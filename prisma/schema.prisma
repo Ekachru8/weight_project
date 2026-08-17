@@ -1,0 +1,71 @@
+// HomeFit Database Schema — SQLite via Prisma
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  name          String       @default("HomeFit User")
+  age           Int?
+  gender        String?      // "male" | "female"
+  heightCm      Float?
+  weightKg      Float?
+  activityLevel String?      // sedentary | light | moderate | very_active | extra_active
+  goal          String?      // "lose" | "gain" | "maintain"
+  equipment     String       @default("Dumbbells, Resistance Band, Yoga Mat")
+  createdAt     DateTime     @default(now())
+  workoutLogs   WorkoutLog[]
+  weightLogs    WeightLog[]
+  dietTargets   DietTarget[]
+}
+
+model Exercise {
+  id          Int    @id @default(autoincrement())
+  dayNumber   Int    // 1–6 (no exercises for day 7 rest)
+  dayName     String // "Chest", "Back", "Legs", "Shoulders", "Arms", "Core"
+  name        String
+  muscleGroup String
+  equipment   String
+  sets        Int
+  reps        String // String to support "30–45 sec", "12/side", "15 steps/side"
+  formCue     String
+  sortOrder   Int
+}
+
+model WorkoutLog {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  date      String  // "YYYY-MM-DD" for easy querying
+  dayNumber Int
+  completed Boolean
+  notes     String?
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}
+
+model WeightLog {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  date     String // "YYYY-MM-DD"
+  weightKg Float
+  user     User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}
+
+model DietTarget {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  calories    Int
+  proteinG    Float
+  carbsG      Float
+  fatG        Float
+  generatedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
