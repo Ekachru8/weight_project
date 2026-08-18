@@ -210,33 +210,42 @@ export default function LandingPage() {
       {/* ── Hero Section ── */}
       <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Glowing orbs */}
+          {/* Glowing orbs & Cyber Rings */}
           <div className="absolute top-20 left-1/4 w-72 h-72 bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
           <div className="absolute top-40 right-1/4 w-60 h-60 bg-sky-500/8 rounded-full blur-[100px] pointer-events-none" />
+          
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[600px] max-h-[600px] pointer-events-none opacity-40 z-0 hidden md:block">
+            <div className="cyber-ring cyber-ring-1" />
+            <div className="cyber-ring cyber-ring-2" />
+            <div className="cyber-ring cyber-ring-3" />
+            <div className="cyber-ring" style={{ width: '300px', height: '300px', border: 'none' }}>
+              <div className="radar-sweep" />
+            </div>
+          </div>
 
-          <div className="fade-in-up">
+          <div className="fade-in-up relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-dim border border-accent/20 text-accent text-xs font-semibold mb-6 landing-badge-glow">
               <Zap size={14} />
               Your Home Gym Companion
             </div>
           </div>
 
-          <h1 className="fade-in-up text-4xl sm:text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
+          <h1 className="fade-in-up relative z-10 text-4xl sm:text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
             Transform Your Body
             <br />
             <span className="text-gradient-hero">From Home</span>
           </h1>
 
-          <p className="fade-in-up opacity-0 text-base sm:text-lg text-muted max-w-2xl mx-auto mb-10 leading-relaxed" style={{ animationDelay: "150ms" }}>
+          <p className="fade-in-up relative z-10 opacity-0 text-base sm:text-lg text-muted max-w-2xl mx-auto mb-10 leading-relaxed" style={{ animationDelay: "150ms" }}>
             Track workouts, crush macros, and build unbreakable consistency — all
             with premium tools designed for your home fitness journey.
           </p>
 
-          <div className="fade-in-up opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animationDelay: "300ms" }}>
+          <div className="fade-in-up relative z-10 opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animationDelay: "300ms" }}>
             <Link
               href="/signup"
               id="hero-cta-btn"
-              className="group px-8 py-4 rounded-2xl text-base font-bold accent-gradient text-black hover:opacity-90 shadow-xl shadow-accent/20 hover:shadow-accent/30 transition-all duration-300 flex items-center gap-2 hover:gap-3"
+              className="group px-8 py-4 rounded-2xl text-base font-bold accent-gradient text-black hover:opacity-90 shadow-[0_0_30px_rgba(192,255,0,0.3)] hover:shadow-[0_0_50px_rgba(192,255,0,0.5)] transition-all duration-300 flex items-center gap-2 hover:gap-3 btn-press"
             >
               Get Started Free
               <ArrowRight

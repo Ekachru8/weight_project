@@ -198,6 +198,72 @@ body::before {
 .card-3d-hover {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
+}
+
+/* ── Cyber Scanner Animations ── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes scan-radar {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cyber-ring {
+  border: 1px solid rgba(192, 255, 0, 0.15);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cyber-ring-1 {
+  width: 200px;
+  height: 200px;
+  border-top-color: #c0ff00;
+  border-right-color: rgba(0, 230, 118, 0.5);
+  animation: spin-slow 8s linear infinite;
+  box-shadow: 0 0 30px rgba(192, 255, 0, 0.1);
+}
+
+.cyber-ring-2 {
+  width: 250px;
+  height: 250px;
+  border-bottom-color: #00e676;
+  border-left-color: rgba(192, 255, 0, 0.5);
+  animation: spin-reverse 12s linear infinite;
+  opacity: 0.7;
+}
+
+.cyber-ring-3 {
+  width: 300px;
+  height: 300px;
+  border: 1px dashed rgba(192, 255, 0, 0.2);
+  animation: spin-slow 20s linear infinite;
+}
+
+.radar-sweep {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(192, 255, 0, 0) 0%, rgba(192, 255, 0, 0.8) 100%);
+  transform-origin: left center;
+  animation: scan-radar 4s linear infinite;
+  box-shadow: 0 0 15px #c0ff00;
+}
+
+/* ── Card 3D hover continued ── */
+.card-3d-hover {
   perspective: 1000px;
 }
 
