@@ -1,6 +1,6 @@
-// HomeFit Database Schema — SQLite via Prisma
+// HomeFit Database Schema — PostgreSQL via Prisma
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 generator client {
