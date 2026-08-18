@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Loader2, Search, Dumbbell, Zap, CircleDot, X, Frown } from "lucide-react";
+import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Exercise {
   id: number;
@@ -13,6 +14,12 @@ interface Exercise {
   equipment: string;
   muscleGroup: string;
   formCue: string;
+}
+
+interface WorkoutLog {
+  date: string;
+  completed: boolean;
+  dayNumber: number;
 }
 
 const DAY_FILTERS = [
@@ -28,6 +35,7 @@ const DAY_FILTERS = [
 export default function ExercisesPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [todayData, setTodayData] = useState<any>(null);
+  const [logs, setLogs] = useState<WorkoutLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dayFilter, setDayFilter] = useState("All");
@@ -44,22 +52,75 @@ export default function ExercisesPage() {
         const localNow = new Date();
         const localDateStr = `${localNow.getFullYear()}-${String(localNow.getMonth() + 1).padStart(2, "0")}-${String(localNow.getDate()).padStart(2, "0")}`;
 
-        const [exercisesRes, todayRes] = await Promise.all([
+        const [exercisesRes, todayRes, logsRes] = await Promise.all([
           fetch("/api/exercises"),
-          fetch(`/api/today?localDate=${localDateStr}`)
+          fetch(`/api/today?localDate=${localDateStr}`),
+          fetch("/api/workout-log")
         ]);
         const exData = await exercisesRes.json();
         const tData = await todayRes.json();
+        const lData = await logsRes.json();
         setExercises(exData);
         setTodayData(tData);
+        setLogs(lData);
       } catch (error) {
-        console.error("Failed to fetch exercises:", error);
+        console.error("Failed to fetch exercises or logs:", error);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
   }, []);
+
+  const calculateSimpleStreak = (logs: WorkoutLog[]) => {
+    if (!logs.length) return 0;
+    const sorted = [...logs]
+      .filter((l) => l.completed)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    if (!sorted.length) return 0;
+    let streak = 1;
+    let currDate = new Date(sorted[0].date);
+    for (let i = 1; i < sorted.length; i++) {
+      const prevDate = new Date(sorted[i].date);
+      const diffDays = Math.floor((currDate.getTime() - prevDate.getTime()) / (1000 * 3600 * 24));
+      if (diffDays === 1) {
+        streak++;
+        currDate = prevDate;
+      } else if (diffDays > 1) {
+        break;
+      }
+    }
+    return streak;
+  };
+
+  const calculateSimpleLongest = (logs: WorkoutLog[]) => {
+    if (!logs.length) return 0;
+    const sorted = [...logs]
+      .filter((l) => l.completed)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    if (!sorted.length) return 0;
+    let longest = 1;
+    let current = 1;
+    for (let i = 1; i < sorted.length; i++) {
+      const diffDays = Math.floor(
+        (new Date(sorted[i].date).getTime() - new Date(sorted[i - 1].date).getTime()) / (1000 * 3600 * 24)
+      );
+      if (diffDays === 1) current++;
+      else if (diffDays > 1) current = 1;
+      if (current > longest) longest = current;
+    }
+    return longest;
+  };
+
+  const currentStreak = calculateSimpleStreak(logs);
+  const longestStreak = calculateSimpleLongest(logs);
+  const weeklyCompleted = logs.filter((l) => {
+    const logDate = new Date(l.date);
+    const now = new Date();
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return l.completed && logDate >= weekAgo && l.dayNumber !== 7;
+  }).length;
 
   const markComplete = async () => {
     if (!todayData || marking) return;
@@ -77,6 +138,8 @@ export default function ExercisesPage() {
       setShowCelebration(true);
       setTimeout(() => setShowCelebration(false), 2000);
       setTodayData({ ...todayData, isCompleted: true });
+      // Optimistically update logs for streak
+      setLogs([...logs, { date: todayData.date, completed: true, dayNumber: todayData.dayNumber }]);
     } catch (error) {
       console.error("Failed to mark complete:", error);
     } finally {
@@ -116,13 +179,13 @@ export default function ExercisesPage() {
     }
   };
 
-  const confettiParticles = useMemo(() => Array.from({ length: 20 }).map((_, i) => ({
+  const confettiParticles = useMemo(() => Array.from({ length: 30 }).map((_, i) => ({
     id: i,
     left: `${20 + Math.random() * 60}%`,
     top: `${30 + Math.random() * 20}%`,
-    backgroundColor: ["#a3e635", "#38bdf8", "#fb923c", "#f472b6", "#a78bfa"][i % 5],
-    animationDelay: `${Math.random() * 0.5}s`,
-    animationDuration: `${0.8 + Math.random() * 0.8}s`,
+    backgroundColor: ["#c0ff00", "#00e676", "#38bdf8", "#fb923c"][i % 4],
+    animationDelay: `${Math.random() * 0.3}s`,
+    animationDuration: `${0.6 + Math.random() * 0.6}s`,
   })), []);
 
   if (loading) {
@@ -133,8 +196,26 @@ export default function ExercisesPage() {
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants: import("framer-motion").Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+  };
+
   return (
-    <div className="space-y-6 relative">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-8 relative pb-20"
+    >
       {showCelebration && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
           {confettiParticles.map((particle) => (
@@ -147,170 +228,207 @@ export default function ExercisesPage() {
                 backgroundColor: particle.backgroundColor,
                 animationDelay: particle.animationDelay,
                 animationDuration: particle.animationDuration,
+                boxShadow: `0 0 10px ${particle.backgroundColor}`
               }}
             />
           ))}
-          <div className="text-4xl celebrate-scale">🎉</div>
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: [0, 1.2, 1] }}
+            className="text-6xl drop-shadow-[0_0_20px_rgba(192,255,0,0.5)]"
+          >
+            🔥
+          </motion.div>
         </div>
       )}
 
-      <div className="fade-in-up">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
-          Exercises
-        </h1>
-        <p className="text-sm text-muted">
-          Your daily workout and complete library
-        </p>
-      </div>
+      {/* Stats Overview */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="glass-card p-6 flex flex-col items-center text-center group">
+          <Flame className="text-accent mb-2 group-hover:animate-pulse" size={28} />
+          <span className="text-3xl font-black text-white">{currentStreak}</span>
+          <span className="text-xs text-muted font-bold uppercase tracking-widest mt-1">Day Streak</span>
+        </div>
+        <div className="glass-card p-6 flex flex-col items-center text-center group">
+          <Trophy className="text-yellow-500 mb-2 group-hover:-translate-y-1 transition-transform" size={28} />
+          <span className="text-3xl font-black text-white">{longestStreak}</span>
+          <span className="text-xs text-muted font-bold uppercase tracking-widest mt-1">Best Streak</span>
+        </div>
+        <div className="glass-card p-6 flex flex-col items-center text-center group">
+          <div className="relative group-hover:scale-110 transition-transform">
+            <svg className="w-12 h-12 mb-1 -rotate-90" viewBox="0 0 36 36">
+              <path className="text-border" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path className="text-emerald-500 transition-all duration-1000 ease-out" strokeDasharray={`${(weeklyCompleted / 6) * 100}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="2.5" />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center pb-1">
+              <span className="text-sm font-black">{weeklyCompleted}</span>
+            </div>
+          </div>
+          <span className="text-xs text-muted font-bold uppercase tracking-widest mt-1">This Week</span>
+        </div>
+      </motion.div>
 
-      <div className="flex gap-2 p-1 bg-card rounded-xl border border-border fade-in-up opacity-0 delay-100">
+      <motion.div variants={itemVariants} className="flex gap-2 p-1 bg-[#1a1a1a] rounded-xl border border-white/5">
         <button
           onClick={() => setActiveTab("today")}
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-            activeTab === "today" ? "accent-gradient text-black shadow-md" : "text-muted hover:text-foreground"
+          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all ${
+            activeTab === "today" ? "accent-gradient text-black shadow-[0_0_20px_rgba(192,255,0,0.2)]" : "text-muted hover:text-white"
           }`}
         >
           Today's Workout
         </button>
         <button
           onClick={() => setActiveTab("library")}
-          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-            activeTab === "library" ? "accent-gradient text-black shadow-md" : "text-muted hover:text-foreground"
+          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all ${
+            activeTab === "library" ? "accent-gradient text-black shadow-[0_0_20px_rgba(192,255,0,0.2)]" : "text-muted hover:text-white"
           }`}
         >
           Full Library
         </button>
-      </div>
+      </motion.div>
 
       {activeTab === "today" && todayData && (
-        <div className="space-y-4 fade-in-up">
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-6">
           {todayData.isRestDay ? (
-            <div className="glass-card p-10 text-center flex flex-col items-center justify-center">
-              <Zap className="text-accent mb-4" size={48} />
-              <h2 className="text-2xl font-bold mb-2">Rest Day</h2>
-              <p className="text-muted">Take time to recover and hydrate.</p>
-            </div>
+            <motion.div variants={itemVariants} className="glass-card p-12 text-center flex flex-col items-center justify-center border-dashed border-2 border-white/10">
+              <Zap className="text-accent mb-6" size={56} />
+              <h2 className="text-3xl font-black mb-3 text-white">Rest & Recover</h2>
+              <p className="text-muted max-w-sm">Muscles grow when you rest. Take this time to stretch, hydrate, and prepare for tomorrow.</p>
+            </motion.div>
           ) : (
             <>
-              <div className="mb-4">
-                <h2 className="text-lg font-bold">Day {todayData.dayNumber} — {todayData.dayName}</h2>
-                <p className="text-sm text-muted">{todayData.exercises.length} exercises to crush today.</p>
-              </div>
+              <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                  <h2 className="text-3xl sm:text-5xl font-black text-white mb-2 tracking-tight">Day {todayData.dayNumber} — {todayData.dayName}</h2>
+                  <p className="text-muted text-lg">{todayData.exercises.length} exercises to crush today.</p>
+                </div>
+                {todayData.isCompleted ? (
+                  <div className="flex items-center gap-2 text-accent font-black bg-accent/10 px-6 py-3 rounded-full border border-accent/20">
+                    <CheckCircle2 size={20} />
+                    Complete
+                  </div>
+                ) : (
+                  <button
+                    onClick={markComplete}
+                    disabled={marking}
+                    className="group relative inline-flex items-center justify-center px-8 py-3 font-bold text-black bg-accent rounded-full overflow-hidden transition-all duration-300 hover:scale-105 disabled:opacity-50"
+                  >
+                    {marking ? (
+                      <Loader2 className="animate-spin" size={20} />
+                    ) : (
+                      <>
+                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                        <CheckCircle2 size={20} className="mr-2" />
+                        <span>Finish Workout</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </motion.div>
 
-              {todayData.exercises.map((ex: any, i: number) => (
-                <div key={ex.id} className="glass-card p-4 hover-lift">
-                  <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-lg number-badge flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-sm font-bold text-black">{i + 1}</span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-base font-bold text-foreground mb-1">{ex.name}</h3>
-                      <p className="text-xs text-muted mb-3 leading-relaxed">{ex.formCue}</p>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold px-2 py-1 rounded-md bg-accent/20 text-accent border border-accent/20">
-                          {ex.sets} × {ex.reps}
-                        </span>
-                        <span className="text-xs flex items-center gap-1.5 text-muted bg-card px-2 py-1 rounded-md border border-border">
-                          {getEquipmentIcon(ex.equipment)} {ex.equipment}
+              <div className="space-y-3">
+                {todayData.exercises.map((ex: any, i: number) => (
+                  <motion.div 
+                    variants={itemVariants}
+                    key={ex.id}
+                    className="glass-card p-5 flex flex-col sm:flex-row gap-4 justify-between group hover:border-accent/30 transition-colors"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-bold px-2 py-1 bg-white/5 rounded text-accent tracking-widest uppercase">
+                          {ex.muscleGroup}
                         </span>
                       </div>
+                      <h3 className="font-black text-xl text-white mb-1 group-hover:text-accent transition-colors">{ex.name}</h3>
+                      <p className="text-sm text-muted italic">"{ex.formCue}"</p>
                     </div>
-                  </div>
-                </div>
-              ))}
-
-              {!todayData.isCompleted ? (
-                <button
-                  onClick={markComplete}
-                  disabled={marking}
-                  className="w-full mt-6 py-4 rounded-xl accent-gradient text-black font-extrabold text-lg flex items-center justify-center gap-2 hover-lift shadow-[0_0_20px_rgba(192,255,0,0.3)] disabled:opacity-50 transition-all btn-press"
-                >
-                  {marking ? (
-                    <Loader2 className="animate-spin" size={24} />
-                  ) : (
-                    <>
-                      <Zap size={24} className="fill-black" />
-                      Mark Today Complete
-                    </>
-                  )}
-                </button>
-              ) : (
-                <div className="w-full mt-6 py-4 rounded-xl glass-card border-accent/50 text-accent font-bold text-center flex items-center justify-center gap-2">
-                  <Zap size={20} className="fill-accent" />
-                  Workout Completed!
-                </div>
-              )}
+                    
+                    <div className="flex flex-wrap sm:flex-col items-center sm:items-end gap-3 sm:gap-1 text-sm font-medium">
+                      <div className="bg-white/5 px-4 py-2 rounded-lg text-center min-w-[100px]">
+                        <span className="block text-2xl font-black text-white">{ex.sets}</span>
+                        <span className="text-[10px] text-muted uppercase tracking-widest">Sets</span>
+                      </div>
+                      <div className="bg-white/5 px-4 py-2 rounded-lg text-center min-w-[100px]">
+                        <span className="block text-2xl font-black text-white">{ex.reps}</span>
+                        <span className="text-[10px] text-muted uppercase tracking-widest">Reps</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-muted bg-white/5 px-3 py-1.5 rounded-lg mt-1 w-full sm:w-auto justify-center">
+                        {getEquipmentIcon(ex.equipment)}
+                        <span className="text-xs uppercase tracking-wider">{ex.equipment}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </>
           )}
-        </div>
+        </motion.div>
       )}
 
       {activeTab === "library" && (
-        <div className="space-y-6 fade-in-up">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
-            <input
-              id="exercise-search"
-              type="text"
-              placeholder="Search exercises, muscles, or equipment..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-10 py-3 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-6">
+          <motion.div variants={itemVariants} className="flex flex-col gap-4">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={20} />
+              <input
+                type="text"
+                placeholder="Search exercises by name, muscle, or equipment..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-muted focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all font-medium"
+              />
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {DAY_FILTERS.map((df) => (
+                <button
+                  key={df}
+                  onClick={() => setDayFilter(df)}
+                  className={`px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-full transition-all ${
+                    dayFilter === df
+                      ? "bg-white text-black"
+                      : "bg-[#1a1a1a] text-muted hover:bg-white/10 hover:text-white border border-white/5"
+                  }`}
+                >
+                  {df}
+                </button>
+              ))}
+            </div>
+          </motion.div>
 
-          {/* Filters */}
-          <div className="pill-scroll">
-            {DAY_FILTERS.map((day) => (
-              <button
-                key={day}
-                onClick={() => setDayFilter(day)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-200 btn-press ${
-                  dayFilter === day ? "accent-gradient text-black shadow-sm shadow-accent/20" : "bg-card border border-border text-muted hover:text-foreground"
-                }`}
+          <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((ex) => (
+              <motion.div 
+                variants={itemVariants}
+                key={ex.id} 
+                className="glass-card p-5 flex flex-col hover:-translate-y-1 transition-transform group border border-white/5 hover:border-accent/30"
               >
-                {day}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            {filtered.map((ex, i) => (
-              <div key={ex.id} className="glass-card p-4 hover-lift">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg number-badge flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-accent/10 text-accent rounded">
+                    {ex.muscleGroup}
+                  </span>
+                  <div className="flex items-center gap-1 text-xs text-muted">
                     {getEquipmentIcon(ex.equipment)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-foreground">{ex.name}</h3>
-                    <p className="text-[10px] text-muted mt-0.5 leading-relaxed">{ex.formCue}</p>
-                    <div className="flex items-center gap-2 mt-2 flex-wrap">
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-accent-dim text-accent">{ex.sets}×{ex.reps}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-card border border-border text-muted">{ex.muscleGroup}</span>
-                    </div>
+                    <span>{ex.equipment}</span>
                   </div>
                 </div>
-              </div>
+                <h3 className="font-black text-lg text-white mb-2 leading-tight group-hover:text-accent transition-colors">{ex.name}</h3>
+                <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-sm font-medium">
+                  <span className="text-muted">Day {ex.dayNumber} ({ex.dayName})</span>
+                  <span className="text-white font-bold">{ex.sets} × {ex.reps}</span>
+                </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {filtered.length === 0 && (
-            <div className="glass-card p-8 text-center">
-              <Frown className="mx-auto mb-3 text-muted" size={40} />
-              <p className="text-foreground font-semibold text-sm mb-1">No exercises found</p>
-            </div>
+            <motion.div variants={itemVariants} className="text-center py-16 text-muted">
+              <Dumbbell className="mx-auto mb-4 opacity-50" size={48} />
+              <p className="text-lg">No exercises found matching your search.</p>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
