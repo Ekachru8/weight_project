@@ -188,13 +188,22 @@ export default function LandingPage() {
               Home<span className="accent-text">Fit</span>
             </span>
           </Link>
-          <Link
-            href="/login"
-            id="landing-login-btn"
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 accent-gradient text-black hover:opacity-90 hover:scale-105 shadow-lg shadow-accent/20"
-          >
-            Login / Sign Up
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              id="landing-login-btn"
+              className="px-4 py-2 text-sm font-semibold text-foreground hover:text-accent transition-colors"
+            >
+              Log In
+            </Link>
+            <Link
+              href="/signup"
+              id="landing-signup-btn"
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 accent-gradient text-black hover:opacity-90 hover:scale-105 shadow-lg shadow-accent/20"
+            >
+              Sign Up
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -225,7 +234,7 @@ export default function LandingPage() {
 
           <div className="fade-in-up opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animationDelay: "300ms" }}>
             <Link
-              href="/login"
+              href="/signup"
               id="hero-cta-btn"
               className="group px-8 py-4 rounded-2xl text-base font-bold accent-gradient text-black hover:opacity-90 shadow-xl shadow-accent/20 hover:shadow-accent/30 transition-all duration-300 flex items-center gap-2 hover:gap-3"
             >

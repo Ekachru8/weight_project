@@ -72,16 +72,18 @@ model User {
 }
 
 model Exercise {
-  id          Int    @id @default(autoincrement())
-  dayNumber   Int    // 1–6 (no exercises for day 7 rest)
-  dayName     String // "Chest", "Back", "Legs", "Shoulders", "Arms", "Core"
-  name        String
-  muscleGroup String
-  equipment   String
-  sets        Int
-  reps        String // String to support "30–45 sec", "12/side", "15 steps/side"
-  formCue     String
-  sortOrder   Int
+  id            Int     @id @default(autoincrement())
+  dayNumber     Int     // 1–6 (no exercises for day 7 rest)
+  dayName       String  // "Chest", "Back", "Legs", "Shoulders", "Arms", "Core"
+  name          String
+  muscleGroup   String
+  equipment     String
+  sets          Int
+  reps          String  // String to support "30–45 sec", "12/side", "15 steps/side"
+  formCue       String
+  sortOrder     Int
+  hoverVideoUrl String?
+  fullVideoUrl  String?
 }
 
 model WorkoutLog {

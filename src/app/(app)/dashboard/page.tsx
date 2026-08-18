@@ -49,8 +49,12 @@ export default function Dashboard() {
 
   const fetchData = useCallback(async () => {
     try {
+      // Get user's local date string YYYY-MM-DD
+      const localNow = new Date();
+      const localDateStr = `${localNow.getFullYear()}-${String(localNow.getMonth() + 1).padStart(2, "0")}-${String(localNow.getDate()).padStart(2, "0")}`;
+
       const [todayRes, logsRes] = await Promise.all([
-        fetch("/api/today"),
+        fetch(`/api/today?localDate=${localDateStr}`),
         fetch("/api/workout-log"),
       ]);
       const today = await todayRes.json();
@@ -202,7 +206,6 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Exercises or Rest Day */}
       {todayData.isRestDay ? (
         <div className="glass-card p-8 text-center fade-in-up opacity-0 delay-200">
           <Battery className="mx-auto mb-3 text-blue-400" size={48} />
@@ -213,7 +216,7 @@ export default function Dashboard() {
           </p>
         </div>
       ) : (
-        <div className="space-y-3 fade-in-up opacity-0 delay-200">
+        <div className="space-y-3 relative z-10 pt-2">
           {todayData.exercises.map((exercise, index) => (
             <WorkoutCard key={exercise.id} exercise={exercise} index={index} />
           ))}

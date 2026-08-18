@@ -483,11 +483,15 @@ async function main() {
       sortOrder: 7,
     },
   ];
+  const exercisesWithVideos = exercises.map(ex => ({
+    ...ex,
+    hoverVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    fullVideoUrl: "https://www.youtube.com/embed/jfKfPfyJRdk"
+  }));
 
   await prisma.exercise.createMany({
-    data: exercises,
+    data: exercisesWithVideos,
   });
-
   console.log(`✅ Seeded ${exercises.length} exercises across 6 days`);
   console.log("✅ Default user created");
 }

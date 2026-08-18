@@ -9,6 +9,7 @@ import {
   Mail,
   Phone,
   Lock,
+  User,
   Eye,
   EyeOff,
   Loader2,
@@ -17,9 +18,10 @@ import {
 
 type IdentifierType = "email" | "phone";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const [identifierType, setIdentifierType] = useState<IdentifierType>("email");
+  const [name, setName] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -33,6 +35,19 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, identifier, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Registration failed");
+        setLoading(false);
+        return;
+      }
+
       const result = await signIn("credentials", {
         identifier,
         password,
@@ -40,7 +55,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError("Invalid credentials. Please check your email/phone and password.");
+        setError("Account created but auto-login failed. Please try logging in.");
       } else {
         router.push("/onboarding");
       }
@@ -63,9 +78,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden bg-[#030303]">
+      {/* Dynamic Animated Mesh Background for Signup */}
       <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#c0ff00] rounded-full blur-[150px] opacity-10 animate-pulse" />
-        <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-[#00e676] rounded-full blur-[150px] opacity-10" />
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#c0ff00] rounded-full blur-[150px] opacity-10 animate-pulse" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#00e676] rounded-full blur-[150px] opacity-10" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
@@ -86,10 +102,10 @@ export default function LoginPage() {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold text-foreground">
-              Welcome Back
+              Create Account
             </h1>
             <p className="text-sm text-muted">
-              Sign in to continue your journey
+              Start your premium fitness journey
             </p>
           </div>
         </div>
@@ -159,6 +175,22 @@ export default function LoginPage() {
 
           <form onSubmit={handleCredentialsSubmit} className="space-y-4">
             <div className="relative">
+              <User
+                size={16}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
+              />
+              <input
+                id="register-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                required
+                className="auth-input pl-10"
+              />
+            </div>
+
+            <div className="relative">
               {identifierType === "email" ? (
                 <Mail
                   size={16}
@@ -195,8 +227,9 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Your password"
+                placeholder="Create password (min 6 chars)"
                 required
+                minLength={6}
                 className="auth-input pl-10 pr-10"
               />
               <button
@@ -223,15 +256,15 @@ export default function LoginPage() {
               {loading ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : (
-                "Sign In"
+                "Create Account"
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm text-muted">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-accent font-semibold hover:underline">
-              Sign Up
+            Already have an account?{" "}
+            <Link href="/login" className="text-accent font-semibold hover:underline">
+              Sign In
             </Link>
           </div>
         </div>
