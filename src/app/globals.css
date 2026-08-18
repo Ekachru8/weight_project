@@ -17,18 +17,18 @@
 }
 
 :root {
-  --background: #0b0f14;
-  --foreground: #e8ecf1;
-  --card: rgba(255, 255, 255, 0.04);
-  --card-hover: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.08);
-  --accent: #a3e635;
-  --accent-dim: rgba(163, 230, 53, 0.15);
-  --accent-glow: rgba(163, 230, 53, 0.3);
-  --muted: #6b7280;
-  --danger: #ef4444;
-  --success: #22c55e;
-  --warning: #f59e0b;
+  --background: #030303;
+  --foreground: #f8fafc;
+  --card: rgba(255, 255, 255, 0.02);
+  --card-hover: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.06);
+  --accent: #c0ff00;
+  --accent-dim: rgba(192, 255, 0, 0.1);
+  --accent-glow: rgba(192, 255, 0, 0.25);
+  --muted: #8492a6;
+  --danger: #ff3366;
+  --success: #00e676;
+  --warning: #ffaa00;
 }
 
 * {
@@ -47,6 +47,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+  letter-spacing: -0.01em; /* Modern, tight tracking */
 }
 
 /* ── Animated mesh gradient background ── */
@@ -59,9 +60,9 @@ body::before {
   bottom: 0;
   z-index: -1;
   background:
-    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(163, 230, 53, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 40% at 85% 80%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 60% at 50% 50%, rgba(251, 146, 60, 0.02) 0%, transparent 50%);
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(192, 255, 0, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 85% 80%, rgba(0, 230, 118, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 60% at 50% 50%, rgba(192, 255, 0, 0.015) 0%, transparent 50%);
   animation: mesh-shift 20s ease-in-out infinite;
   pointer-events: none;
 }
@@ -74,30 +75,34 @@ body::before {
 /* ── Glassmorphism card ── */
 .glass-card {
   background: var(--card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--border);
-  border-radius: 1rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  border-radius: 1.25rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.02),
+    0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .glass-card:hover {
   background: var(--card-hover);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.15);
   box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
-    0 4px 24px -4px rgba(0, 0, 0, 0.3);
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.03),
+    0 12px 40px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* ── Accent gradient ── */
 .accent-gradient {
-  background: linear-gradient(135deg, #a3e635 0%, #65a30d 100%);
+  background: linear-gradient(135deg, #c0ff00 0%, #00e676 100%);
 }
 
 /* ── Accent text gradient ── */
 .accent-text {
-  background: linear-gradient(135deg, #a3e635 0%, #84cc16 100%);
+  background: linear-gradient(135deg, #c0ff00 0%, #00e676 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -105,7 +110,7 @@ body::before {
 
 /* ── Hero text gradient ── */
 .text-gradient-hero {
-  background: linear-gradient(135deg, #a3e635 0%, #38bdf8 50%, #fb923c 100%);
+  background: linear-gradient(135deg, #c0ff00 0%, #00e676 50%, #00f2fe 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -120,17 +125,17 @@ body::before {
 
 /* ── Glow effect ── */
 .glow {
-  box-shadow: 0 0 20px rgba(163, 230, 53, 0.15),
-    0 0 60px rgba(163, 230, 53, 0.05);
+  box-shadow: 0 0 30px rgba(192, 255, 0, 0.15),
+    0 0 80px rgba(192, 255, 0, 0.05);
 }
 
 /* ── Pulse animation ── */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(163, 230, 53, 0.2);
+    box-shadow: 0 0 15px rgba(192, 255, 0, 0.15);
   }
   50% {
-    box-shadow: 0 0 25px rgba(163, 230, 53, 0.4);
+    box-shadow: 0 0 30px rgba(192, 255, 0, 0.35);
   }
 }
 
@@ -191,14 +196,14 @@ body::before {
 
 /* ── Card 3D hover ── */
 .card-3d-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
-  perspective: 800px;
+  perspective: 1000px;
 }
 
 .card-3d-hover:hover {
-  transform: translateY(-3px) rotateX(1deg);
-  box-shadow: 0 12px 40px -8px rgba(163, 230, 53, 0.08);
+  transform: translateY(-4px) rotateX(2deg);
+  box-shadow: 0 16px 50px -10px rgba(192, 255, 0, 0.1);
 }
 
 /* ── Heatmap cell ── */
@@ -795,8 +800,8 @@ textarea:focus-visible {
 
 /* ── Badge glow ── */
 @keyframes badge-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(163, 230, 53, 0.15); }
-  50% { box-shadow: 0 0 20px rgba(163, 230, 53, 0.3); }
+  0%, 100% { box-shadow: 0 0 8px rgba(192, 255, 0, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(192, 255, 0, 0.3); }
 }
 
 .landing-badge-glow {
@@ -809,8 +814,8 @@ textarea:focus-visible {
 }
 
 .landing-cta-card:hover {
-  border-color: rgba(163, 230, 53, 0.15);
-  box-shadow: 0 0 60px rgba(163, 230, 53, 0.05);
+  border-color: rgba(192, 255, 0, 0.15);
+  box-shadow: 0 0 60px rgba(192, 255, 0, 0.05);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -822,12 +827,13 @@ textarea:focus-visible {
     width: 100%;
     padding: 0.875rem 1rem;
     border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border);
     color: var(--foreground);
     font-size: 0.875rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     outline: none;
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
   }
 
   .auth-input::placeholder {
@@ -835,13 +841,14 @@ textarea:focus-visible {
   }
 
   .auth-input:focus {
-    border-color: rgba(163, 230, 53, 0.4);
-    box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.1);
-    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(192, 255, 0, 0.4);
+    box-shadow: 0 0 0 3px rgba(192, 255, 0, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .auth-input:hover:not(:focus) {
     border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
   }
 }
 
