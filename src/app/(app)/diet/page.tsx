@@ -116,7 +116,7 @@ export default function DietPage() {
           <div className="w-16 h-16 rounded-2xl accent-gradient flex items-center justify-center mx-auto mb-4 hover-lift">
             <Target size={28} className="text-black" />
           </div>
-          <h1 className="text-2xl font-extrabold text-foreground mb-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-2">
             Set Up Your Diet Plan
           </h1>
           <p className="text-sm text-muted">
@@ -288,7 +288,7 @@ export default function DietPage() {
   return (
     <div className="space-y-6">
       <div className="fade-in-up">
-        <h1 className="text-2xl font-extrabold text-foreground mb-1">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
           Diet Plan
         </h1>
         <div className="flex items-center gap-2">
@@ -339,7 +339,7 @@ export default function DietPage() {
         <h3 className="text-sm font-semibold text-foreground mb-3">
           Sample Meal Plan
         </h3>
-        <div className="flex gap-2 mb-4">
+        <div className="pill-scroll mb-4">
           {[
             { value: "non_vegetarian" as DietType, label: "🍗 Non-Veg" },
             { value: "vegetarian" as DietType, label: "🥬 Vegetarian" },

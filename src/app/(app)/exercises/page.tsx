@@ -90,7 +90,7 @@ export default function ExercisesPage() {
   return (
     <div className="space-y-6">
       <div className="fade-in-up">
-        <h1 className="text-2xl font-extrabold text-foreground mb-1">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
           Exercise Library
         </h1>
         <p className="text-sm text-muted">
@@ -124,7 +124,7 @@ export default function ExercisesPage() {
       </div>
 
       {/* Day filter */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar fade-in-up opacity-0 delay-200">
+      <div className="pill-scroll fade-in-up opacity-0 delay-200">
         {DAY_FILTERS.map((day) => (
           <button
             key={day}
@@ -142,7 +142,7 @@ export default function ExercisesPage() {
 
       {/* Muscle group filter */}
       {muscleGroups.length > 2 && (
-        <div className="flex gap-2 overflow-x-auto no-scrollbar fade-in-up opacity-0 delay-300">
+        <div className="pill-scroll fade-in-up opacity-0 delay-300">
           {muscleGroups.map((mg) => (
             <button
               key={mg}

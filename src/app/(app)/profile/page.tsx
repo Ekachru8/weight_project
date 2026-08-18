@@ -114,7 +114,7 @@ export default function ProfilePage() {
             <span className="text-black font-bold text-sm">{initials}</span>
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">
               Profile
             </h1>
             <p className="text-xs text-muted">

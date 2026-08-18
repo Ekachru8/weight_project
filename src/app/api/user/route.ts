@@ -85,3 +85,69 @@ export async function PUT(request: Request) {
     );
   }
 }
+
+// PATCH /api/user — Update user profile (supports onboarding fields)
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const {
+      name, age, gender, heightCm, weightKg,
+      targetWeightKg, activityLevel, goal,
+      equipment, onboardingDone,
+    } = body;
+
+    const user = await prisma.user.update({
+      where: { id: 1 },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(age !== undefined && { age: Number(age) }),
+        ...(gender !== undefined && { gender }),
+        ...(heightCm !== undefined && { heightCm: Number(heightCm) }),
+        ...(weightKg !== undefined && { weightKg: Number(weightKg) }),
+        ...(targetWeightKg !== undefined && { targetWeightKg: Number(targetWeightKg) }),
+        ...(activityLevel !== undefined && { activityLevel }),
+        ...(goal !== undefined && { goal }),
+        ...(equipment !== undefined && { equipment }),
+        ...(onboardingDone !== undefined && { onboardingDone: Boolean(onboardingDone) }),
+      },
+    });
+
+    // If all diet-relevant fields are present, recalculate diet targets
+    if (user.age && user.gender && user.heightCm && user.weightKg && user.activityLevel && user.goal) {
+      const dietResult = calculateDiet(
+        user.weightKg,
+        user.heightCm,
+        user.age,
+        user.gender as Gender,
+        user.activityLevel as ActivityLevel,
+        user.goal as Goal
+      );
+
+      await prisma.dietTarget.create({
+        data: {
+          userId: 1,
+          calories: dietResult.targetCalories,
+          proteinG: dietResult.proteinG,
+          carbsG: dietResult.carbsG,
+          fatG: dietResult.fatG,
+        },
+      });
+    }
+
+    const updatedUser = await prisma.user.findFirst({
+      where: { id: 1 },
+      include: {
+        dietTargets: { orderBy: { generatedAt: "desc" }, take: 1 },
+      },
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error("PATCH /api/user error:", error);
+    return NextResponse.json(
+      { error: "Failed to update user" },
+      { status: 500 }
+    );
+  }
+}
+

@@ -49,7 +49,7 @@ export default function WeightChart({ data, targetWeight }: WeightChartProps) {
       <h3 className="text-sm font-semibold text-foreground mb-4">
         Weight Trend
       </h3>
-      <div className="h-52">
+      <div className="chart-container">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
@@ -101,7 +101,7 @@ export default function WeightChart({ data, targetWeight }: WeightChartProps) {
               }}
               labelStyle={{ color: "#6b7280" }}
               itemStyle={{ color: "#a3e635" }}
-              formatter={(value: number) => [`${value} kg`, "Weight"]}
+              formatter={(value: any) => [`${value} kg`, "Weight"]}
             />
             {targetWeight && (
               <ReferenceLine

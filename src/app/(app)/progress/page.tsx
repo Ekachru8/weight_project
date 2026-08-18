@@ -128,7 +128,7 @@ export default function ProgressPage() {
   return (
     <div className="space-y-6">
       <div className="fade-in-up">
-        <h1 className="text-2xl font-extrabold text-foreground mb-1">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
           Progress
         </h1>
         <p className="text-sm text-muted">

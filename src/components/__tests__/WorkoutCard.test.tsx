@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import WorkoutCard from "../WorkoutCard";
 
 const mockExercise = {
@@ -52,9 +52,9 @@ describe("WorkoutCard", () => {
 
   it("shows form cue after clicking expand", async () => {
     render(<WorkoutCard exercise={mockExercise} index={0} />);
-    screen.getByText("Form tip").click();
+    fireEvent.click(screen.getByText("Form tip"));
     expect(
-      screen.getByText("Keep elbows at 45 degrees, squeeze at the top.")
+      await screen.findByText("Keep elbows at 45 degrees, squeeze at the top.")
     ).toBeInTheDocument();
   });
 

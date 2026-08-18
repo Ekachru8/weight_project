@@ -78,7 +78,7 @@ export default function SchedulePage() {
   return (
     <div className="space-y-6">
       <div className="fade-in-up">
-        <h1 className="text-2xl font-extrabold text-foreground mb-1">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
           Weekly Schedule
         </h1>
         <p className="text-sm text-muted">
@@ -87,7 +87,7 @@ export default function SchedulePage() {
       </div>
 
       {/* Day pills */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 fade-in-up opacity-0 delay-100">
+      <div className="pill-scroll pb-2 fade-in-up opacity-0 delay-100">
         <button
           onClick={() => setSelectedDay(null)}
           className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 whitespace-nowrap btn-press ${

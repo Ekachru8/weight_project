@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: "HomeFit — Home Workout & Diet Tracker",
@@ -33,12 +32,11 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#0b0f14" />
       </head>
-      <body className="min-h-screen bg-background text-foreground pb-20 md:pb-0 md:pl-20">
-        <Navbar />
-        <main className="max-w-2xl mx-auto px-4 py-6">{children}</main>
+      <body className="min-h-screen bg-background text-foreground safe-bottom">
+        {children}
       </body>
     </html>
   );

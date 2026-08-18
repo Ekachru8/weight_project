@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import WorkoutCard from "@/components/WorkoutCard";
 import StreakBadge from "@/components/StreakBadge";
 import DayPill from "@/components/DayPill";
@@ -104,6 +104,14 @@ export default function Dashboard() {
 
   const greeting = getGreeting();
 
+  const confettiParticles = useMemo(() => Array.from({ length: 20 }).map((_, i) => ({
+    id: i,
+    left: `${20 + Math.random() * 60}%`,
+    top: `${30 + Math.random() * 20}%`,
+    backgroundColor: ["#a3e635", "#38bdf8", "#fb923c", "#f472b6", "#a78bfa"][i % 5],
+    animationDelay: `${Math.random() * 0.5}s`,
+    animationDuration: `${0.8 + Math.random() * 0.8}s`,
+  })), []);
   if (loading) {
     return (
       <div className="space-y-6">
@@ -136,16 +144,16 @@ export default function Dashboard() {
       {/* Confetti celebration overlay */}
       {showCelebration && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-          {Array.from({ length: 20 }).map((_, i) => (
+          {confettiParticles.map((particle) => (
             <div
-              key={i}
+              key={particle.id}
               className="confetti-particle"
               style={{
-                left: `${20 + Math.random() * 60}%`,
-                top: `${30 + Math.random() * 20}%`,
-                backgroundColor: ["#a3e635", "#38bdf8", "#fb923c", "#f472b6", "#a78bfa"][i % 5],
-                animationDelay: `${Math.random() * 0.5}s`,
-                animationDuration: `${0.8 + Math.random() * 0.8}s`,
+                left: particle.left,
+                top: particle.top,
+                backgroundColor: particle.backgroundColor,
+                animationDelay: particle.animationDelay,
+                animationDuration: particle.animationDuration,
               }}
             />
           ))}
@@ -172,7 +180,7 @@ export default function Dashboard() {
               isToday
             />
           </div>
-          <h1 className="text-3xl font-extrabold accent-text">
+          <h1 className="text-2xl sm:text-3xl font-extrabold accent-text">
             {todayData.isRestDay ? "Rest & Recover" : `Day ${todayData.dayNumber} — ${todayData.dayName}`}
           </h1>
           {!todayData.isRestDay && (
@@ -214,7 +222,7 @@ export default function Dashboard() {
 
       {/* Mark Complete Button */}
       {!todayData.isRestDay && (
-        <div className="sticky bottom-20 md:bottom-4 z-40 fade-in-up opacity-0 delay-300">
+        <div className="sticky-above-nav fade-in-up opacity-0 delay-300">
           <button
             id="mark-complete-btn"
             onClick={markComplete}

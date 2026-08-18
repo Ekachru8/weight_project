@@ -34,9 +34,9 @@ export default function MacroRing({
       <h3 className="text-sm font-semibold text-foreground mb-4">
         Daily Macros
       </h3>
-      <div className="flex items-center gap-6">
+      <div className="macro-ring-layout">
         {/* Donut chart */}
-        <div className="relative w-36 h-36 flex-shrink-0">
+        <div className="relative macro-ring-chart flex-shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -84,7 +84,7 @@ export default function MacroRing({
         </div>
 
         {/* Macro breakdown */}
-        <div className="flex flex-col gap-3 flex-1">
+        <div className="flex flex-col gap-3 macro-ring-breakdown">
           {data.map((d) => {
             const percent = totalCals > 0 ? Math.round((d.value / totalCals) * 100) : 0;
             return (

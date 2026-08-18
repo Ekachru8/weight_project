@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/", label: "Home", icon: Home },
+  { href: "/dashboard", label: "Home", icon: Home },
   { href: "/schedule", label: "Schedule", icon: Calendar },
   { href: "/exercises", label: "Exercises", icon: Dumbbell },
   { href: "/progress", label: "Progress", icon: TrendingUp },
@@ -28,13 +28,13 @@ export default function Navbar() {
       {/* Mobile bottom nav */}
       <nav
         id="mobile-nav"
-        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#0d1117]/90 backdrop-blur-xl border-t border-border"
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#0d1117]/90 backdrop-blur-xl border-t border-border safe-bottom"
       >
         <div className="flex justify-around items-center h-16 px-2">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+              pathname.startsWith(item.href + "/");
             const Icon = item.icon;
             return (
               <Link
@@ -73,7 +73,7 @@ export default function Navbar() {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
+            pathname.startsWith(item.href + "/");
           const Icon = item.icon;
           return (
             <Link

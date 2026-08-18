@@ -14,12 +14,12 @@ vi.mock("next/link", () => ({
 describe("Navbar", () => {
   it("renders all nav links", () => {
     render(<Navbar />);
-    expect(screen.getAllByText("Home")).toHaveLength(2); // mobile + desktop
-    expect(screen.getAllByText("Schedule")).toHaveLength(2);
-    expect(screen.getAllByText("Exercises")).toHaveLength(2);
-    expect(screen.getAllByText("Progress")).toHaveLength(2);
-    expect(screen.getAllByText("Diet")).toHaveLength(2);
-    expect(screen.getAllByText("Profile")).toHaveLength(2);
+    expect(screen.getAllByText("Home")).toHaveLength(3); // mobile + desktop + tooltip
+    expect(screen.getAllByText("Schedule")).toHaveLength(3);
+    expect(screen.getAllByText("Exercises")).toHaveLength(3);
+    expect(screen.getAllByText("Progress")).toHaveLength(3);
+    expect(screen.getAllByText("Diet")).toHaveLength(3);
+    expect(screen.getAllByText("Profile")).toHaveLength(3);
   });
 
   it("renders mobile navigation", () => {
@@ -51,11 +51,11 @@ describe("Navbar", () => {
     expect(document.getElementById("nav-desktop-exercises")).toBeInTheDocument();
   });
 
-  it("home link points to /", () => {
+  it("home link points to /dashboard", () => {
     render(<Navbar />);
     const homeLinks = screen.getAllByText("Home");
     homeLinks.forEach((link) => {
-      expect(link.closest("a")).toHaveAttribute("href", "/");
+      expect(link.closest("a")).toHaveAttribute("href", "/dashboard");
     });
   });
 

@@ -35,7 +35,7 @@ export default function MealCard({ meal, mealTime }: MealCardProps) {
         {meal.name}
       </h4>
       <p className="text-xs text-muted mb-3 leading-relaxed">{meal.items}</p>
-      <div className="flex gap-3 text-[10px]">
+      <div className="flex gap-3 text-[10px] meal-badges flex-wrap">
         <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent font-medium">
           {meal.calories} kcal
         </span>
