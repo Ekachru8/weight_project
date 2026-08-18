@@ -817,29 +817,31 @@ textarea:focus-visible {
    AUTH FORM STYLES
    ═══════════════════════════════════════════════════════════ */
 
-.auth-input {
-  width: 100%;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  color: var(--foreground);
-  font-size: 0.875rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  outline: none;
-}
+@layer components {
+  .auth-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+  }
 
-.auth-input::placeholder {
-  color: var(--muted);
-}
+  .auth-input::placeholder {
+    color: var(--muted);
+  }
 
-.auth-input:focus {
-  border-color: rgba(163, 230, 53, 0.4);
-  box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.1);
-  background: rgba(255, 255, 255, 0.06);
-}
+  .auth-input:focus {
+    border-color: rgba(163, 230, 53, 0.4);
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+  }
 
-.auth-input:hover:not(:focus) {
-  border-color: rgba(255, 255, 255, 0.15);
+  .auth-input:hover:not(:focus) {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
 }
 
