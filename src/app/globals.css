@@ -72,6 +72,10 @@ body::before {
   50% { opacity: 0.7; transform: scale(1.05); }
 }
 
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
 /* ── Glassmorphism card ── */
 .glass-card {
   background: var(--card);
