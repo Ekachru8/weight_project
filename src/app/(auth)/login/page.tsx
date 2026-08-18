@@ -42,7 +42,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Invalid credentials. Please check your email/phone and password.");
       } else {
-        router.push("/onboarding");
+        router.push("/dashboard");
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -54,7 +54,7 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/onboarding" });
+      await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
       setError("Google sign-in failed. Please try again.");
       setGoogleLoading(false);
