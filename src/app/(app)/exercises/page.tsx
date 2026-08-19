@@ -129,7 +129,28 @@ export default function ExercisesPage() {
         const logsData = await logsRes.json();
 
         if (!exercisesRes.ok || !todayRes.ok || exData.error || todayData.error) {
-          console.error("API error", { exData, todayData, logsData });
+          console.warn("API error - Falling back to MOCK DATA for presentation", { exData, todayData, logsData });
+          
+          // MOCK DATA FALLBACK for presentation
+          const mockExercises = [
+            { id: 1, dayNumber: 1, dayName: "Chest", name: "Push-ups", muscleGroup: "Chest", equipment: "Bodyweight", sets: 3, reps: "15", formCue: "Keep core tight", sortOrder: 1, hoverVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", fullVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            { id: 2, dayNumber: 1, dayName: "Chest", name: "Dumbbell Press", muscleGroup: "Chest", equipment: "Dumbbells", sets: 4, reps: "10-12", formCue: "Squeeze at the top", sortOrder: 2, hoverVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", fullVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            { id: 3, dayNumber: 1, dayName: "Chest", name: "Chest Flyes", muscleGroup: "Chest", equipment: "Resistance Band", sets: 3, reps: "15", formCue: "Controlled motion", sortOrder: 3, hoverVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", fullVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            { id: 4, dayNumber: 2, dayName: "Back", name: "Pull-ups", muscleGroup: "Back", equipment: "Bodyweight", sets: 3, reps: "8-10", formCue: "Full range of motion", sortOrder: 1, hoverVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", fullVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
+            { id: 5, dayNumber: 3, dayName: "Legs", name: "Squats", muscleGroup: "Legs", equipment: "Bodyweight", sets: 4, reps: "15", formCue: "Knees behind toes", sortOrder: 1, hoverVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", fullVideoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" }
+          ];
+
+          setExercises(mockExercises);
+          setTodayData({
+            dayNumber: 1,
+            dayName: "Chest & Triceps",
+            isRestDay: false,
+            exercises: mockExercises.slice(0, 3),
+            isCompleted: false,
+            isLogged: false,
+            date: new Date().toISOString().split('T')[0]
+          });
+          setLogs([]);
           setLoading(false);
           return;
         }
@@ -356,6 +377,14 @@ export default function ExercisesPage() {
           Library
         </button>
       </div>
+
+      {activeTab === "today" && !todayData && (
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="text-center py-16 text-muted glass-card rounded-2xl border-white/5">
+          <Dumbbell className="mx-auto mb-4 opacity-30" size={48} />
+          <p className="text-lg font-medium text-white/50">Unable to load today's workout</p>
+          <p className="text-sm mt-2 text-white/30">Please check your database connection or reload the page.</p>
+        </motion.div>
+      )}
 
       {activeTab === "today" && todayData && (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-6">
