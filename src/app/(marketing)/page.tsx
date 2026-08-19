@@ -19,26 +19,23 @@ import {
 
 /* ── Floating particle component ── */
 function FloatingParticles() {
-  const [mounted, setMounted] = useState(false);
-  const particles = useMemo(
-    () =>
-      mounted
-        ? Array.from({ length: 25 }, (_, i) => ({
-            id: i,
-            size: 2 + Math.random() * 4,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            duration: 15 + Math.random() * 25,
-            delay: Math.random() * 10,
-            opacity: 0.1 + Math.random() * 0.25,
-          }))
-        : [],
-    [mounted]
-  );
+  const [particles, setParticles] = useState<any[]>([]);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 25 }, (_, i) => ({
+        id: i,
+        size: 2 + Math.random() * 4,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        duration: 15 + Math.random() * 25,
+        delay: Math.random() * 10,
+        opacity: 0.1 + Math.random() * 0.25,
+      }))
+    );
+  }, []);
 
-  if (!mounted) return null;
+  if (particles.length === 0) return null;
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">

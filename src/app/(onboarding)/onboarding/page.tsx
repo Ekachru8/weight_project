@@ -549,7 +549,6 @@ export default function OnboardingPage() {
                           fontSize: "12px",
                           color: "#e8ecf1",
                         }}
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         formatter={(value: any) => [
                           `${value} kg`,
                           "Weight",

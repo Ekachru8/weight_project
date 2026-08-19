@@ -83,7 +83,7 @@ function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: ()
 
       <div className="p-4 flex flex-col flex-1">
         <h3 className="font-black text-lg text-white mb-1 leading-tight group-hover:text-accent transition-colors">{ex.name}</h3>
-        <p className="text-xs text-muted italic mb-3 line-clamp-1">"{ex.formCue}"</p>
+        <p className="text-xs text-muted italic mb-3 line-clamp-1">&quot;{ex.formCue}&quot;</p>
         
         <div className="mt-auto flex justify-between items-center text-sm font-medium">
           <div className="flex items-center gap-1 text-xs text-muted">
@@ -529,7 +529,7 @@ export default function ExercisesPage() {
                     <Flame size={16} /> AI Form Cue
                   </h4>
                   <p className="text-sm text-white/80 leading-relaxed italic">
-                    "{selectedVideo.formCue}"
+                    &quot;{selectedVideo.formCue}&quot;
                   </p>
                 </div>
               </div>
