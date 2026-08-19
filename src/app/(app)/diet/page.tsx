@@ -58,9 +58,19 @@ export default function DietPage() {
     try {
       const res = await fetch("/api/diet");
       const data = await res.json();
+      
+      if (!res.ok || data.error) {
+        console.error("API error", data);
+        setLoading(false);
+        return;
+      }
+
       setOnboardingRequired(data.onboardingRequired);
-      setUser(data.user);
-      if (!data.onboardingRequired) {
+      if (data.user) {
+        setUser(data.user);
+      }
+      
+      if (!data.onboardingRequired && data.diet && data.user) {
         setDiet(data.diet);
         setDietType(data.user.dietPreference as DietType || "non_vegetarian");
         generateAIPlan(data.diet.targetCalories, data.user.dietPreference as DietType || "non_vegetarian", data.user.goal, data.user.weightKg);
@@ -449,10 +459,10 @@ export default function DietPage() {
             <button
               key={dt.value}
               onClick={() => setDietType(dt.value)}
-              className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 border flex items-center justify-center btn-press ${
+              className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-500 ease-out border flex items-center justify-center backdrop-blur-md ${
                 dietType === dt.value
-                  ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10"
-                  : "glass-card text-muted hover:text-foreground border-transparent hover:bg-white/[0.02]"
+                  ? "bg-white/[0.08] border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                  : "bg-white/[0.02] border-white/[0.05] text-muted hover:bg-white/[0.04] hover:border-white/10 hover:text-white"
               }`}
             >
               {dt.label}

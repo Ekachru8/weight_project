@@ -120,15 +120,25 @@ export default function ExercisesPage() {
 
         const [exercisesRes, todayRes, logsRes] = await Promise.all([
           fetch("/api/exercises"),
-          fetch(`/api/today?localDate=${localDateStr}`),
-          fetch("/api/workout-log")
+          fetch("/api/today"),
+          fetch("/api/workout-log"),
         ]);
+        
         const exData = await exercisesRes.json();
-        const tData = await todayRes.json();
-        const lData = await logsRes.json();
+        const todayData = await todayRes.json();
+        const logsData = await logsRes.json();
+
+        if (!exercisesRes.ok || !todayRes.ok || exData.error || todayData.error) {
+          console.error("API error", { exData, todayData, logsData });
+          setLoading(false);
+          return;
+        }
+
         setExercises(exData);
-        setTodayData(tData);
-        setLogs(lData);
+        setTodayData(todayData);
+        if (Array.isArray(logsData)) {
+          setLogs(logsData);
+        }
       } catch (error) {
         console.error("Failed to fetch exercises or logs:", error);
       } finally {
@@ -360,7 +370,7 @@ export default function ExercisesPage() {
               <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
                 <div>
                   <h2 className="text-3xl sm:text-5xl font-black text-white mb-2 tracking-tight">Day {todayData.dayNumber} — {todayData.dayName}</h2>
-                  <p className="text-muted text-lg">{todayData.exercises.length} exercises to crush today.</p>
+                  <p className="text-muted text-lg">{todayData.exercises?.length || 0} exercises to crush today.</p>
                 </div>
                 {todayData.isCompleted ? (
                   <div className="flex items-center gap-2 text-accent font-black bg-accent/10 px-6 py-3 rounded-full border border-accent/20">
@@ -387,7 +397,7 @@ export default function ExercisesPage() {
               </motion.div>
 
               <div className="space-y-3">
-                {todayData.exercises.map((ex: any, i: number) => (
+                {todayData.exercises?.map((ex: any, i: number) => (
                   <motion.div 
                     variants={itemVariants}
                     key={ex.id}
