@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2, X } from "lucide-react";
+import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2, X, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Exercise {
@@ -46,6 +46,45 @@ const getEquipmentIcon = (eq: string) => {
       return <CircleDot size={14} className="text-muted" />;
   }
 };
+
+function InlineTimer({ defaultSeconds = 60 }: { defaultSeconds?: number }) {
+  const [timeLeft, setTimeLeft] = useState(defaultSeconds);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => setTimeLeft((t) => t - 1), 1000);
+    } else if (timeLeft === 0) {
+      setIsActive(false);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft]);
+
+  const toggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (timeLeft === 0) setTimeLeft(defaultSeconds);
+    setIsActive(!isActive);
+  };
+
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  const formatted = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+  return (
+    <button 
+      onClick={toggle} 
+      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all btn-press border ${
+        isActive 
+          ? 'bg-accent/20 text-accent border-accent/30 shadow-[0_0_10px_rgba(192,255,0,0.2)]' 
+          : 'bg-white/5 hover:bg-white/10 text-muted border-transparent'
+      }`}
+    >
+      {isActive ? <Play size={12} className="animate-pulse" /> : <Clock size={12} />}
+      <span>{formatted}</span>
+    </button>
+  );
+}
 
 function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: () => void, itemVariants: any }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -111,6 +150,18 @@ export default function ExercisesPage() {
   const [marking, setMarking] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<Exercise | null>(null);
+  const [completedExIds, setCompletedExIds] = useState<Set<number>>(new Set());
+
+  const toggleExercise = (id: number) => {
+    setCompletedExIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const allExercisesCompleted = todayData?.exercises?.length > 0 && completedExIds.size === todayData.exercises.length;
 
   useEffect(() => {
     async function fetchData() {
@@ -401,64 +452,114 @@ export default function ExercisesPage() {
                   <h2 className="text-3xl sm:text-5xl font-black text-white mb-2 tracking-tight">Day {todayData.dayNumber} — {todayData.dayName}</h2>
                   <p className="text-muted text-lg">{todayData.exercises?.length || 0} exercises to crush today.</p>
                 </div>
-                {todayData.isCompleted ? (
-                  <div className="flex items-center gap-2 text-accent font-black bg-accent/10 px-6 py-3 rounded-full border border-accent/20">
-                    <CheckCircle2 size={20} />
-                    Complete
-                  </div>
-                ) : (
-                  <button
-                    onClick={markComplete}
-                    disabled={marking}
-                    className="group relative inline-flex items-center justify-center px-8 py-3 font-bold text-black bg-accent rounded-full overflow-hidden transition-all duration-300 hover:scale-105 disabled:opacity-50"
-                  >
-                    {marking ? (
-                      <Loader2 className="animate-spin" size={20} />
-                    ) : (
-                      <>
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                        <CheckCircle2 size={20} className="mr-2" />
-                        <span>Finish Workout</span>
-                      </>
-                    )}
-                  </button>
-                )}
               </motion.div>
 
-              <div className="space-y-3">
-                {todayData.exercises?.map((ex: any, i: number) => (
-                  <motion.div 
-                    variants={itemVariants}
-                    key={ex.id}
-                    className="glass-card p-5 flex flex-col sm:flex-row gap-4 justify-between group hover:border-accent/30 transition-colors"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-bold px-2 py-1 bg-white/5 rounded text-accent tracking-widest uppercase">
-                          {ex.muscleGroup}
-                        </span>
+              <div className="space-y-4">
+                {todayData.exercises?.map((ex: any, i: number) => {
+                  const isDone = completedExIds.has(ex.id);
+                  const isTimeBased = ex.reps.toLowerCase().includes('sec') || ex.reps.toLowerCase().includes('min');
+                  const timeMatch = ex.reps.match(/(\d+)/);
+                  const timerSeconds = isTimeBased && timeMatch ? parseInt(timeMatch[1]) : 60; // default 60s rest if not time-based
+                  
+                  return (
+                    <motion.div 
+                      variants={itemVariants}
+                      key={ex.id}
+                      className={`glass-card p-4 sm:p-5 flex flex-col sm:flex-row gap-4 justify-between transition-all duration-300 relative overflow-hidden ${
+                        isDone ? 'border-accent/30 bg-accent/5' : 'hover:border-white/20'
+                      }`}
+                    >
+                      {/* Interactive area on the left (Check + Title) */}
+                      <div className="flex items-start gap-4 flex-1">
+                        <button 
+                          onClick={() => toggleExercise(ex.id)}
+                          className={`mt-1 flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 btn-press ${
+                            isDone 
+                              ? 'bg-accent border-accent text-black shadow-[0_0_15px_rgba(192,255,0,0.4)]' 
+                              : 'border-white/20 hover:border-accent/50 text-transparent hover:bg-white/5'
+                          }`}
+                        >
+                          <CheckCircle2 size={18} className={isDone ? 'opacity-100' : 'opacity-0'} />
+                        </button>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-[10px] font-bold px-2 py-0.5 bg-white/10 rounded text-white/70 tracking-widest uppercase">
+                              {ex.muscleGroup}
+                            </span>
+                            <button 
+                              onClick={() => setSelectedVideo(ex)}
+                              className="text-xs text-accent hover:text-white flex items-center gap-1 transition-colors bg-accent/10 px-2 py-0.5 rounded"
+                            >
+                              <Play size={10} /> Watch Form
+                            </button>
+                          </div>
+                          <h3 className={`font-black text-xl mb-1 transition-colors ${isDone ? 'text-accent' : 'text-white'}`}>{ex.name}</h3>
+                          <p className="text-sm text-muted italic line-clamp-2">&quot;{ex.formCue}&quot;</p>
+                        </div>
                       </div>
-                      <h3 className="font-black text-xl text-white mb-1 group-hover:text-accent transition-colors">{ex.name}</h3>
-                      <p className="text-sm text-muted italic">&quot;{ex.formCue}&quot;</p>
-                    </div>
-                    
-                    <div className="flex flex-wrap sm:flex-col items-center sm:items-end gap-3 sm:gap-1 text-sm font-medium">
-                      <div className="bg-white/5 px-4 py-2 rounded-lg text-center min-w-[100px]">
-                        <span className="block text-2xl font-black text-white">{ex.sets}</span>
-                        <span className="text-[10px] text-muted uppercase tracking-widest">Sets</span>
+                      
+                      {/* Stats & Timers on the right */}
+                      <div className="flex flex-wrap sm:flex-col items-center sm:items-end gap-3 sm:gap-2 text-sm font-medium mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-white/5 sm:border-0">
+                        <div className="flex gap-2">
+                          <div className="bg-white/5 px-3 py-1.5 rounded-lg text-center min-w-[70px]">
+                            <span className="block text-xl font-black text-white">{ex.sets}</span>
+                            <span className="text-[9px] text-muted uppercase tracking-widest">Sets</span>
+                          </div>
+                          <div className="bg-white/5 px-3 py-1.5 rounded-lg text-center min-w-[70px]">
+                            <span className="block text-xl font-black text-white">{ex.reps}</span>
+                            <span className="text-[9px] text-muted uppercase tracking-widest">Reps</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                          <InlineTimer defaultSeconds={timerSeconds} />
+                          <div className="flex items-center gap-1 text-muted bg-white/5 px-2 py-1.5 rounded-lg">
+                            {getEquipmentIcon(ex.equipment)}
+                            <span className="text-[10px] uppercase tracking-wider">{ex.equipment}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="bg-white/5 px-4 py-2 rounded-lg text-center min-w-[100px]">
-                        <span className="block text-2xl font-black text-white">{ex.reps}</span>
-                        <span className="text-[10px] text-muted uppercase tracking-widest">Reps</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-muted bg-white/5 px-3 py-1.5 rounded-lg mt-1 w-full sm:w-auto justify-center">
-                        {getEquipmentIcon(ex.equipment)}
-                        <span className="text-xs uppercase tracking-wider">{ex.equipment}</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
+
+              {/* Action Button at the bottom */}
+              <motion.div variants={itemVariants} className="pt-6 flex justify-center">
+                {todayData.isCompleted ? (
+                  <div className="flex items-center gap-2 text-accent font-black bg-accent/10 px-8 py-4 rounded-2xl border border-accent/20 glow">
+                    <CheckCircle2 size={24} />
+                    Workout Completed
+                  </div>
+                ) : (
+                  <div className="w-full max-w-sm flex flex-col items-center gap-3">
+                    <button
+                      onClick={markComplete}
+                      disabled={marking || !allExercisesCompleted}
+                      className={`group relative w-full flex items-center justify-center px-8 py-4 font-black text-lg rounded-2xl overflow-hidden transition-all duration-300 btn-press ${
+                        allExercisesCompleted 
+                          ? 'bg-accent text-black hover:scale-105 shadow-[0_0_30px_rgba(192,255,0,0.3)]' 
+                          : 'bg-white/5 text-white/30 border border-white/10'
+                      }`}
+                    >
+                      {marking ? (
+                        <Loader2 className="animate-spin" size={24} />
+                      ) : (
+                        <>
+                          {allExercisesCompleted && <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />}
+                          <CheckCircle2 size={24} className="mr-2" />
+                          <span>Finish Workout</span>
+                        </>
+                      )}
+                    </button>
+                    {!allExercisesCompleted && (
+                      <p className="text-xs text-muted font-medium text-center">
+                        Complete all {todayData.exercises?.length} exercises to finish.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </motion.div>
             </>
           )}
         </motion.div>
