@@ -14,6 +14,8 @@ interface Exercise {
   equipment: string;
   muscleGroup: string;
   formCue: string;
+  hoverVideoUrl?: string;
+  fullVideoUrl?: string;
 }
 
 interface WorkoutLog {
