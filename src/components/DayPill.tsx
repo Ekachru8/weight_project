@@ -46,7 +46,7 @@ export default function DayPill({
       </span>
       <p className="text-sm font-semibold whitespace-nowrap">{dayName}</p>
       {isToday && (
-        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full animate-pulse" />
+        <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
       )}
     </button>
   );
