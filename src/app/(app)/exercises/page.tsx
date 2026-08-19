@@ -327,24 +327,25 @@ export default function ExercisesPage() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="flex gap-2 p-1 glass-card rounded-xl">
+      {/* Tabs */}
+      <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/[0.05] relative z-10 mx-auto max-w-sm mb-6 shadow-2xl shadow-black/50">
         <button
           onClick={() => setActiveTab("today")}
-          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all border ${
-            activeTab === "today" ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10" : "border-transparent text-muted hover:text-white hover:bg-white/[0.02]"
+          className={`flex-1 py-3 text-sm font-semibold uppercase tracking-wider rounded-xl transition-all duration-500 ease-out border backdrop-blur-md ${
+            activeTab === "today" ? "bg-white/[0.08] border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]" : "bg-white/[0.02] border-white/[0.05] text-muted hover:bg-white/[0.04] hover:text-white hover:border-white/10"
           }`}
         >
           Today&apos;s Workout
         </button>
         <button
           onClick={() => setActiveTab("library")}
-          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all border ${
-            activeTab === "library" ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10" : "border-transparent text-muted hover:text-white hover:bg-white/[0.02]"
+          className={`flex-1 py-3 text-sm font-semibold uppercase tracking-wider rounded-xl transition-all duration-500 ease-out border backdrop-blur-md ${
+            activeTab === "library" ? "bg-white/[0.08] border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]" : "bg-white/[0.02] border-white/[0.05] text-muted hover:bg-white/[0.04] hover:text-white hover:border-white/10"
           }`}
         >
-          Full Library
+          Library
         </button>
-      </motion.div>
+      </div>
 
       {activeTab === "today" && todayData && (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-6">
@@ -443,10 +444,10 @@ export default function ExercisesPage() {
                 <button
                   key={df}
                   onClick={() => setDayFilter(df)}
-                  className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-full transition-all border ${
+                  className={`shrink-0 whitespace-nowrap px-5 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-2xl transition-all duration-500 ease-out border backdrop-blur-md ${
                     dayFilter === df
-                      ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10"
-                      : "glass-card text-muted hover:text-white border-transparent hover:bg-white/[0.02]"
+                      ? "bg-white/[0.08] border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                      : "bg-white/[0.02] border-white/[0.05] text-muted hover:bg-white/[0.04] hover:border-white/10 hover:text-white"
                   }`}
                 >
                   {df}

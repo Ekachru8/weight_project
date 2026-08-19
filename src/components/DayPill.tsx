@@ -9,13 +9,13 @@ interface DayPillProps {
 }
 
 const dayColors: Record<string, string> = {
-  Chest: "from-red-500/20 to-red-600/10 text-red-400 border-red-500/20",
-  Back: "from-blue-500/20 to-blue-600/10 text-blue-400 border-blue-500/20",
-  Legs: "from-purple-500/20 to-purple-600/10 text-purple-400 border-purple-500/20",
-  Shoulders: "from-amber-500/20 to-amber-600/10 text-amber-400 border-amber-500/20",
-  Arms: "from-emerald-500/20 to-emerald-600/10 text-emerald-400 border-emerald-500/20",
-  Core: "from-pink-500/20 to-pink-600/10 text-pink-400 border-pink-500/20",
-  Rest: "from-slate-500/20 to-slate-600/10 text-slate-400 border-slate-500/20",
+  Chest: "text-rose-300",
+  Back: "text-blue-300",
+  Legs: "text-purple-300",
+  Shoulders: "text-amber-300",
+  Arms: "text-emerald-300",
+  Core: "text-pink-300",
+  Rest: "text-slate-400",
 };
 
 export default function DayPill({
@@ -33,18 +33,20 @@ export default function DayPill({
       data-testid={`day-pill-${dayNumber}`}
       aria-label={`Day ${dayNumber}: ${dayName}${isToday ? " (Today)" : ""}`}
       className={`
-        relative px-4 py-2 rounded-xl border transition-all duration-300
-        bg-gradient-to-b ${colorClass} shrink-0 min-w-[72px] flex flex-col items-center justify-center gap-0.5
-        ripple-container
-        ${isActive ? "ring-1 ring-accent shadow-sm shadow-accent/10" : "hover:bg-white/[0.02]"}
-        ${isToday ? "pulse-glow" : ""}
-        ${onClick ? "cursor-pointer btn-press" : "cursor-default"}
+        relative px-4 py-2.5 rounded-2xl border transition-all duration-500 ease-out
+        shrink-0 min-w-[76px] flex flex-col items-center justify-center gap-0.5
+        backdrop-blur-md overflow-hidden group
+        ${isActive 
+          ? `bg-white/[0.08] border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.05)] ${colorClass}` 
+          : "bg-white/[0.02] border-white/[0.05] text-muted hover:bg-white/[0.04] hover:border-white/10 hover:text-white"}
+        ${isToday ? "ring-1 ring-accent/30 shadow-[0_0_20px_rgba(192,255,0,0.1)]" : ""}
+        ${onClick ? "cursor-pointer" : "cursor-default"}
       `}
     >
-      <span className="text-[10px] font-medium uppercase tracking-wider opacity-60 whitespace-nowrap">
+      <span className={`text-[10px] font-semibold uppercase tracking-wider transition-colors duration-500 ${isActive ? "opacity-80" : "opacity-50 group-hover:opacity-80"} whitespace-nowrap`}>
         Day {dayNumber}
       </span>
-      <p className="text-sm font-semibold whitespace-nowrap">{dayName}</p>
+      <p className={`text-sm font-semibold whitespace-nowrap transition-colors duration-500 ${isActive ? "opacity-100" : "opacity-70 group-hover:opacity-100"}`}>{dayName}</p>
       {isToday && (
         <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
       )}
