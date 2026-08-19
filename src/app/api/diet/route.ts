@@ -52,11 +52,11 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { age, gender, heightCm, weightKg, activityLevel, goal } = body;
+    const { age, gender, heightCm, weightKg, activityLevel, goal, dietPreference } = body;
 
-    if (!age || !gender || !heightCm || !weightKg || !activityLevel || !goal) {
+    if (!age || !gender || !heightCm || !weightKg || !activityLevel || !goal || !dietPreference) {
       return NextResponse.json(
-        { error: "All fields are required: age, gender, heightCm, weightKg, activityLevel, goal" },
+        { error: "All fields are required: age, gender, heightCm, weightKg, activityLevel, goal, dietPreference" },
         { status: 400 }
       );
     }
@@ -71,6 +71,7 @@ export async function POST(request: Request) {
         weightKg: Number(weightKg),
         activityLevel,
         goal,
+        dietPreference,
       },
     });
 
@@ -83,6 +84,9 @@ export async function POST(request: Request) {
       activityLevel as ActivityLevel,
       goal as Goal
     );
+
+    // Simulate AI Generation Delay
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Save diet target
     const target = await prisma.dietTarget.create({

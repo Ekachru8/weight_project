@@ -44,6 +44,34 @@ export function getSampleMealPlan(
   return MEAL_PLANS[dietType][tier];
 }
 
+export interface AIDietPlan {
+  meals: MealPlan;
+  aiReasoning: string;
+}
+
+export async function generateAIDietPlan(
+  targetCalories: number,
+  dietType: DietType,
+  goal: string,
+  weight: number
+): Promise<AIDietPlan> {
+  // Simulate AI latency
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  
+  const meals = getSampleMealPlan(targetCalories, dietType);
+  
+  let reasoning = "";
+  if (goal === "lose") {
+    reasoning = `Based on your goal to lose weight from your current ${weight}kg, I've designed a calorie-deficit plan targeting ~${targetCalories} kcal. This ${dietType.replace("_", "-")} plan focuses on high-satiety proteins and fiber to keep you full while burning fat.`;
+  } else if (goal === "gain") {
+    reasoning = `To help you gain muscle mass from ${weight}kg, I've formulated a surplus diet at ~${targetCalories} kcal. The meals emphasize dense carbohydrates and high protein in your preferred ${dietType.replace("_", "-")} style to fuel heavy lifts.`;
+  } else {
+    reasoning = `I've optimized a ${dietType.replace("_", "-")} maintenance plan at ~${targetCalories} kcal to sustain your current ${weight}kg physique while improving overall metabolic health and recovery.`;
+  }
+
+  return { meals, aiReasoning: reasoning };
+}
+
 function makePlan(meals: {
   breakfast: Meal;
   morningSnack: Meal;

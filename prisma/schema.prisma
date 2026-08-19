@@ -61,6 +61,7 @@ model User {
   targetWeightKg  Float?
   activityLevel   String?      // sedentary | light | moderate | very_active | extra_active
   goal            String?      // "lose" | "gain" | "maintain"
+  dietPreference  String?      // "veg" | "non_veg" | "both"
   equipment       String       @default("Dumbbells, Resistance Band, Yoga Mat")
   onboardingDone  Boolean      @default(false)
   createdAt       DateTime     @default(now())

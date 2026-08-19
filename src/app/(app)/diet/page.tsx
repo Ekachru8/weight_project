@@ -15,11 +15,14 @@ interface UserData {
   weightKg: number | null;
   activityLevel: string | null;
   goal: string | null;
+  dietPreference: string | null;
 }
 
 export default function DietPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [diet, setDiet] = useState<DietResult | null>(null);
+  const [aiPlan, setAiPlan] = useState<any>(null);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [onboardingRequired, setOnboardingRequired] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,6 +37,7 @@ export default function DietPage() {
     weightKg: "",
     activityLevel: "moderate",
     goal: "maintain",
+    dietPreference: "non_vegetarian",
   });
 
   const fetchDiet = useCallback(async () => {
@@ -44,6 +48,8 @@ export default function DietPage() {
       setUser(data.user);
       if (!data.onboardingRequired) {
         setDiet(data.diet);
+        setDietType(data.user.dietPreference as DietType || "non_vegetarian");
+        generateAIPlan(data.diet.targetCalories, data.user.dietPreference as DietType || "non_vegetarian", data.user.goal, data.user.weightKg);
       }
     } catch (error) {
       console.error("Failed to fetch diet:", error);
@@ -52,9 +58,31 @@ export default function DietPage() {
     }
   }, []);
 
+  const generateAIPlan = async (calories: number, type: DietType, goal: string, weight: number) => {
+    setIsGeneratingAI(true);
+    try {
+      // Dynamic import to avoid SSR issues with the mock delay if needed, or just fetch via API
+      const { generateAIDietPlan } = await import("@/lib/meals");
+      const result = await generateAIDietPlan(calories, type, goal, weight);
+      setAiPlan(result);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
   useEffect(() => {
     fetchDiet();
   }, [fetchDiet]);
+
+  // When dietType changes via tabs, regenerate the AI plan
+  useEffect(() => {
+    if (diet && user && aiPlan) {
+      generateAIPlan(diet.targetCalories, dietType, user.goal || "maintain", user.weightKg || 70);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dietType]);
 
   const submitOnboarding = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +95,10 @@ export default function DietPage() {
       });
       const data = await res.json();
       setDiet(data.diet);
+      setDietType(form.dietPreference as DietType);
+      setUser(prev => prev ? { ...prev, goal: form.goal, weightKg: Number(form.weightKg) } : null);
       setOnboardingRequired(false);
+      generateAIPlan(data.diet.targetCalories, form.dietPreference as DietType, form.goal, Number(form.weightKg));
     } catch (error) {
       console.error("Failed to save diet:", error);
     } finally {
@@ -125,11 +156,11 @@ export default function DietPage() {
           </p>
         </div>
 
-        {/* Step progress indicator */}
         <div className="flex items-center justify-center gap-2 fade-in-up opacity-0 delay-100">
-          <div className={`h-1.5 w-16 rounded-full transition-all duration-300 ${step >= 1 ? "accent-gradient" : "bg-white/10"}`} />
-          <div className={`h-1.5 w-16 rounded-full transition-all duration-300 ${step >= 2 ? "accent-gradient" : "bg-white/10"}`} />
-          <span className="text-[10px] text-muted ml-2">Step {step}/2</span>
+          <div className={`h-1.5 w-12 rounded-full transition-all duration-300 ${step >= 1 ? "accent-gradient" : "bg-white/10"}`} />
+          <div className={`h-1.5 w-12 rounded-full transition-all duration-300 ${step >= 2 ? "accent-gradient" : "bg-white/10"}`} />
+          <div className={`h-1.5 w-12 rounded-full transition-all duration-300 ${step >= 3 ? "accent-gradient" : "bg-white/10"}`} />
+          <span className="text-[10px] text-muted ml-2">Step {step}/3</span>
         </div>
 
         <form onSubmit={submitOnboarding} className="space-y-4 fade-in-up opacity-0 delay-200">
@@ -262,6 +293,59 @@ export default function DietPage() {
                   ← Back
                 </button>
                 <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className="flex-1 py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press disabled:opacity-50 transition-all"
+                >
+                  Continue →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4 fade-in-up">
+              <div>
+                <label className="text-xs text-muted font-medium mb-2 block">Diet Preference</label>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { value: "non_vegetarian", label: "🍗 Non-Vegetarian" },
+                    { value: "vegetarian", label: "🥬 Vegetarian" },
+                    { value: "eggetarian", label: "🥚 Eggetarian" },
+                  ].map((dp) => (
+                    <button
+                      key={dp.value}
+                      type="button"
+                      onClick={() => setForm({ ...form, dietPreference: dp.value })}
+                      className={`p-4 rounded-xl border text-left transition-all duration-200 btn-press flex items-center justify-between ${
+                        form.dietPreference === dp.value
+                          ? `border-accent/50 bg-accent/10 ring-2 ring-accent/30`
+                          : "border-border bg-card hover:bg-card-hover"
+                      }`}
+                    >
+                      <span
+                        className={`text-sm font-medium ${
+                          form.dietPreference === dp.value ? "text-foreground" : "text-muted"
+                        }`}
+                      >
+                        {dp.label}
+                      </span>
+                      {form.dietPreference === dp.value && (
+                        <div className="w-4 h-4 rounded-full bg-accent flex items-center justify-center shadow-[0_0_10px_rgba(192,255,0,0.5)]" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="px-4 py-3 rounded-xl glass-card text-sm font-medium text-muted hover:text-foreground transition-all btn-press"
+                >
+                  ← Back
+                </button>
+                <button
                   type="submit"
                   disabled={saving}
                   className="flex-1 py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press disabled:opacity-50 transition-all"
@@ -269,7 +353,7 @@ export default function DietPage() {
                   {saving ? (
                     <Loader2 className="animate-spin mx-auto" size={18} />
                   ) : (
-                    "Calculate My Plan"
+                    "Generate AI Diet Plan"
                   )}
                 </button>
               </div>
@@ -283,7 +367,24 @@ export default function DietPage() {
   // Diet results
   if (!diet) return null;
 
-  const mealPlan = getSampleMealPlan(diet.targetCalories, dietType);
+  if (isGeneratingAI) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 fade-in-up">
+        <div className="relative">
+          <div className="absolute inset-0 bg-accent rounded-full blur-[30px] opacity-20 animate-pulse" />
+          <div className="w-16 h-16 rounded-2xl accent-gradient flex items-center justify-center shadow-[0_0_30px_rgba(192,255,0,0.3)] relative z-10">
+            <Loader2 className="text-black animate-spin" size={28} />
+          </div>
+        </div>
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-foreground">Generating AI Diet Plan...</h2>
+          <p className="text-sm text-muted mt-1">Analyzing your profile and preferences to build the perfect plan.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const mealPlan = aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType);
 
   return (
     <div className="space-y-6">
@@ -368,8 +469,23 @@ export default function DietPage() {
           <MealCard meal={mealPlan.dinner} mealTime="Dinner" />
         </div>
 
+        {/* AI Reasoning */}
+        {aiPlan && (
+          <div className="glass-card p-4 mt-4 bg-accent/5 border-accent/20 flex items-start gap-3 fade-in-up">
+            <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-black text-xs font-bold">AI</span>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-accent mb-1">Why this plan?</h4>
+              <p className="text-xs text-muted leading-relaxed">
+                {aiPlan.aiReasoning}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Meal plan totals */}
-        <div className="glass-card p-4 mt-3 hover-lift">
+        <div className="glass-card p-4 mt-4 hover-lift">
           <p className="text-xs text-muted mb-2 font-medium">
             Sample Day Totals
           </p>

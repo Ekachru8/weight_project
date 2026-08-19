@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Exercise {
   id: number;
@@ -32,6 +32,69 @@ const DAY_FILTERS = [
   "Core",
 ];
 
+const getEquipmentIcon = (eq: string) => {
+  switch (eq.toLowerCase()) {
+    case "dumbbells":
+      return <Dumbbell size={14} className="text-accent" />;
+    case "resistance band":
+      return <Zap size={14} className="text-yellow-400" />;
+    case "bodyweight":
+      return <CircleDot size={14} className="text-blue-400" />;
+    default:
+      return <CircleDot size={14} className="text-muted" />;
+  }
+};
+
+function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: () => void, itemVariants: any }) {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Placeholder mock video URLs since we can't generate actual AI video files
+  const mockGlimpseUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+
+  return (
+    <motion.div 
+      variants={itemVariants}
+      className="glass-card flex flex-col hover:-translate-y-1 transition-transform group border border-white/5 hover:border-accent/30 overflow-hidden cursor-pointer relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
+    >
+      {/* Video Glimpse Container */}
+      <div className="relative w-full h-32 bg-black/50 border-b border-white/5 overflow-hidden">
+        {isHovered ? (
+          <video 
+            src={ex.hoverVideoUrl || mockGlimpseUrl} 
+            autoPlay 
+            muted 
+            loop 
+            className="w-full h-full object-cover opacity-80"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Play className="text-white/20 group-hover:text-accent/50 transition-colors" size={32} />
+          </div>
+        )}
+        <div className="absolute top-2 right-2 px-2 py-1 bg-black/60 rounded text-[10px] font-bold text-accent uppercase tracking-widest backdrop-blur-md">
+          {ex.muscleGroup}
+        </div>
+      </div>
+
+      <div className="p-4 flex flex-col flex-1">
+        <h3 className="font-black text-lg text-white mb-1 leading-tight group-hover:text-accent transition-colors">{ex.name}</h3>
+        <p className="text-xs text-muted italic mb-3 line-clamp-1">"{ex.formCue}"</p>
+        
+        <div className="mt-auto flex justify-between items-center text-sm font-medium">
+          <div className="flex items-center gap-1 text-xs text-muted">
+            {getEquipmentIcon(ex.equipment)}
+            <span>{ex.equipment}</span>
+          </div>
+          <span className="text-white font-bold bg-white/5 px-2 py-1 rounded">{ex.sets} × {ex.reps}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function ExercisesPage() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [todayData, setTodayData] = useState<any>(null);
@@ -45,6 +108,7 @@ export default function ExercisesPage() {
   const [activeTab, setActiveTab] = useState<"today" | "library">("today");
   const [marking, setMarking] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<Exercise | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -165,19 +229,6 @@ export default function ExercisesPage() {
       return matchesSearch && matchesDay && matchesMuscle;
     });
   }, [exercises, search, dayFilter, muscleFilter]);
-
-  const getEquipmentIcon = (eq: string) => {
-    switch (eq.toLowerCase()) {
-      case "dumbbells":
-        return <Dumbbell size={14} className="text-accent" />;
-      case "resistance band":
-        return <Zap size={14} className="text-yellow-400" />;
-      case "bodyweight":
-        return <CircleDot size={14} className="text-blue-400" />;
-      default:
-        return <CircleDot size={14} className="text-muted" />;
-    }
-  };
 
   const confettiParticles = useMemo(() => Array.from({ length: 30 }).map((_, i) => ({
     id: i,
@@ -398,26 +449,7 @@ export default function ExercisesPage() {
 
           <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((ex) => (
-              <motion.div 
-                variants={itemVariants}
-                key={ex.id} 
-                className="glass-card p-5 flex flex-col hover:-translate-y-1 transition-transform group border border-white/5 hover:border-accent/30"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-accent/10 text-accent rounded">
-                    {ex.muscleGroup}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted">
-                    {getEquipmentIcon(ex.equipment)}
-                    <span>{ex.equipment}</span>
-                  </div>
-                </div>
-                <h3 className="font-black text-lg text-white mb-2 leading-tight group-hover:text-accent transition-colors">{ex.name}</h3>
-                <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-sm font-medium">
-                  <span className="text-muted">Day {ex.dayNumber} ({ex.dayName})</span>
-                  <span className="text-white font-bold">{ex.sets} × {ex.reps}</span>
-                </div>
-              </motion.div>
+              <ExerciseCard key={ex.id} ex={ex} itemVariants={itemVariants} onClick={() => setSelectedVideo(ex)} />
             ))}
           </motion.div>
 
@@ -429,6 +461,80 @@ export default function ExercisesPage() {
           )}
         </motion.div>
       )}
+
+      {/* Full Video Modal */}
+      <AnimatePresence>
+        {selectedVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setSelectedVideo(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-3xl glass-card border border-white/10 overflow-hidden relative shadow-[0_0_50px_rgba(192,255,0,0.1)]"
+            >
+              <button 
+                onClick={() => setSelectedVideo(null)}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md"
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="w-full aspect-video bg-black relative">
+                {/* Simulated AI Video Player */}
+                <video 
+                  src={selectedVideo.fullVideoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"} 
+                  controls 
+                  autoPlay 
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* AI Badge Overlay */}
+                <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-md border border-white/10">
+                  <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                  <span className="text-xs font-bold text-white uppercase tracking-widest">AI Generated</span>
+                </div>
+              </div>
+
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-accent/10 text-accent rounded">
+                    {selectedVideo.muscleGroup}
+                  </span>
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-white/5 text-muted rounded">
+                    {selectedVideo.equipment}
+                  </span>
+                </div>
+                
+                <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">{selectedVideo.name}</h2>
+                <div className="flex items-center gap-4 text-sm font-bold text-white mb-6">
+                  <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/5">
+                    {selectedVideo.sets} Sets
+                  </div>
+                  <div className="px-4 py-2 bg-white/5 rounded-lg border border-white/5">
+                    {selectedVideo.reps} Reps
+                  </div>
+                </div>
+
+                <div className="p-4 bg-accent/5 border border-accent/20 rounded-xl">
+                  <h4 className="text-sm font-bold text-accent mb-1 flex items-center gap-2">
+                    <Flame size={16} /> AI Form Cue
+                  </h4>
+                  <p className="text-sm text-white/80 leading-relaxed italic">
+                    "{selectedVideo.formCue}"
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

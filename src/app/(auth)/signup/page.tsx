@@ -230,7 +230,7 @@ export default function SignupPage() {
                 placeholder="Create password (min 6 chars)"
                 required
                 minLength={6}
-                className="auth-input pl-10 pr-10"
+                className="auth-input pl-10 pr-12"
               />
               <button
                 type="button"
