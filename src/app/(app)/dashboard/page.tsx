@@ -1,10 +1,25 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
+  const [particles, setParticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 15 }).map((_, i) => ({
+        id: i,
+        initialX: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+        initialY: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
+        animateY: Math.random() * -500,
+        duration: 5 + Math.random() * 10,
+        delay: Math.random() * 5,
+      }))
+    );
+  }, []);
   return (
     <div className="relative min-h-[85vh] w-full flex items-center justify-center overflow-hidden rounded-[2rem] bg-[#030303]">
       {/* Dynamic Animated Mesh Background */}
@@ -63,23 +78,23 @@ export default function Dashboard() {
       </div>
 
       {/* Subtle floating particles */}
-      {Array.from({ length: 15 }).map((_, i) => (
+      {particles.map((p) => (
         <motion.div
-          key={i}
+          key={p.id}
           className="absolute w-1 h-1 bg-white/30 rounded-full"
           initial={{
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
+            x: p.initialX,
+            y: p.initialY,
           }}
           animate={{
-            y: [null, Math.random() * -500],
+            y: [null, p.animateY],
             opacity: [0, 1, 0],
           }}
           transition={{
-            duration: 5 + Math.random() * 10,
+            duration: p.duration,
             repeat: Infinity,
             ease: "linear",
-            delay: Math.random() * 5,
+            delay: p.delay,
           }}
         />
       ))}

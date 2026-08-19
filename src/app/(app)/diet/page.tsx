@@ -40,6 +40,20 @@ export default function DietPage() {
     dietPreference: "non_vegetarian",
   });
 
+  const generateAIPlan = useCallback(async (calories: number, type: DietType, goal: string, weight: number) => {
+    setIsGeneratingAI(true);
+    try {
+      // Dynamic import to avoid SSR issues with the mock delay if needed, or just fetch via API
+      const { generateAIDietPlan } = await import("@/lib/meals");
+      const result = await generateAIDietPlan(calories, type, goal, weight);
+      setAiPlan(result);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  }, []);
+
   const fetchDiet = useCallback(async () => {
     try {
       const res = await fetch("/api/diet");
@@ -56,21 +70,7 @@ export default function DietPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  const generateAIPlan = async (calories: number, type: DietType, goal: string, weight: number) => {
-    setIsGeneratingAI(true);
-    try {
-      // Dynamic import to avoid SSR issues with the mock delay if needed, or just fetch via API
-      const { generateAIDietPlan } = await import("@/lib/meals");
-      const result = await generateAIDietPlan(calories, type, goal, weight);
-      setAiPlan(result);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsGeneratingAI(false);
-    }
-  };
+  }, [generateAIPlan]);
 
   useEffect(() => {
     fetchDiet();

@@ -232,14 +232,20 @@ export default function ExercisesPage() {
     });
   }, [exercises, search, dayFilter, muscleFilter]);
 
-  const confettiParticles = useMemo(() => Array.from({ length: 30 }).map((_, i) => ({
-    id: i,
-    left: `${20 + Math.random() * 60}%`,
-    top: `${30 + Math.random() * 20}%`,
-    backgroundColor: ["#c0ff00", "#00e676", "#38bdf8", "#fb923c"][i % 4],
-    animationDelay: `${Math.random() * 0.3}s`,
-    animationDuration: `${0.6 + Math.random() * 0.6}s`,
-  })), []);
+  const [confettiParticles, setConfettiParticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    setConfettiParticles(
+      Array.from({ length: 30 }).map((_, i) => ({
+        id: i,
+        left: `${20 + Math.random() * 60}%`,
+        top: `${30 + Math.random() * 20}%`,
+        backgroundColor: ["#c0ff00", "#00e676", "#38bdf8", "#fb923c"][i % 4],
+        animationDelay: `${Math.random() * 0.3}s`,
+        animationDuration: `${0.6 + Math.random() * 0.6}s`,
+      }))
+    );
+  }, []);
 
   if (loading) {
     return (
@@ -328,7 +334,7 @@ export default function ExercisesPage() {
             activeTab === "today" ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10" : "border-transparent text-muted hover:text-white hover:bg-white/[0.02]"
           }`}
         >
-          Today's Workout
+          Today&apos;s Workout
         </button>
         <button
           onClick={() => setActiveTab("library")}
@@ -393,7 +399,7 @@ export default function ExercisesPage() {
                         </span>
                       </div>
                       <h3 className="font-black text-xl text-white mb-1 group-hover:text-accent transition-colors">{ex.name}</h3>
-                      <p className="text-sm text-muted italic">"{ex.formCue}"</p>
+                      <p className="text-sm text-muted italic">&quot;{ex.formCue}&quot;</p>
                     </div>
                     
                     <div className="flex flex-wrap sm:flex-col items-center sm:items-end gap-3 sm:gap-1 text-sm font-medium">
