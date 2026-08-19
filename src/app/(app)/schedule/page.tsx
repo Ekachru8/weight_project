@@ -90,11 +90,11 @@ export default function SchedulePage() {
       <div className="pill-scroll pb-2 fade-in-up opacity-0 delay-100">
         <button
           onClick={() => setSelectedDay(null)}
-          className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 whitespace-nowrap btn-press ${
+          className={`shrink-0 min-w-[72px] px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap flex flex-col items-center justify-center border ${
             selectedDay === null
-              ? "accent-gradient text-black shadow-sm shadow-accent/20"
-              : "glass-card text-muted hover:text-foreground"
-          }`}
+              ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10"
+              : "glass-card text-muted hover:text-foreground border-transparent hover:bg-white/[0.02]"
+          } btn-press`}
         >
           All Days
         </button>

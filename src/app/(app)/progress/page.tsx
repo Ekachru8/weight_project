@@ -212,7 +212,7 @@ export default function ProgressPage() {
               id="log-weight-btn"
               onClick={logWeight}
               disabled={!newWeight || saving}
-              className="px-4 py-2 rounded-lg accent-gradient text-black text-sm font-semibold btn-press disabled:opacity-50 transition-all"
+              className="px-4 py-2 rounded-lg bg-gradient-to-b from-accent/20 to-accent/5 text-accent border border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10 text-sm font-semibold btn-press disabled:opacity-50 transition-all hover:bg-white/[0.02]"
             >
               {saving ? (
                 <Loader2 className="animate-spin" size={16} />

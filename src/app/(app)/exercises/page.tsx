@@ -268,19 +268,19 @@ export default function ExercisesPage() {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="flex gap-2 p-1 bg-[#1a1a1a] rounded-xl border border-white/5">
+      <motion.div variants={itemVariants} className="flex gap-2 p-1 glass-card rounded-xl">
         <button
           onClick={() => setActiveTab("today")}
-          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all ${
-            activeTab === "today" ? "accent-gradient text-black shadow-[0_0_20px_rgba(192,255,0,0.2)]" : "text-muted hover:text-white"
+          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all border ${
+            activeTab === "today" ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10" : "border-transparent text-muted hover:text-white hover:bg-white/[0.02]"
           }`}
         >
           Today's Workout
         </button>
         <button
           onClick={() => setActiveTab("library")}
-          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all ${
-            activeTab === "library" ? "accent-gradient text-black shadow-[0_0_20px_rgba(192,255,0,0.2)]" : "text-muted hover:text-white"
+          className={`flex-1 py-3 text-sm font-bold uppercase tracking-widest rounded-lg transition-all border ${
+            activeTab === "library" ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10" : "border-transparent text-muted hover:text-white hover:bg-white/[0.02]"
           }`}
         >
           Full Library
@@ -379,15 +379,15 @@ export default function ExercisesPage() {
               />
             </div>
             
-            <div className="flex flex-wrap gap-2">
+            <div className="pill-scroll mb-2">
               {DAY_FILTERS.map((df) => (
                 <button
                   key={df}
                   onClick={() => setDayFilter(df)}
-                  className={`px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-full transition-all ${
+                  className={`shrink-0 whitespace-nowrap px-4 py-2 text-xs font-bold uppercase tracking-widest rounded-full transition-all border ${
                     dayFilter === df
-                      ? "bg-white text-black"
-                      : "bg-[#1a1a1a] text-muted hover:bg-white/10 hover:text-white border border-white/5"
+                      ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10"
+                      : "glass-card text-muted hover:text-white border-transparent hover:bg-white/[0.02]"
                   }`}
                 >
                   {df}

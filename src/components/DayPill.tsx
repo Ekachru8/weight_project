@@ -33,18 +33,18 @@ export default function DayPill({
       data-testid={`day-pill-${dayNumber}`}
       aria-label={`Day ${dayNumber}: ${dayName}${isToday ? " (Today)" : ""}`}
       className={`
-        relative px-3 py-2 rounded-xl border transition-all duration-300
-        bg-gradient-to-b ${colorClass}
+        relative px-4 py-2 rounded-xl border transition-all duration-300
+        bg-gradient-to-b ${colorClass} shrink-0 min-w-[72px] flex flex-col items-center justify-center gap-0.5
         ripple-container
-        ${isActive ? "ring-2 ring-accent scale-105 shadow-lg shadow-accent/10" : "hover:scale-[1.03]"}
+        ${isActive ? "ring-1 ring-accent shadow-sm shadow-accent/10" : "hover:bg-white/[0.02]"}
         ${isToday ? "pulse-glow" : ""}
         ${onClick ? "cursor-pointer btn-press" : "cursor-default"}
       `}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-wider opacity-70">
+      <span className="text-[10px] font-medium uppercase tracking-wider opacity-60 whitespace-nowrap">
         Day {dayNumber}
       </span>
-      <p className="text-sm font-bold">{dayName}</p>
+      <p className="text-sm font-semibold whitespace-nowrap">{dayName}</p>
       {isToday && (
         <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full animate-pulse" />
       )}

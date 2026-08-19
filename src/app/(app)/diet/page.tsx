@@ -348,10 +348,10 @@ export default function DietPage() {
             <button
               key={dt.value}
               onClick={() => setDietType(dt.value)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 btn-press ${
+              className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 border flex items-center justify-center btn-press ${
                 dietType === dt.value
-                  ? "accent-gradient text-black shadow-sm shadow-accent/20"
-                  : "glass-card text-muted hover:text-foreground"
+                  ? "bg-gradient-to-b from-accent/20 to-accent/5 text-accent border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10"
+                  : "glass-card text-muted hover:text-foreground border-transparent hover:bg-white/[0.02]"
               }`}
             >
               {dt.label}
