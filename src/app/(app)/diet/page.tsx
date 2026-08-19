@@ -64,7 +64,7 @@ export default function DietPage() {
         
         // MOCK DATA FALLBACK for presentation if database is asleep/missing
         setOnboardingRequired(false);
-        setUser({ goal: "lose", weightKg: 70, dietPreference: "non_vegetarian" });
+        setUser({ goal: "lose", weightKg: 70, dietPreference: "non_vegetarian" } as any);
         setDiet({
           targetCalories: 1850,
           proteinG: 150,
