@@ -432,7 +432,7 @@ export default function ExercisesPage() {
       {activeTab === "today" && !todayData && (
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="text-center py-16 text-muted glass-card rounded-2xl border-white/5">
           <Dumbbell className="mx-auto mb-4 opacity-30" size={48} />
-          <p className="text-lg font-medium text-white/50">Unable to load today's workout</p>
+          <p className="text-lg font-medium text-white/50">Unable to load today&apos;s workout</p>
           <p className="text-sm mt-2 text-white/30">Please check your database connection or reload the page.</p>
         </motion.div>
       )}

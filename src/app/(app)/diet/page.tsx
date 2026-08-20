@@ -6,7 +6,23 @@ import MealCard from "@/components/MealCard";
 import { getSampleMealPlan } from "@/lib/meals";
 import type { DietType } from "@/lib/meals";
 import type { DietResult } from "@/lib/diet";
-import { Loader2, AlertTriangle, Flame, Target, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import {
+  EMPTY_ASSISTANT_INTAKE,
+  type AssistantIntake,
+  type DietAssistantPlan,
+} from "@/lib/diet-assistant";
+import {
+  Loader2,
+  AlertTriangle,
+  Flame,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  Sparkles,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 
 interface UserData {
   age: number | null;
@@ -28,6 +44,12 @@ export default function DietPage() {
   const [saving, setSaving] = useState(false);
   const [dietType, setDietType] = useState<DietType>("non_vegetarian");
   const [step, setStep] = useState(1);
+  const [assistantIntake, setAssistantIntake] = useState<AssistantIntake>(EMPTY_ASSISTANT_INTAKE);
+  const [assistantPlan, setAssistantPlan] = useState<DietAssistantPlan | null>(null);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [assistantStep, setAssistantStep] = useState<1 | 2 | 3>(1);
+  const [assistantError, setAssistantError] = useState("");
+  const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
 
   // Onboarding form state
   const [form, setForm] = useState({
@@ -53,6 +75,58 @@ export default function DietPage() {
       setIsGeneratingAI(false);
     }
   }, []);
+
+  const generateAssistantPlan = useCallback(async () => {
+    if (!diet || !user) return;
+    setIsGeneratingAssistant(true);
+    setAssistantError("");
+    try {
+      const context = {
+        diet: {
+          targetCalories: diet.targetCalories,
+          proteinG: diet.proteinG,
+          carbsG: diet.carbsG,
+          fatG: diet.fatG,
+          tdee: diet.tdee,
+        },
+        user,
+      };
+      const res = await fetch("/api/diet/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dietType, intake: assistantIntake, context }),
+      });
+
+      const responseText = await res.text();
+      let data: { plan?: DietAssistantPlan; error?: string } = {};
+
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        throw new Error(`The server returned an invalid response (${res.status}).`);
+      }
+
+      if (!res.ok || !data.plan) {
+        throw new Error(data.error || `Unable to generate a personalized plan (${res.status}).`);
+      }
+
+      setAssistantPlan(data.plan);
+      setAssistantOpen(true);
+    } catch (error) {
+      console.error("Failed to generate assistant plan:", error);
+      setAssistantError(
+        error instanceof Error
+          ? error.message
+          : "I couldn't build that plan right now. Please try again.",
+      );
+    } finally {
+      setIsGeneratingAssistant(false);
+    }
+  }, [assistantIntake, diet, dietType, user]);
+
+  const updateAssistantIntake = (field: keyof AssistantIntake, value: string | number) => {
+    setAssistantIntake((previous) => ({ ...previous, [field]: value }));
+  };
 
   const fetchDiet = useCallback(async () => {
     try {
@@ -418,7 +492,7 @@ export default function DietPage() {
     );
   }
 
-  const mealPlan = aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType);
+  const mealPlan = assistantPlan?.meals || (aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType));
 
   return (
     <div className="space-y-6">
@@ -439,6 +513,166 @@ export default function DietPage() {
         <div className="fade-in-up bg-warning/10 border border-warning/30 rounded-xl p-4 flex items-start gap-3">
           <AlertTriangle className="text-warning flex-shrink-0 mt-0.5" size={18} />
           <p className="text-sm text-warning">{diet.cautionMessage}</p>
+        </div>
+      )}
+
+      {/* AI dietician intake */}
+      <div className="glass-card p-5 border-accent/20 bg-accent/[0.035] fade-in-up opacity-0 delay-100">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-2xl accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_18px_rgba(192,255,0,0.2)]">
+            <Sparkles className="text-black" size={20} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] uppercase tracking-[0.18em] font-bold text-accent">AI Dietician</p>
+            <h2 className="text-base sm:text-lg font-bold text-foreground mt-1">Build a plan around your real life</h2>
+            <p className="text-xs sm:text-sm text-muted leading-relaxed mt-1">
+              Tell me what you already eat, what feels comfortable, and what you want to avoid. I&apos;ll shape the meals around your target calories and macros.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setAssistantOpen((open) => !open)}
+            className="shrink-0 px-3 py-2 rounded-xl border border-accent/30 bg-accent/10 text-accent text-xs font-bold hover:bg-accent/20 transition-colors btn-press"
+          >
+            {assistantOpen ? "Close" : assistantPlan ? "Refine plan" : "Start"}
+          </button>
+        </div>
+
+        {assistantOpen && (
+          <div className="mt-5 pt-5 border-t border-white/10">
+            <div className="flex items-center gap-2 mb-5">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className={`h-1.5 flex-1 rounded-full transition-colors ${assistantStep >= item ? "bg-accent" : "bg-white/10"}`} />
+              ))}
+              <span className="text-[10px] text-muted whitespace-nowrap">Step {assistantStep}/3</span>
+            </div>
+
+            {assistantStep === 1 && (
+              <div className="space-y-4 fade-in-up">
+                <div>
+                  <label htmlFor="foods-they-eat" className="text-xs text-foreground font-semibold mb-1 block">What do you usually eat?</label>
+                  <p className="text-[11px] text-muted mb-2">Share regular meals, snacks, or ingredients. A simple comma-separated list is perfect.</p>
+                  <textarea
+                    id="foods-they-eat"
+                    value={assistantIntake.foodsTheyEat}
+                    onChange={(event) => updateAssistantIntake("foodsTheyEat", event.target.value)}
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    placeholder="For example: rice, dal, chicken, curd, bananas, roti"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="comfortable-foods" className="text-xs text-foreground font-semibold mb-1 block">Which foods are you comfortable eating?</label>
+                  <p className="text-[11px] text-muted mb-2">This helps the assistant choose foods you are more likely to enjoy and follow consistently.</p>
+                  <textarea
+                    id="comfortable-foods"
+                    value={assistantIntake.comfortableFoods}
+                    onChange={(event) => updateAssistantIntake("comfortableFoods", event.target.value)}
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    placeholder="For example: home-cooked Indian meals, eggs, oats, paneer"
+                  />
+                </div>
+                <button type="button" onClick={() => setAssistantStep(2)} className="w-full py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press">Continue →</button>
+              </div>
+            )}
+
+            {assistantStep === 2 && (
+              <div className="space-y-4 fade-in-up">
+                <div>
+                  <label htmlFor="foods-to-avoid" className="text-xs text-foreground font-semibold mb-1 block">Anything you dislike or want to avoid?</label>
+                  <p className="text-[11px] text-muted mb-2">Mention ingredients, dishes, or textures you do not want in the plan.</p>
+                  <textarea
+                    id="foods-to-avoid"
+                    value={assistantIntake.foodsToAvoid}
+                    onChange={(event) => updateAssistantIntake("foodsToAvoid", event.target.value)}
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    placeholder="For example: fish, mushrooms, very spicy food"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="food-allergies" className="text-xs text-foreground font-semibold mb-1 block">Food allergies or intolerances</label>
+                  <p className="text-[11px] text-muted mb-2">List any allergy or intolerance explicitly. Leave blank if none.</p>
+                  <textarea
+                    id="food-allergies"
+                    value={assistantIntake.allergies}
+                    onChange={(event) => updateAssistantIntake("allergies", event.target.value)}
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    placeholder="For example: peanuts, lactose"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => setAssistantStep(1)} className="px-4 py-3 rounded-xl glass-card text-sm font-medium text-muted hover:text-foreground transition-colors btn-press">← Back</button>
+                  <button type="button" onClick={() => setAssistantStep(3)} className="flex-1 py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press">Continue →</button>
+                </div>
+              </div>
+            )}
+
+            {assistantStep === 3 && (
+              <div className="space-y-4 fade-in-up">
+                <div>
+                  <label htmlFor="cooking-constraints" className="text-xs text-foreground font-semibold mb-1 block">What should the plan fit around?</label>
+                  <p className="text-[11px] text-muted mb-2">Tell me about cooking time, budget, work schedule, or other practical limits.</p>
+                  <textarea
+                    id="cooking-constraints"
+                    value={assistantIntake.cookingConstraints}
+                    onChange={(event) => updateAssistantIntake("cookingConstraints", event.target.value)}
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    placeholder="For example: under 20 minutes on weekdays, affordable ingredients"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="meals-per-day" className="text-xs text-foreground font-semibold mb-1 block">How many eating occasions work for you?</label>
+                  <select
+                    id="meals-per-day"
+                    value={assistantIntake.mealsPerDay}
+                    onChange={(event) => updateAssistantIntake("mealsPerDay", Number(event.target.value))}
+                    className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                  >
+                    <option value={3}>3 meals</option>
+                    <option value={4}>4 meals</option>
+                    <option value={5}>5 meals</option>
+                    <option value={6}>6 meals</option>
+                  </select>
+                </div>
+                {assistantError && <p className="text-xs text-rose-300" role="alert">{assistantError}</p>}
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => setAssistantStep(2)} className="px-4 py-3 rounded-xl glass-card text-sm font-medium text-muted hover:text-foreground transition-colors btn-press">← Back</button>
+                  <button type="button" onClick={generateAssistantPlan} disabled={isGeneratingAssistant} className="flex-1 py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press disabled:opacity-60 flex items-center justify-center gap-2">
+                    {isGeneratingAssistant ? <><Loader2 className="animate-spin" size={17} /> Building your plan...</> : <><Sparkles size={17} /> Build my plan</>}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {assistantPlan && (
+        <div className="glass-card p-5 border-accent/20 fade-in-up">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0">
+              {assistantPlan.source === "ai" ? <Sparkles className="text-accent" size={18} /> : <ShieldCheck className="text-accent" size={18} />}
+            </div>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-accent">{assistantPlan.source === "ai" ? "AI personalized" : "Personalized starter"}</p>
+                <span className="text-[10px] text-muted">Built from your answers</span>
+              </div>
+              <h2 className="text-lg font-bold text-foreground mt-1">{assistantPlan.headline}</h2>
+              <p className="text-sm text-muted leading-relaxed mt-1">{assistantPlan.summary}</p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {assistantPlan.swaps.slice(0, 3).map((swap, index) => (
+              <div key={`${swap}-${index}`} className="rounded-xl bg-white/[0.035] border border-white/[0.06] p-3">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">{index === 0 ? "Flexible" : index === 1 ? "Protein" : "Routine"}</p>
+                <p className="text-xs text-foreground/80 leading-relaxed">{swap}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex items-start gap-2 rounded-xl bg-yellow-400/[0.06] border border-yellow-400/15 p-3">
+            <ShieldCheck className="text-yellow-300 flex-shrink-0 mt-0.5" size={15} />
+            <p className="text-[11px] text-yellow-100/75 leading-relaxed">{assistantPlan.safetyNote}</p>
+          </div>
         </div>
       )}
 
@@ -482,7 +716,10 @@ export default function DietPage() {
           ].map((dt) => (
             <button
               key={dt.value}
-              onClick={() => setDietType(dt.value)}
+              onClick={() => {
+                setDietType(dt.value);
+                setAssistantPlan(null);
+              }}
               className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-500 ease-out border flex items-center justify-center backdrop-blur-md ${
                 dietType === dt.value
                   ? "bg-white/[0.08] border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]"
