@@ -136,7 +136,7 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
     return forbiddenTerms.some(term => lower.includes(term));
   };
 
-  const getAlternative = (originalCalories: number, originalProtein: number, originalCarbs: number, originalFat: number, baseName: string): Meal => {
+  const getAlternative = (originalCalories: number, originalProtein: number, originalCarbs: number, originalFat: number, mealType: string): Meal => {
     const safeProteins: string[] = [];
     if (!isForbidden("lentils") && !isForbidden("dal")) safeProteins.push("Lentils", "Dal");
     if (!isForbidden("paneer") && !isForbidden("dairy") && !isForbidden("milk")) safeProteins.push("Paneer");
@@ -155,11 +155,12 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
     if (safeCarbs.length === 0) safeCarbs.push("Mixed Veggies");
 
     const options: import("./meals").RecipeOption[] = [];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 8; i++) {
        const p = safeProteins[i % safeProteins.length];
        const c = safeCarbs[i % safeCarbs.length];
        options.push({
          name: `${p} & ${c} Variation ${i + 1}`,
+         mealType: mealType as "breakfast" | "morningSnack" | "lunch" | "eveningSnack" | "dinner",
          ingredients: [`1 portion of ${p}`, `1 portion of ${c}`, "Spices to taste", "1 tsp oil"],
          instructions: ["Gather all ingredients.", "Prepare the protein and carbohydrates.", "Cook thoroughly.", "Serve hot."],
          prepMinutes: 15 + (i * 5),
@@ -186,8 +187,9 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
     };
   };
 
-  const sanitizeMeal = (meal: Meal): Meal => {
+  const sanitizeMeal = (meal: Meal, mealType: string): Meal => {
     const sanitizedOptions = meal.options?.filter(opt => {
+      if (opt.mealType && opt.mealType !== mealType) return false;
       if (isForbidden(opt.name)) return false;
       if (opt.ingredients.some(isForbidden)) return false;
       if (opt.instructions.some(isForbidden)) return false;
@@ -196,8 +198,8 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
 
     const isMainForbidden = isForbidden(meal.name) || isForbidden(meal.items) || (meal.instructions && meal.instructions.some(isForbidden));
 
-    if (isMainForbidden || sanitizedOptions.length < 4) {
-      const alt = getAlternative(meal.calories, meal.protein, meal.carbs, meal.fat, meal.name);
+    if (isMainForbidden || sanitizedOptions.length < 8) {
+      const alt = getAlternative(meal.calories, meal.protein, meal.carbs, meal.fat, mealType);
       
       if (isMainForbidden) {
          meal.name = alt.name;
@@ -206,21 +208,48 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
          meal.prepMinutes = alt.prepMinutes;
       }
       
-      while (sanitizedOptions.length < 4) {
-         sanitizedOptions.push(alt.options![sanitizedOptions.length % 4]);
+      while (sanitizedOptions.length < 8) {
+         sanitizedOptions.push(alt.options![sanitizedOptions.length % 8]);
       }
     }
     
-    meal.options = sanitizedOptions;
+    // Ensure uniqueness by name and ingredients string
+    const uniqueOptions: import("./meals").RecipeOption[] = [];
+    const seenNames = new Set<string>();
+    const seenIngredients = new Set<string>();
+    
+    for (const opt of sanitizedOptions) {
+      const normName = opt.name.toLowerCase().trim();
+      const normIng = opt.ingredients.map(i => i.toLowerCase().trim()).sort().join("|");
+      if (!seenNames.has(normName) && !seenIngredients.has(normIng)) {
+        seenNames.add(normName);
+        seenIngredients.add(normIng);
+        uniqueOptions.push(opt);
+      }
+    }
+    
+    // If we dropped some due to duplicates, fill back up with alternatives
+    if (uniqueOptions.length < 8) {
+       const alt = getAlternative(meal.calories, meal.protein, meal.carbs, meal.fat, mealType);
+       let altIndex = 0;
+       while (uniqueOptions.length < 8) {
+          const opt = alt.options![altIndex % 8];
+          opt.name = `${opt.name} (${uniqueOptions.length})`;
+          uniqueOptions.push(opt);
+          altIndex++;
+       }
+    }
+
+    meal.options = uniqueOptions;
     return meal;
   };
 
   return recalculate({
-    breakfast: sanitizeMeal(mealPlan.breakfast),
-    morningSnack: sanitizeMeal(mealPlan.morningSnack),
-    lunch: sanitizeMeal(mealPlan.lunch),
-    eveningSnack: sanitizeMeal(mealPlan.eveningSnack),
-    dinner: sanitizeMeal(mealPlan.dinner),
+    breakfast: sanitizeMeal(mealPlan.breakfast, "breakfast"),
+    morningSnack: sanitizeMeal(mealPlan.morningSnack, "morningSnack"),
+    lunch: sanitizeMeal(mealPlan.lunch, "lunch"),
+    eveningSnack: sanitizeMeal(mealPlan.eveningSnack, "eveningSnack"),
+    dinner: sanitizeMeal(mealPlan.dinner, "dinner"),
   });
 }
 

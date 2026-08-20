@@ -49,7 +49,9 @@ export default function DietPage() {
   const [step, setStep] = useState(1);
   const [assistantIntake, setAssistantIntake] = useState<AssistantIntake>(EMPTY_ASSISTANT_INTAKE);
   const [assistantPlan, setAssistantPlan] = useState<DietAssistantPlan | null>(null);
-  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [planCreated, setPlanCreated] = useState(false);
+  const [assistantMode, setAssistantMode] = useState<"closed" | "chat" | "edit">("closed");
+  const [chatInput, setChatInput] = useState("");
   const [assistantStep, setAssistantStep] = useState<1 | 2 | 3>(1);
   const [assistantError, setAssistantError] = useState("");
   const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
@@ -80,7 +82,7 @@ export default function DietPage() {
     }
   }, []);
 
-  const generateAssistantPlan = useCallback(async () => {
+  const generateAssistantPlan = useCallback(async (userMessage?: string) => {
     if (!diet || !user) return;
     setIsGeneratingAssistant(true);
     setAssistantError("");
@@ -114,7 +116,7 @@ export default function DietPage() {
       const res = await fetch("/api/diet/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dietType, intake: assistantIntake, context }),
+        body: JSON.stringify({ dietType, intake: assistantIntake, context, userMessage }),
       });
 
       const responseText = await res.text();
@@ -131,7 +133,8 @@ export default function DietPage() {
       }
 
       setAssistantPlan(data.plan);
-      setAssistantOpen(true);
+      setPlanCreated(true);
+      setAssistantMode("closed");
     } catch (error) {
       console.error("Failed to generate assistant plan:", error);
       setAssistantError(
@@ -653,32 +656,171 @@ export default function DietPage() {
         {/* Glow behind the icon */}
         <div className="absolute top-0 left-0 w-[200px] h-[200px] bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
         
-        <div className="flex items-start justify-between gap-4 relative z-10">
-          <div className="flex items-start gap-4 sm:gap-6">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_24px_rgba(192,255,0,0.25)]">
-              <Sparkles className="text-black" size={24} />
+        {(!planCreated || assistantMode === "edit") && (
+          <div className="flex items-start justify-between gap-4 relative z-10">
+            <div className="flex items-start gap-4 sm:gap-6">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_24px_rgba(192,255,0,0.25)]">
+                <Sparkles className="text-black" size={24} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-accent mb-2">AI Dietician</p>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-foreground leading-tight">Build a nutrition plan that fits your life</h2>
+                <p className="text-sm text-foreground/80 leading-relaxed mt-2.5 max-w-2xl">
+                  Answer a few simple questions about your preferences, routine, and food choices. We’ll create a practical meal plan that supports your goals and is easy to follow.
+                </p>
+                <p className="text-[11px] uppercase tracking-wider text-muted font-bold mt-3">Personalized nutrition • Flexible meals • Smarter choices</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-accent mb-2">AI Dietician</p>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-foreground leading-tight">Build a nutrition plan that fits your life</h2>
-              <p className="text-sm text-foreground/80 leading-relaxed mt-2.5 max-w-2xl">
-                Answer a few simple questions about your preferences, routine, and food choices. We’ll create a practical meal plan that supports your goals and is easy to follow.
-              </p>
-              <p className="text-[11px] uppercase tracking-wider text-muted font-bold mt-3">Personalized nutrition • Flexible meals • Smarter choices</p>
+            
+            <button
+              type="button"
+              onClick={() => {
+                if (planCreated) {
+                  setAssistantMode("closed");
+                }
+              }}
+              aria-label="Close AI Dietician"
+              className={`shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-accent/40 bg-white/[0.02] hover:bg-accent/10 text-muted hover:text-accent transition-all duration-300 btn-press group ${!planCreated ? 'hidden' : ''}`}
+            >
+              <X size={20} className="group-hover:scale-110 transition-transform" />
+            </button>
+          </div>
+        )}
+
+        {(planCreated && assistantMode !== "edit") && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 relative z-10">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(192,255,0,0.2)]">
+                <Sparkles className="text-black" size={18} />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-accent mb-0.5">AI Dietician</p>
+                <h2 className="text-lg font-bold text-foreground">Your plan is ready</h2>
+                <p className="text-xs text-foreground/70 mt-0.5">
+                  Personalized around your goals, preferences, exclusions, and daily routine.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              {assistantMode === "closed" ? (
+                <>
+                  <button
+                    onClick={() => setAssistantMode("chat")}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-accent/10 border border-accent/20 text-accent text-xs font-bold hover:bg-accent/20 transition-all btn-press"
+                  >
+                    Ask AI Dietician
+                  </button>
+                  <button
+                    onClick={() => setAssistantMode("edit")}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-white/[0.05] border border-white/10 text-muted hover:text-white text-xs font-bold transition-all btn-press"
+                  >
+                    Adjust preferences
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setAssistantMode("closed")}
+                  aria-label="Close AI Dietician"
+                  className="shrink-0 flex items-center justify-center w-8 h-8 rounded-full border border-white/10 bg-white/[0.02] text-muted hover:text-white hover:bg-white/[0.1] transition-all btn-press"
+                >
+                  <X size={16} />
+                </button>
+              )}
             </div>
           </div>
-          
-          <button
-            type="button"
-            onClick={() => setAssistantOpen((open) => !open)}
-            aria-label="Close AI Dietician"
-            className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-accent/40 bg-white/[0.02] hover:bg-accent/10 text-muted hover:text-accent transition-all duration-300 btn-press group"
-          >
-            {assistantOpen ? <X size={20} className="group-hover:scale-110 transition-transform" /> : <span className="text-xs font-bold px-4 w-auto h-auto">Start</span>}
-          </button>
-        </div>
+        )}
 
-        {assistantOpen && (
+        {assistantMode === "chat" && (
+          <div className="mt-6 pt-6 border-t border-white/[0.08] relative z-10 fade-in-up">
+            <div className="flex flex-col h-[400px]">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="text-black" size={14} />
+                  </div>
+                  <div className="bg-white/[0.05] border border-white/10 rounded-2xl rounded-tl-sm p-3.5 max-w-[85%]">
+                    <p className="text-sm text-foreground leading-relaxed">
+                      Hi! I’m your AI Dietician. I’ve reviewed your profile and created a starting plan. What would you like to improve first?
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {[
+                        "Make it easier to cook",
+                        "Add more variety",
+                        "Increase protein",
+                        "Reduce calories",
+                        "Change foods I dislike",
+                        "Show different recipes"
+                      ].map(reply => (
+                        <button
+                          key={reply}
+                          onClick={() => generateAssistantPlan(reply)}
+                          className="px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold hover:bg-accent/20 transition-colors btn-press"
+                        >
+                          {reply}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {isGeneratingAssistant && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="text-black animate-pulse" size={14} />
+                    </div>
+                    <div className="bg-white/[0.05] border border-white/10 rounded-2xl rounded-tl-sm px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="animate-spin text-accent" size={14} />
+                        <span className="text-xs text-muted">Updating your plan...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {assistantError && !isGeneratingAssistant && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0">
+                      <AlertTriangle size={14} />
+                    </div>
+                    <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl rounded-tl-sm p-3 max-w-[85%]">
+                      <p className="text-xs font-medium text-rose-400">{assistantError}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-2 mt-auto">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && chatInput.trim()) {
+                      generateAssistantPlan(chatInput);
+                      setChatInput("");
+                    }
+                  }}
+                  placeholder="Type foods separated by commas or ask for a change..."
+                  className="flex-1 bg-black/40 border border-white/10 rounded-full px-4 py-3 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all"
+                />
+                <button
+                  onClick={() => {
+                    if (chatInput.trim()) {
+                      generateAssistantPlan(chatInput);
+                      setChatInput("");
+                    }
+                  }}
+                  disabled={isGeneratingAssistant || !chatInput.trim()}
+                  className="w-11 h-11 rounded-full accent-gradient flex items-center justify-center text-black disabled:opacity-50 transition-all btn-press"
+                >
+                  <Sparkles size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {(!planCreated || assistantMode === "edit") && (
           <div className="mt-8 pt-6 border-t border-white/[0.08] relative z-10">
             {/* Step Indicator */}
             <div className="flex items-center justify-between mb-8 overflow-hidden">
@@ -841,7 +983,7 @@ export default function DietPage() {
                   {assistantError && <p className="text-xs font-semibold text-rose-400 bg-rose-400/10 border border-rose-400/20 p-3 rounded-xl" role="alert">{assistantError}</p>}
                   <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2 justify-end">
                     <button type="button" onClick={() => setAssistantStep(2)} className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-white/15 bg-white/[0.02] text-sm font-bold text-foreground hover:bg-white/[0.05] transition-colors btn-press">Back</button>
-                    <button type="button" onClick={generateAssistantPlan} disabled={isGeneratingAssistant} className="w-full sm:w-auto px-8 py-3.5 rounded-xl accent-gradient text-black font-extrabold text-sm btn-press shadow-[0_0_20px_rgba(192,255,0,0.2)] disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => generateAssistantPlan()} disabled={isGeneratingAssistant} className="w-full sm:w-auto px-8 py-3.5 rounded-xl accent-gradient text-black font-extrabold text-sm btn-press shadow-[0_0_20px_rgba(192,255,0,0.2)] disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2">
                       {isGeneratingAssistant ? <><Loader2 className="animate-spin" size={18} /> Creating your personalized plan...</> : <><Sparkles size={18} /> Create my personalized plan</>}
                     </button>
                   </div>

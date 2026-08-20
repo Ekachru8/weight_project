@@ -20,6 +20,7 @@ export function getDeterministicOptionIndex(dateString: string, mealType: string
 
 export interface RecipeOption {
   name: string;
+  mealType: "breakfast" | "morningSnack" | "lunch" | "eveningSnack" | "dinner";
   ingredients: string[];
   instructions: string[];
   prepMinutes: number;

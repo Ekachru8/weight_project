@@ -24,6 +24,7 @@ const getMealIcon = (mealTime: string) => {
 
 export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isManualSelection = false, onSelectOption }: MealCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showAllOptions, setShowAllOptions] = useState(false);
   const { icon: Icon, bg, color } = getMealIcon(mealTime);
 
   const options = meal.options || [];
@@ -98,10 +99,15 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
               {isManualSelection ? "Selected by you" : "Recommended for today"}
             </p>
             <button 
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => {
+                setIsExpanded(!isExpanded);
+                if (isExpanded) setShowAllOptions(false);
+              }}
               className="flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-white transition-colors btn-press"
             >
-              View {options.length} recipe options
+              {mealTime.toLowerCase().includes("snack")
+                ? "Explore snack options"
+                : `Explore ${mealTime.toLowerCase()} options`}
               {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
           </div>
@@ -113,8 +119,10 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
         <div className="px-5 pb-5 pt-2 bg-black/20 border-t border-white/5 relative z-10 fade-in-up">
           <p className="text-xs text-muted mb-4 font-medium italic">Choose a different option each day for variety.</p>
           <div className="grid lg:grid-cols-2 gap-4">
-            {options.map((opt, idx) => {
-              const isSelected = selectedOptionIndex === idx;
+            {(showAllOptions ? options : options.slice(0, 4)).map((opt, idx) => {
+              // Ensure we use the correct original index for selection logic
+              const originalIdx = options.findIndex(o => o.name === opt.name);
+              const isSelected = selectedOptionIndex === originalIdx;
               return (
                 <div key={idx} className={`p-4 rounded-xl border transition-all ${isSelected ? "border-accent/40 bg-accent/[0.03] shadow-[0_0_15px_rgba(192,255,0,0.05)]" : "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"}`}>
                   <div className="flex justify-between items-start mb-3">
@@ -160,8 +168,9 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
                   {!isSelected && onSelectOption && (
                     <button
                       onClick={() => {
-                        onSelectOption(idx);
+                        onSelectOption(originalIdx);
                         setIsExpanded(false);
+                        setShowAllOptions(false);
                       }}
                       className="w-full mt-4 py-2 rounded-lg border border-accent/30 text-accent hover:bg-accent/10 transition-colors text-xs font-bold btn-press"
                     >
@@ -172,6 +181,16 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
               );
             })}
           </div>
+          {options.length > 4 && !showAllOptions && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => setShowAllOptions(true)}
+                className="px-4 py-2 rounded-full border border-white/10 text-xs font-bold text-muted hover:text-white hover:bg-white/[0.05] transition-all"
+              >
+                View more options
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
