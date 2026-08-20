@@ -8,6 +8,7 @@ interface MealCardProps {
   meal: Meal;
   mealTime: string;
   selectedOptionIndex?: number;
+  isManualSelection?: boolean;
   onSelectOption?: (index: number) => void;
 }
 
@@ -21,7 +22,7 @@ const getMealIcon = (mealTime: string) => {
   return { icon: Coffee, bg: "meal-icon-snack", color: "text-muted" };
 };
 
-export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, onSelectOption }: MealCardProps) {
+export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isManualSelection = false, onSelectOption }: MealCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { icon: Icon, bg, color } = getMealIcon(mealTime);
 
@@ -94,7 +95,7 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, onSe
         {hasOptions && (
           <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
             <p className="text-[10px] uppercase tracking-wider text-accent font-bold">
-              {selectedOptionIndex === 0 ? "Recommended for today" : "Selected for today"}
+              {isManualSelection ? "Selected by you" : "Recommended for today"}
             </p>
             <button 
               onClick={() => setIsExpanded(!isExpanded)}

@@ -28,6 +28,8 @@ export interface DietResult {
   carbsG: number;
   isBelowFloor: boolean;
   cautionMessage: string | null;
+  targetWeightKg: number | null;
+  estimatedWeeks: number | null;
 }
 
 /**
@@ -57,28 +59,47 @@ export function calculateTDEE(
 
 /**
  * Apply the user's goal to TDEE to get target calories.
- * - Lose: TDEE − 500
- * - Gain: TDEE + 350
+ * - Lose (with target): TDEE - 300
+ * - Gain (with target): TDEE + 250
  * - Maintain: TDEE
  * Safety floor: 1200 kcal (women) / 1500 kcal (men)
  */
 export function calculateTargetCalories(
   tdee: number,
   goal: Goal,
-  gender: Gender
-): { calories: number; isBelowFloor: boolean; cautionMessage: string | null } {
+  gender: Gender,
+  weightKg?: number,
+  targetWeightKg?: number
+): { calories: number; isBelowFloor: boolean; cautionMessage: string | null; estimatedWeeks: number | null } {
   let calories = tdee;
+  let estimatedWeeks: number | null = null;
+  let dailyCalorieAdjustment = 0;
 
-  switch (goal) {
-    case "lose":
-      calories = tdee - 500;
-      break;
-    case "gain":
-      calories = tdee + 350;
-      break;
-    case "maintain":
+  if (weightKg !== undefined && targetWeightKg !== undefined) {
+    const weightDifference = Math.abs(weightKg - targetWeightKg);
+    if (goal === "lose") {
+      dailyCalorieAdjustment = 300; // max adjustment is implicitly maintained, wait, the prompt says "Allow a max of 500". Since we hardcode 300 here, it's fine.
+      calories = tdee - dailyCalorieAdjustment;
+      estimatedWeeks = weightDifference > 0 ? (weightDifference * 7700) / (dailyCalorieAdjustment * 7) : 0;
+    } else if (goal === "gain") {
+      dailyCalorieAdjustment = 250;
+      calories = tdee + dailyCalorieAdjustment;
+      estimatedWeeks = weightDifference > 0 ? (weightDifference * 7700) / (dailyCalorieAdjustment * 7) : 0;
+    } else {
       calories = tdee;
-      break;
+    }
+  } else {
+    switch (goal) {
+      case "lose":
+        calories = tdee - 500;
+        break;
+      case "gain":
+        calories = tdee + 350;
+        break;
+      case "maintain":
+        calories = tdee;
+        break;
+    }
   }
 
   const floor = gender === "male" ? 1500 : 1200;
@@ -90,7 +111,7 @@ export function calculateTargetCalories(
     calories = floor;
   }
 
-  return { calories: Math.round(calories), isBelowFloor, cautionMessage };
+  return { calories: Math.round(calories), isBelowFloor, cautionMessage, estimatedWeeks };
 }
 
 /**
@@ -123,7 +144,8 @@ export function calculateDiet(
   age: number,
   gender: Gender,
   activityLevel: ActivityLevel,
-  goal: Goal
+  goal: Goal,
+  targetWeightKg?: number
 ): DietResult {
   const bmr = calculateBMR(weightKg, heightCm, age, gender);
   const tdee = calculateTDEE(bmr, activityLevel);
@@ -131,7 +153,8 @@ export function calculateDiet(
     calories: targetCalories,
     isBelowFloor,
     cautionMessage,
-  } = calculateTargetCalories(tdee, goal, gender);
+    estimatedWeeks,
+  } = calculateTargetCalories(tdee, goal, gender, weightKg, targetWeightKg);
   const { proteinG, fatG, carbsG } = calculateMacros(targetCalories, weightKg);
 
   return {
@@ -143,5 +166,7 @@ export function calculateDiet(
     carbsG,
     isBelowFloor,
     cautionMessage,
+    targetWeightKg: targetWeightKg ?? null,
+    estimatedWeeks: estimatedWeeks !== null ? Math.round(estimatedWeeks) : null,
   };
 }

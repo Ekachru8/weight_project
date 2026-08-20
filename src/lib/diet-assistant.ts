@@ -26,12 +26,13 @@ export interface DietAssistantPlan {
 }
 
 export interface DietAssistantContext {
-  diet: Pick<DietResult, "targetCalories" | "proteinG" | "carbsG" | "fatG" | "tdee">;
+  diet: Pick<DietResult, "targetCalories" | "proteinG" | "carbsG" | "fatG" | "tdee" | "targetWeightKg" | "estimatedWeeks">;
   user: {
     age?: number | null;
     gender?: string | null;
     heightCm?: number | null;
     weightKg?: number | null;
+    targetWeightKg?: number | null;
     activityLevel?: string | null;
     goal?: string | null;
     dietPreference?: string | null;

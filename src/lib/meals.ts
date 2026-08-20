@@ -6,6 +6,18 @@
 
 export type DietType = "vegetarian" | "non_vegetarian" | "eggetarian";
 
+export function getDeterministicOptionIndex(dateString: string, mealType: string, optionsCount: number): number {
+  if (optionsCount <= 0) return 0;
+  let hash = 0;
+  const str = `${dateString}-${mealType}`;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash) % optionsCount;
+}
+
 export interface RecipeOption {
   name: string;
   ingredients: string[];

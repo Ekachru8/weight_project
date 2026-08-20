@@ -31,7 +31,7 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { name, age, gender, heightCm, weightKg, activityLevel, goal, equipment } = body;
+    const { name, age, gender, heightCm, weightKg, targetWeightKg, activityLevel, goal, equipment } = body;
 
     const user = await prisma.user.update({
       where: { id: 1 },
@@ -41,6 +41,7 @@ export async function PUT(request: Request) {
         ...(gender !== undefined && { gender }),
         ...(heightCm !== undefined && { heightCm: Number(heightCm) }),
         ...(weightKg !== undefined && { weightKg: Number(weightKg) }),
+        ...(targetWeightKg !== undefined && { targetWeightKg: Number(targetWeightKg) }),
         ...(activityLevel !== undefined && { activityLevel }),
         ...(goal !== undefined && { goal }),
         ...(equipment !== undefined && { equipment }),
@@ -55,7 +56,8 @@ export async function PUT(request: Request) {
         user.age,
         user.gender as Gender,
         user.activityLevel as ActivityLevel,
-        user.goal as Goal
+        user.goal as Goal,
+        user.targetWeightKg ?? undefined
       );
 
       await prisma.dietTarget.create({
@@ -120,7 +122,8 @@ export async function PATCH(request: Request) {
         user.age,
         user.gender as Gender,
         user.activityLevel as ActivityLevel,
-        user.goal as Goal
+        user.goal as Goal,
+        user.targetWeightKg ?? undefined
       );
 
       await prisma.dietTarget.create({

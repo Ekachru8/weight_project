@@ -140,6 +140,8 @@ function parseContext(value: unknown): DietAssistantContext | null {
       carbsG: typeof diet.carbsG === "number" ? diet.carbsG : 0,
       fatG: typeof diet.fatG === "number" ? diet.fatG : 0,
       tdee: typeof diet.tdee === "number" ? diet.tdee : diet.targetCalories,
+      targetWeightKg: typeof diet.targetWeightKg === "number" ? diet.targetWeightKg : null,
+      estimatedWeeks: typeof diet.estimatedWeeks === "number" ? diet.estimatedWeeks : null,
     },
     user,
   };
@@ -261,10 +263,13 @@ export async function POST(request: Request) {
                 gender: context.user.gender ?? null,
                 heightCm: context.user.heightCm ?? null,
                 weightKg: weight,
+                targetWeightKg: context.diet.targetWeightKg ?? null,
                 activityLevel: context.user.activityLevel ?? null,
                 goal,
                 dietType,
+                tdee: context.diet.tdee,
                 targetCalories: context.diet.targetCalories,
+                estimatedWeeks: context.diet.estimatedWeeks ?? null,
                 macros: {
                   proteinG: context.diet.proteinG,
                   carbsG: context.diet.carbsG,

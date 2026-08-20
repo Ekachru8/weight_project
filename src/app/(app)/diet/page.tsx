@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import MacroRing from "@/components/MacroRing";
 import MealCard from "@/components/MealCard";
-import { getSampleMealPlan } from "@/lib/meals";
+import { getSampleMealPlan, getDeterministicOptionIndex } from "@/lib/meals";
 import type { DietType } from "@/lib/meals";
 import type { DietResult } from "@/lib/diet";
 import {
@@ -31,6 +31,7 @@ interface UserData {
   gender: string | null;
   heightCm: number | null;
   weightKg: number | null;
+  targetWeightKg?: number | null;
   activityLevel: string | null;
   goal: string | null;
   dietPreference: string | null;
@@ -52,7 +53,7 @@ export default function DietPage() {
   const [assistantStep, setAssistantStep] = useState<1 | 2 | 3>(1);
   const [assistantError, setAssistantError] = useState("");
   const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
-  const [selectedMealOptions, setSelectedMealOptions] = useState<Record<string, number>>({});
+  const [manualSelections, setManualSelections] = useState<{ date: string; options: Record<string, number> }>({ date: "", options: {} });
 
   // Onboarding form state
   const [form, setForm] = useState({
@@ -83,6 +84,20 @@ export default function DietPage() {
     if (!diet || !user) return;
     setIsGeneratingAssistant(true);
     setAssistantError("");
+
+    if (user.targetWeightKg && user.weightKg) {
+      if (user.targetWeightKg < user.weightKg && user.goal !== "lose" && user.goal !== "maintain") {
+        setAssistantError("Your target weight is lower than your current weight, but your goal is set to Gain Weight. Please update your target weight or goal.");
+        setIsGeneratingAssistant(false);
+        return;
+      }
+      if (user.targetWeightKg > user.weightKg && user.goal !== "gain" && user.goal !== "maintain") {
+        setAssistantError("Your target weight is higher than your current weight, but your goal is set to Lose Weight. Please update your target weight or goal.");
+        setIsGeneratingAssistant(false);
+        return;
+      }
+    }
+
     try {
       const context = {
         diet: {
@@ -91,6 +106,8 @@ export default function DietPage() {
           carbsG: diet.carbsG,
           fatG: diet.fatG,
           tdee: diet.tdee,
+          targetWeightKg: user.targetWeightKg,
+          estimatedWeeks: (diet as any).estimatedWeeks,
         },
         user,
       };
@@ -130,7 +147,7 @@ export default function DietPage() {
   const updateAssistantIntake = (field: keyof AssistantIntake, value: string | number) => {
     setAssistantIntake((previous) => ({ ...previous, [field]: value }));
     setAssistantPlan(null);
-    setSelectedMealOptions({});
+    setManualSelections({ date: "", options: {} });
   };
 
   const fetchDiet = useCallback(async () => {
@@ -143,7 +160,7 @@ export default function DietPage() {
         
         // MOCK DATA FALLBACK for presentation if database is asleep/missing
         setOnboardingRequired(false);
-        setUser({ goal: "lose", weightKg: 70, dietPreference: "non_vegetarian" } as any);
+        setUser({ goal: "lose", weightKg: 70, targetWeightKg: 65, dietPreference: "non_vegetarian" } as any);
         setDiet({
           targetCalories: 1850,
           proteinG: 150,
@@ -152,7 +169,9 @@ export default function DietPage() {
           bmr: 1650,
           tdee: 2350,
           isBelowFloor: false,
-          cautionMessage: ""
+          cautionMessage: "",
+          targetWeightKg: 65,
+          estimatedWeeks: 6,
         });
         setDietType("non_vegetarian");
         generateAIPlan(1850, "non_vegetarian", "lose", 70);
@@ -185,7 +204,7 @@ export default function DietPage() {
   // When dietType changes via tabs, regenerate the AI plan
   useEffect(() => {
     setAssistantPlan(null);
-    setSelectedMealOptions({});
+    setManualSelections({ date: "", options: {} });
     if (diet && user && aiPlan) {
       generateAIPlan(diet.targetCalories, dietType, user.goal || "maintain", user.weightKg || 70);
     }
@@ -211,6 +230,36 @@ export default function DietPage() {
       console.error("Failed to save diet:", error);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUpdateTargetWeight = async (targetWeight: number) => {
+    if (!user || isNaN(targetWeight) || targetWeight <= 0) return;
+    setUser((prev) => prev ? { ...prev, targetWeightKg: targetWeight } : null);
+    
+    try {
+      const res = await fetch("/api/user", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetWeightKg: targetWeight }),
+      });
+      const data = await res.json();
+      if (data.dietTargets && data.dietTargets[0]) {
+         const latestTarget = data.dietTargets[0];
+         setDiet((prev) => prev ? { 
+            ...prev, 
+            targetCalories: latestTarget.calories,
+            proteinG: latestTarget.proteinG,
+            carbsG: latestTarget.carbsG,
+            fatG: latestTarget.fatG,
+            // Assuming tdee, etc. remain the same if we only updated targetWeightKg
+         } : null);
+         // Generate new AI Plan if needed, but since we rely on Assistant or Fallback, 
+         // just fetchDiet to refresh everything safely.
+         fetchDiet();
+      }
+    } catch (err) {
+      console.error("Failed to update target weight:", err);
     }
   };
 
@@ -501,19 +550,34 @@ export default function DietPage() {
 
   const mealPlan = assistantPlan?.meals ?? (aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType));
 
-  const getSelectedDish = (meal: any, key: string) => {
-    if (!meal) return { calories: 0, protein: 0, carbs: 0, fat: 0 };
+  const todayKey = new Date().toISOString().slice(0, 10);
+
+  const getActiveOption = (meal: any, key: string) => {
+    if (!meal) return { dish: { calories: 0, protein: 0, carbs: 0, fat: 0 }, index: 0, isManual: false };
     const options = meal.options || [];
-    const idx = selectedMealOptions[key] || 0;
-    return options.length > idx ? options[idx] : meal;
+    if (options.length === 0) return { dish: meal, index: 0, isManual: false };
+
+    if (manualSelections.date === todayKey && manualSelections.options[key] !== undefined) {
+      const idx = manualSelections.options[key];
+      return { dish: options.length > idx ? options[idx] : meal, index: idx, isManual: true };
+    }
+
+    const recIdx = getDeterministicOptionIndex(todayKey, key, options.length);
+    return { dish: options[recIdx], index: recIdx, isManual: false };
   };
 
+  const activeBreakfast = getActiveOption(mealPlan.breakfast, "breakfast");
+  const activeMorningSnack = getActiveOption(mealPlan.morningSnack, "morningSnack");
+  const activeLunch = getActiveOption(mealPlan.lunch, "lunch");
+  const activeEveningSnack = getActiveOption(mealPlan.eveningSnack, "eveningSnack");
+  const activeDinner = getActiveOption(mealPlan.dinner, "dinner");
+
   const dynamicMeals = {
-    breakfast: getSelectedDish(mealPlan.breakfast, "breakfast"),
-    morningSnack: getSelectedDish(mealPlan.morningSnack, "morningSnack"),
-    lunch: getSelectedDish(mealPlan.lunch, "lunch"),
-    eveningSnack: getSelectedDish(mealPlan.eveningSnack, "eveningSnack"),
-    dinner: getSelectedDish(mealPlan.dinner, "dinner"),
+    breakfast: activeBreakfast.dish,
+    morningSnack: activeMorningSnack.dish,
+    lunch: activeLunch.dish,
+    eveningSnack: activeEveningSnack.dish,
+    dinner: activeDinner.dish,
   };
 
   const dynamicTotals = {
@@ -547,6 +611,40 @@ export default function DietPage() {
         <div className="fade-in-up bg-warning/10 border border-warning/30 rounded-xl p-4 flex items-start gap-3">
           <AlertTriangle className="text-warning flex-shrink-0 mt-0.5" size={18} />
           <p className="text-sm text-warning">{diet.cautionMessage}</p>
+        </div>
+      )}
+
+      {/* Goal Snapshot */}
+      {user && user.targetWeightKg && (
+        <div className="fade-in-up glass-card border-white/10 rounded-3xl p-6 lg:p-8 bg-white/[0.02]">
+          <div className="flex items-start gap-3 mb-4">
+            <Target className="text-accent" size={24} />
+            <h2 className="text-xl font-bold text-foreground">Goal Snapshot</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Current Weight</p>
+              <p className="text-lg font-black text-foreground">{user.weightKg} kg</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Target Weight</p>
+              <p className="text-lg font-black text-accent">{user.targetWeightKg} kg</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Change Required</p>
+              <p className="text-lg font-black text-foreground">{Math.abs((user.weightKg || 0) - user.targetWeightKg).toFixed(1)} kg</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Estimated Timeline</p>
+              <p className="text-lg font-black text-foreground">{diet.estimatedWeeks ? `~${diet.estimatedWeeks} weeks` : "N/A"}</p>
+            </div>
+          </div>
+          <p className="text-sm text-foreground/80 leading-relaxed max-w-3xl">
+            Your calorie target ({diet.targetCalories} kcal) is based on your current profile, activity level, desired weight change, and a moderate adjustment designed to support steady progress.
+          </p>
+          <p className="text-[10px] text-muted/60 mt-3 max-w-3xl">
+            Progress varies between individuals. This estimate is for general wellness planning and should be reviewed with a qualified clinician or dietitian if you have medical needs.
+          </p>
         </div>
       )}
 
@@ -626,6 +724,21 @@ export default function DietPage() {
             <div className="transition-all duration-300">
               {assistantStep === 1 && (
                 <div className="space-y-6 fade-in-up">
+                  {(!user?.targetWeightKg) && (
+                    <div className="mb-6">
+                      <label htmlFor="target-weight" className="text-sm text-foreground font-semibold mb-1 block">What weight would you like to reach?</label>
+                      <p className="text-[11px] sm:text-xs text-muted mb-3 leading-relaxed">This helps us estimate your calorie target and a realistic timeline. You can update it later.</p>
+                      <input
+                        id="target-weight"
+                        type="number"
+                        min="30"
+                        max="300"
+                        onBlur={(e) => handleUpdateTargetWeight(Number(e.target.value))}
+                        className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all"
+                        placeholder="e.g. 70"
+                      />
+                    </div>
+                  )}
                   <div className="grid lg:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="foods-they-eat" className="text-sm text-foreground font-semibold mb-1 block">What foods are already part of your routine?</label>
@@ -898,12 +1011,18 @@ export default function DietPage() {
         </div>
       </div>
 
+      <div className="fade-in-up mb-4 text-center">
+        <p className="text-xs text-muted">
+          Your recommendations refresh daily. You can also choose another recipe whenever you want more variety.
+        </p>
+      </div>
+
       <div className="space-y-4 mb-10">
-        {mealPlan.breakfast && <MealCard meal={mealPlan.breakfast} mealTime="Breakfast" selectedOptionIndex={selectedMealOptions.breakfast || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, breakfast: idx }))} />}
-        {mealPlan.morningSnack && <MealCard meal={mealPlan.morningSnack} mealTime="Morning Snack" selectedOptionIndex={selectedMealOptions.morningSnack || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, morningSnack: idx }))} />}
-        {mealPlan.lunch && <MealCard meal={mealPlan.lunch} mealTime="Lunch" selectedOptionIndex={selectedMealOptions.lunch || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, lunch: idx }))} />}
-        {mealPlan.eveningSnack && <MealCard meal={mealPlan.eveningSnack} mealTime="Evening Snack" selectedOptionIndex={selectedMealOptions.eveningSnack || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, eveningSnack: idx }))} />}
-        {mealPlan.dinner && <MealCard meal={mealPlan.dinner} mealTime="Dinner" selectedOptionIndex={selectedMealOptions.dinner || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, dinner: idx }))} />}
+        {mealPlan.breakfast && <MealCard meal={mealPlan.breakfast} mealTime="Breakfast" selectedOptionIndex={activeBreakfast.index} isManualSelection={activeBreakfast.isManual} onSelectOption={(idx) => setManualSelections(prev => ({ date: todayKey, options: { ...prev.options, breakfast: idx } }))} />}
+        {mealPlan.morningSnack && <MealCard meal={mealPlan.morningSnack} mealTime="Morning Snack" selectedOptionIndex={activeMorningSnack.index} isManualSelection={activeMorningSnack.isManual} onSelectOption={(idx) => setManualSelections(prev => ({ date: todayKey, options: { ...prev.options, morningSnack: idx } }))} />}
+        {mealPlan.lunch && <MealCard meal={mealPlan.lunch} mealTime="Lunch" selectedOptionIndex={activeLunch.index} isManualSelection={activeLunch.isManual} onSelectOption={(idx) => setManualSelections(prev => ({ date: todayKey, options: { ...prev.options, lunch: idx } }))} />}
+        {mealPlan.eveningSnack && <MealCard meal={mealPlan.eveningSnack} mealTime="Evening Snack" selectedOptionIndex={activeEveningSnack.index} isManualSelection={activeEveningSnack.isManual} onSelectOption={(idx) => setManualSelections(prev => ({ date: todayKey, options: { ...prev.options, eveningSnack: idx } }))} />}
+        {mealPlan.dinner && <MealCard meal={mealPlan.dinner} mealTime="Dinner" selectedOptionIndex={activeDinner.index} isManualSelection={activeDinner.isManual} onSelectOption={(idx) => setManualSelections(prev => ({ date: todayKey, options: { ...prev.options, dinner: idx } }))} />}
       </div>
         {/* AI Reasoning (for standard AI plan only) */}
         {!assistantPlan && aiPlan && (
