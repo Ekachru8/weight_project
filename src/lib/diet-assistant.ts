@@ -90,7 +90,8 @@ export function buildFallbackDietAssistantPlan(
   weight: number,
   intake: AssistantIntake,
 ): DietAssistantPlan {
-  const meals = applyAllergyGuard(cloneMealPlan(getSampleMealPlan(targetCalories, dietType)), intake.allergies);
+  const baseMeals = cloneMealPlan(getSampleMealPlan(targetCalories, dietType));
+  const meals = sanitizeMealPlan(baseMeals, intake, dietType);
   const favorite = firstListItem(intake.comfortableFoods) || firstListItem(intake.foodsTheyEat);
   const avoid = firstListItem(intake.foodsToAvoid);
   const mealCount = Math.min(6, Math.max(3, intake.mealsPerDay || 5));
@@ -117,37 +118,66 @@ export function buildFallbackDietAssistantPlan(
   };
 }
 
-function applyAllergyGuard(mealPlan: MealPlan, allergies: string): MealPlan {
-  const allergyText = allergies.toLowerCase();
-  if (!allergyText) return mealPlan;
+export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, dietType: DietType): MealPlan {
+  const forbiddenText = `${intake.foodsToAvoid}, ${intake.allergies}`.toLowerCase();
+  const forbiddenTerms = forbiddenText.split(/[,\n]/).map(t => t.trim()).filter(Boolean);
 
-  const rules = [
-    { pattern: /peanut|nut|almond|walnut|cashew/, label: "nut-free" },
-    { pattern: /dairy|milk|lactose|cheese|paneer|yogurt|curd/, label: "dairy-free" },
-    { pattern: /egg/, label: "egg-free" },
-    { pattern: /fish|salmon|tuna|seafood|shellfish|shrimp|prawn/, label: "seafood-free" },
-    { pattern: /soy|tofu|soya/, label: "soy-free" },
-    { pattern: /gluten|wheat/, label: "gluten-free" },
-  ];
-  const matched = rules.filter((rule) => rule.pattern.test(allergyText));
-  if (matched.length === 0) return mealPlan;
+  const isForbidden = (text: string) => {
+    const lower = text.toLowerCase();
+    // Enforce diet types intrinsically
+    if (dietType === "vegetarian" || dietType === "eggetarian") {
+      if (/chicken|meat|fish|seafood|beef|pork|tuna|salmon/.test(lower)) return true;
+    }
+    if (dietType === "vegetarian") {
+      if (/egg/.test(lower)) return true;
+    }
+    return forbiddenTerms.some(term => lower.includes(term));
+  };
 
-  const labels = matched.map((rule) => rule.label).join(" / ");
-  const protect = (meal: Meal): Meal => {
-    if (!matched.some((rule) => rule.pattern.test(`${meal.name} ${meal.items}`.toLowerCase()))) return meal;
+  const getAlternative = (originalCalories: number, originalProtein: number, originalCarbs: number, originalFat: number): Meal => {
+    const safeProteins: string[] = [];
+    if (!isForbidden("lentils") && !isForbidden("dal")) safeProteins.push("Lentils", "Dal");
+    if (!isForbidden("paneer") && !isForbidden("dairy") && !isForbidden("milk")) safeProteins.push("Paneer");
+    if (!isForbidden("tofu") && !isForbidden("soy")) safeProteins.push("Tofu");
+    if (dietType !== "vegetarian" && !isForbidden("egg") && !isForbidden("eggs")) safeProteins.push("Eggs");
+    if (dietType === "non_vegetarian" && !isForbidden("chicken")) safeProteins.push("Chicken");
+    if (dietType === "non_vegetarian" && !isForbidden("fish") && !isForbidden("salmon") && !isForbidden("tuna")) safeProteins.push("Fish");
+    if (safeProteins.length === 0) safeProteins.push("Plant Protein"); 
+
+    const safeCarbs: string[] = [];
+    if (!isForbidden("rice")) safeCarbs.push("Rice");
+    if (!isForbidden("roti") && !isForbidden("wheat") && !isForbidden("gluten")) safeCarbs.push("Roti");
+    if (!isForbidden("oats")) safeCarbs.push("Oats");
+    if (!isForbidden("quinoa")) safeCarbs.push("Quinoa");
+    if (!isForbidden("potato")) safeCarbs.push("Sweet Potato");
+    if (safeCarbs.length === 0) safeCarbs.push("Mixed Veggies");
+
+    const p = safeProteins[Math.floor(Math.random() * safeProteins.length)];
+    const c = safeCarbs[Math.floor(Math.random() * safeCarbs.length)];
+
     return {
-      ...meal,
-      name: `${labels} alternative needed`,
-      items: `Replace this meal with a verified ${labels} equivalent using a similar portion and nutrition profile.`,
+      name: `${p} & ${c} Bowl`,
+      items: `A safe, customized portion of ${p.toLowerCase()} and ${c.toLowerCase()} tailored to your restrictions.`,
+      calories: originalCalories,
+      protein: originalProtein,
+      carbs: originalCarbs,
+      fat: originalFat
     };
   };
 
+  const sanitizeMeal = (meal: Meal): Meal => {
+    if (isForbidden(meal.name) || isForbidden(meal.items)) {
+      return getAlternative(meal.calories, meal.protein, meal.carbs, meal.fat);
+    }
+    return meal;
+  };
+
   return recalculate({
-    breakfast: protect(mealPlan.breakfast),
-    morningSnack: protect(mealPlan.morningSnack),
-    lunch: protect(mealPlan.lunch),
-    eveningSnack: protect(mealPlan.eveningSnack),
-    dinner: protect(mealPlan.dinner),
+    breakfast: sanitizeMeal(mealPlan.breakfast),
+    morningSnack: sanitizeMeal(mealPlan.morningSnack),
+    lunch: sanitizeMeal(mealPlan.lunch),
+    eveningSnack: sanitizeMeal(mealPlan.eveningSnack),
+    dinner: sanitizeMeal(mealPlan.dinner),
   });
 }
 

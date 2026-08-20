@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   buildFallbackDietAssistantPlan,
+  sanitizeMealPlan,
   normalizeAssistantPlan,
   type AssistantIntake,
   type DietAssistantContext,
@@ -254,6 +255,9 @@ export async function POST(request: Request) {
 
     const providerJson = await providerResponse.json();
     const plan = normalizeAssistantPlan(extractJson(providerJson), fallbackPlan);
+    
+    // Ensure the AI plan strictly adheres to forbidden items, just in case
+    plan.meals = sanitizeMealPlan(plan.meals, intake, dietType);
 
     return NextResponse.json({
       plan,

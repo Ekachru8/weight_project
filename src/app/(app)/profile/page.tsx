@@ -152,7 +152,7 @@ export default function ProfilePage() {
             type="text"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+            className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
           />
         </div>
 
@@ -167,7 +167,7 @@ export default function ProfilePage() {
               type="number"
               value={form.age}
               onChange={(e) => setForm({ ...form, age: e.target.value })}
-              className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+              className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
               placeholder="25"
             />
           </div>
@@ -179,7 +179,7 @@ export default function ProfilePage() {
               id="profile-gender"
               value={form.gender}
               onChange={(e) => setForm({ ...form, gender: e.target.value })}
-              className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+              className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
             >
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -198,7 +198,7 @@ export default function ProfilePage() {
               type="number"
               value={form.heightCm}
               onChange={(e) => setForm({ ...form, heightCm: e.target.value })}
-              className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+              className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
               placeholder="175"
             />
           </div>
@@ -212,7 +212,7 @@ export default function ProfilePage() {
               step="0.1"
               value={form.weightKg}
               onChange={(e) => setForm({ ...form, weightKg: e.target.value })}
-              className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+              className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
               placeholder="70"
             />
           </div>
@@ -229,7 +229,7 @@ export default function ProfilePage() {
             onChange={(e) =>
               setForm({ ...form, activityLevel: e.target.value })
             }
-            className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+            className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
           >
             <option value="sedentary">Sedentary</option>
             <option value="light">Light (1–3 days/week)</option>
@@ -248,7 +248,7 @@ export default function ProfilePage() {
             id="profile-goal"
             value={form.goal}
             onChange={(e) => setForm({ ...form, goal: e.target.value })}
-            className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+            className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
           >
             <option value="lose">Lose Weight</option>
             <option value="maintain">Maintain Weight</option>
@@ -266,7 +266,7 @@ export default function ProfilePage() {
             type="text"
             value={form.equipment}
             onChange={(e) => setForm({ ...form, equipment: e.target.value })}
-            className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+            className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
           />
         </div>
 

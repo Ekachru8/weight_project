@@ -126,6 +126,7 @@ export default function DietPage() {
 
   const updateAssistantIntake = (field: keyof AssistantIntake, value: string | number) => {
     setAssistantIntake((previous) => ({ ...previous, [field]: value }));
+    setAssistantPlan(null);
   };
 
   const fetchDiet = useCallback(async () => {
@@ -179,6 +180,7 @@ export default function DietPage() {
 
   // When dietType changes via tabs, regenerate the AI plan
   useEffect(() => {
+    setAssistantPlan(null);
     if (diet && user && aiPlan) {
       generateAIPlan(diet.targetCalories, dietType, user.goal || "maintain", user.weightKg || 70);
     }
@@ -276,7 +278,7 @@ export default function DietPage() {
                     required
                     value={form.age}
                     onChange={(e) => setForm({ ...form, age: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
                     placeholder="25"
                   />
                 </div>
@@ -286,7 +288,7 @@ export default function DietPage() {
                     id="diet-gender"
                     value={form.gender}
                     onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -302,7 +304,7 @@ export default function DietPage() {
                     required
                     value={form.heightCm}
                     onChange={(e) => setForm({ ...form, heightCm: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
                     placeholder="175"
                   />
                 </div>
@@ -315,7 +317,7 @@ export default function DietPage() {
                     required
                     value={form.weightKg}
                     onChange={(e) => setForm({ ...form, weightKg: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
                     placeholder="70"
                   />
                 </div>
@@ -339,7 +341,7 @@ export default function DietPage() {
                   id="diet-activity"
                   value={form.activityLevel}
                   onChange={(e) => setForm({ ...form, activityLevel: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
                 >
                   <option value="sedentary">Sedentary (desk job, little exercise)</option>
                   <option value="light">Light (1–3 days/week)</option>
@@ -561,7 +563,7 @@ export default function DietPage() {
                     id="foods-they-eat"
                     value={assistantIntake.foodsTheyEat}
                     onChange={(event) => updateAssistantIntake("foodsTheyEat", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
                     placeholder="For example: rice, dal, chicken, curd, bananas, roti"
                   />
                 </div>
@@ -572,7 +574,7 @@ export default function DietPage() {
                     id="comfortable-foods"
                     value={assistantIntake.comfortableFoods}
                     onChange={(event) => updateAssistantIntake("comfortableFoods", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
                     placeholder="For example: home-cooked Indian meals, eggs, oats, paneer"
                   />
                 </div>
@@ -589,7 +591,7 @@ export default function DietPage() {
                     id="foods-to-avoid"
                     value={assistantIntake.foodsToAvoid}
                     onChange={(event) => updateAssistantIntake("foodsToAvoid", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
                     placeholder="For example: fish, mushrooms, very spicy food"
                   />
                 </div>
@@ -600,7 +602,7 @@ export default function DietPage() {
                     id="food-allergies"
                     value={assistantIntake.allergies}
                     onChange={(event) => updateAssistantIntake("allergies", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
                     placeholder="For example: peanuts, lactose"
                   />
                 </div>
@@ -620,7 +622,7 @@ export default function DietPage() {
                     id="cooking-constraints"
                     value={assistantIntake.cookingConstraints}
                     onChange={(event) => updateAssistantIntake("cookingConstraints", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
+                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
                     placeholder="For example: under 20 minutes on weekdays, affordable ingredients"
                   />
                 </div>
@@ -630,7 +632,7 @@ export default function DietPage() {
                     id="meals-per-day"
                     value={assistantIntake.mealsPerDay}
                     onChange={(event) => updateAssistantIntake("mealsPerDay", Number(event.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-card border border-border text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40"
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40"
                   >
                     <option value={3}>3 meals</option>
                     <option value={4}>4 meals</option>
