@@ -23,6 +23,7 @@ import {
   RefreshCw,
   ShieldCheck,
   Check,
+  X,
 } from "lucide-react";
 
 interface UserData {
@@ -51,6 +52,7 @@ export default function DietPage() {
   const [assistantStep, setAssistantStep] = useState<1 | 2 | 3>(1);
   const [assistantError, setAssistantError] = useState("");
   const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
+  const [selectedMealOptions, setSelectedMealOptions] = useState<Record<string, number>>({});
 
   // Onboarding form state
   const [form, setForm] = useState({
@@ -128,6 +130,7 @@ export default function DietPage() {
   const updateAssistantIntake = (field: keyof AssistantIntake, value: string | number) => {
     setAssistantIntake((previous) => ({ ...previous, [field]: value }));
     setAssistantPlan(null);
+    setSelectedMealOptions({});
   };
 
   const fetchDiet = useCallback(async () => {
@@ -182,6 +185,7 @@ export default function DietPage() {
   // When dietType changes via tabs, regenerate the AI plan
   useEffect(() => {
     setAssistantPlan(null);
+    setSelectedMealOptions({});
     if (diet && user && aiPlan) {
       generateAIPlan(diet.targetCalories, dietType, user.goal || "maintain", user.weightKg || 70);
     }
@@ -497,10 +501,32 @@ export default function DietPage() {
 
   const mealPlan = assistantPlan?.meals ?? (aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType));
 
-  const displayedCalories = assistantPlan?.meals.totalCalories ?? diet.targetCalories;
-  const displayedProtein = assistantPlan?.meals.totalProtein ?? diet.proteinG;
-  const displayedCarbs = assistantPlan?.meals.totalCarbs ?? diet.carbsG;
-  const displayedFat = assistantPlan?.meals.totalFat ?? diet.fatG;
+  const getSelectedDish = (meal: any, key: string) => {
+    if (!meal) return { calories: 0, protein: 0, carbs: 0, fat: 0 };
+    const options = meal.options || [];
+    const idx = selectedMealOptions[key] || 0;
+    return options.length > idx ? options[idx] : meal;
+  };
+
+  const dynamicMeals = {
+    breakfast: getSelectedDish(mealPlan.breakfast, "breakfast"),
+    morningSnack: getSelectedDish(mealPlan.morningSnack, "morningSnack"),
+    lunch: getSelectedDish(mealPlan.lunch, "lunch"),
+    eveningSnack: getSelectedDish(mealPlan.eveningSnack, "eveningSnack"),
+    dinner: getSelectedDish(mealPlan.dinner, "dinner"),
+  };
+
+  const dynamicTotals = {
+    totalCalories: Object.values(dynamicMeals).reduce((sum, dish) => sum + dish.calories, 0),
+    totalProtein: Object.values(dynamicMeals).reduce((sum, dish) => sum + dish.protein, 0),
+    totalCarbs: Object.values(dynamicMeals).reduce((sum, dish) => sum + dish.carbs, 0),
+    totalFat: Object.values(dynamicMeals).reduce((sum, dish) => sum + dish.fat, 0),
+  };
+
+  const displayedCalories = assistantPlan ? dynamicTotals.totalCalories : diet.targetCalories;
+  const displayedProtein = assistantPlan ? dynamicTotals.totalProtein : diet.proteinG;
+  const displayedCarbs = assistantPlan ? dynamicTotals.totalCarbs : diet.carbsG;
+  const displayedFat = assistantPlan ? dynamicTotals.totalFat : diet.fatG;
 
   return (
     <div className="space-y-6">
@@ -525,131 +551,200 @@ export default function DietPage() {
       )}
 
       {/* AI dietician intake */}
-      <div className="glass-card p-5 border-accent/20 bg-accent/[0.035] fade-in-up opacity-0 delay-100">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-2xl accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_18px_rgba(192,255,0,0.2)]">
-            <Sparkles className="text-black" size={20} />
+      <div className="glass-card border-accent/25 bg-white/[0.025] rounded-3xl p-6 lg:p-8 fade-in-up opacity-0 delay-100 relative overflow-hidden">
+        {/* Glow behind the icon */}
+        <div className="absolute top-0 left-0 w-[200px] h-[200px] bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
+        
+        <div className="flex items-start justify-between gap-4 relative z-10">
+          <div className="flex items-start gap-4 sm:gap-6">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_24px_rgba(192,255,0,0.25)]">
+              <Sparkles className="text-black" size={24} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-accent mb-2">AI Dietician</p>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-foreground leading-tight">Build a nutrition plan that fits your life</h2>
+              <p className="text-sm text-foreground/80 leading-relaxed mt-2.5 max-w-2xl">
+                Answer a few simple questions about your preferences, routine, and food choices. We’ll create a practical meal plan that supports your goals and is easy to follow.
+              </p>
+              <p className="text-[11px] uppercase tracking-wider text-muted font-bold mt-3">Personalized nutrition • Flexible meals • Smarter choices</p>
+            </div>
           </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] uppercase tracking-[0.18em] font-bold text-accent">AI Dietician</p>
-            <h2 className="text-base sm:text-lg font-bold text-foreground mt-1">Build a plan around your real life</h2>
-            <p className="text-xs sm:text-sm text-muted leading-relaxed mt-1">
-              Tell me what you already eat, what feels comfortable, and what you want to avoid. I&apos;ll shape the meals around your target calories and macros.
-            </p>
-          </div>
+          
           <button
             type="button"
             onClick={() => setAssistantOpen((open) => !open)}
-            className="shrink-0 px-3 py-2 rounded-xl border border-accent/30 bg-accent/10 text-accent text-xs font-bold hover:bg-accent/20 transition-colors btn-press"
+            aria-label="Close AI Dietician"
+            className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-white/10 hover:border-accent/40 bg-white/[0.02] hover:bg-accent/10 text-muted hover:text-accent transition-all duration-300 btn-press group"
           >
-            {assistantOpen ? "Close" : assistantPlan ? "Refine plan" : "Start"}
+            {assistantOpen ? <X size={20} className="group-hover:scale-110 transition-transform" /> : <span className="text-xs font-bold px-4 w-auto h-auto">Start</span>}
           </button>
         </div>
 
         {assistantOpen && (
-          <div className="mt-5 pt-5 border-t border-white/10">
-            <div className="flex items-center gap-2 mb-5">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className={`h-1.5 flex-1 rounded-full transition-colors ${assistantStep >= item ? "bg-accent" : "bg-white/10"}`} />
-              ))}
-              <span className="text-[10px] text-muted whitespace-nowrap">Step {assistantStep}/3</span>
+          <div className="mt-8 pt-6 border-t border-white/[0.08] relative z-10">
+            {/* Step Indicator */}
+            <div className="flex items-center justify-between mb-8 overflow-hidden">
+              <div className="flex items-center flex-1 gap-2 sm:gap-4">
+                {[
+                  { id: 1, label: "Your Food Preferences" },
+                  { id: 2, label: "Foods to Avoid" },
+                  { id: 3, label: "Your Routine" }
+                ].map((s) => {
+                  const isActive = assistantStep === s.id;
+                  const isCompleted = assistantStep > s.id;
+                  return (
+                    <div key={s.id} className="flex-1">
+                      <div className={`h-1.5 w-full rounded-full transition-all duration-500 mb-2 ${
+                        isActive ? "bg-accent shadow-[0_0_10px_rgba(192,255,0,0.4)]" : 
+                        isCompleted ? "bg-accent/40" : "bg-white/10"
+                      }`} />
+                      <div className="hidden sm:flex items-center gap-1.5">
+                        {isCompleted ? (
+                          <div className="w-4 h-4 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                            <Check size={10} className="text-accent" />
+                          </div>
+                        ) : (
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 text-[9px] font-bold ${
+                            isActive ? "border-accent bg-accent text-black" : "border-muted text-muted"
+                          }`}>
+                            {s.id}
+                          </div>
+                        )}
+                        <span className={`text-[10px] uppercase tracking-wider font-bold truncate ${isActive ? "text-accent" : "text-muted"}`}>
+                          {s.label}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="ml-4 sm:hidden flex-shrink-0">
+                <span className="text-xs font-bold text-accent">Step {assistantStep} of 3</span>
+              </div>
             </div>
 
-            {assistantStep === 1 && (
-              <div className="space-y-4 fade-in-up">
-                <div>
-                  <label htmlFor="foods-they-eat" className="text-xs text-foreground font-semibold mb-1 block">What do you usually eat?</label>
-                  <p className="text-[11px] text-muted mb-2">Share regular meals, snacks, or ingredients. A simple comma-separated list is perfect.</p>
-                  <textarea
-                    id="foods-they-eat"
-                    value={assistantIntake.foodsTheyEat}
-                    onChange={(event) => updateAssistantIntake("foodsTheyEat", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
-                    placeholder="For example: rice, dal, chicken, curd, bananas, roti"
-                  />
+            <div className="transition-all duration-300">
+              {assistantStep === 1 && (
+                <div className="space-y-6 fade-in-up">
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="foods-they-eat" className="text-sm text-foreground font-semibold mb-1 block">What foods are already part of your routine?</label>
+                      <p className="text-[11px] sm:text-xs text-muted mb-3 leading-relaxed">Tell us what you usually eat so we can build around familiar foods instead of forcing you into an unrealistic plan.</p>
+                      <textarea
+                        id="foods-they-eat"
+                        value={assistantIntake.foodsTheyEat}
+                        onChange={(event) => updateAssistantIntake("foodsTheyEat", event.target.value)}
+                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
+                        placeholder="For example: rice, dal, chicken, curd, bananas, roti"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="comfortable-foods" className="text-sm text-foreground font-semibold mb-1 block">Which foods do you enjoy and feel comfortable preparing?</label>
+                      <p className="text-[11px] sm:text-xs text-muted mb-3 leading-relaxed">These preferences help us suggest meals you will actually enjoy and continue eating.</p>
+                      <textarea
+                        id="comfortable-foods"
+                        value={assistantIntake.comfortableFoods}
+                        onChange={(event) => updateAssistantIntake("comfortableFoods", event.target.value)}
+                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
+                        placeholder="For example: home-cooked Indian meals, eggs, oats, paneer"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end pt-2">
+                    <button type="button" onClick={() => setAssistantStep(2)} className="w-full sm:w-auto px-8 py-3.5 rounded-xl accent-gradient text-black font-extrabold text-sm btn-press shadow-[0_0_20px_rgba(192,255,0,0.2)]">Continue to exclusions →</button>
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="comfortable-foods" className="text-xs text-foreground font-semibold mb-1 block">Which foods are you comfortable eating?</label>
-                  <p className="text-[11px] text-muted mb-2">This helps the assistant choose foods you are more likely to enjoy and follow consistently.</p>
-                  <textarea
-                    id="comfortable-foods"
-                    value={assistantIntake.comfortableFoods}
-                    onChange={(event) => updateAssistantIntake("comfortableFoods", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
-                    placeholder="For example: home-cooked Indian meals, eggs, oats, paneer"
-                  />
-                </div>
-                <button type="button" onClick={() => setAssistantStep(2)} className="w-full py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press">Continue →</button>
-              </div>
-            )}
+              )}
 
-            {assistantStep === 2 && (
-              <div className="space-y-4 fade-in-up">
-                <div>
-                  <label htmlFor="foods-to-avoid" className="text-xs text-foreground font-semibold mb-1 block">Anything you dislike or want to avoid?</label>
-                  <p className="text-[11px] text-muted mb-2">Mention ingredients, dishes, or textures you do not want in the plan.</p>
-                  <textarea
-                    id="foods-to-avoid"
-                    value={assistantIntake.foodsToAvoid}
-                    onChange={(event) => updateAssistantIntake("foodsToAvoid", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
-                    placeholder="For example: fish, mushrooms, very spicy food"
-                  />
+              {assistantStep === 2 && (
+                <div className="space-y-6 fade-in-up">
+                  <div className="mb-2">
+                    <h3 className="text-lg font-bold text-foreground mb-1">Tell us what to leave out</h3>
+                    <p className="text-xs text-muted">We’ll remove disliked foods, ingredients, textures, and allergens from your recommendations.</p>
+                  </div>
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="foods-to-avoid" className="text-sm text-foreground font-semibold mb-1 block">Foods you dislike or want to avoid</label>
+                      <textarea
+                        id="foods-to-avoid"
+                        value={assistantIntake.foodsToAvoid}
+                        onChange={(event) => updateAssistantIntake("foodsToAvoid", event.target.value)}
+                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
+                        placeholder="For example: tofu, fish, mushrooms, very spicy food"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="food-allergies" className="text-sm text-foreground font-semibold mb-1 block">Allergies or intolerances</label>
+                      <p className="text-[11px] sm:text-xs text-muted mb-3 leading-relaxed">List every allergy or intolerance clearly. This information is used as a safety filter.</p>
+                      <textarea
+                        id="food-allergies"
+                        value={assistantIntake.allergies}
+                        onChange={(event) => updateAssistantIntake("allergies", event.target.value)}
+                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
+                        placeholder="For example: peanuts, lactose, shellfish. Type &quot;None&quot; if you have no known restrictions."
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2 justify-end">
+                    <button type="button" onClick={() => setAssistantStep(1)} className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-white/15 bg-white/[0.02] text-sm font-bold text-foreground hover:bg-white/[0.05] transition-colors btn-press">Back</button>
+                    <button type="button" onClick={() => setAssistantStep(3)} className="w-full sm:w-auto px-8 py-3.5 rounded-xl accent-gradient text-black font-extrabold text-sm btn-press shadow-[0_0_20px_rgba(192,255,0,0.2)]">Continue to your routine →</button>
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="food-allergies" className="text-xs text-foreground font-semibold mb-1 block">Food allergies or intolerances</label>
-                  <p className="text-[11px] text-muted mb-2">List any allergy or intolerance explicitly. Leave blank if none.</p>
-                  <textarea
-                    id="food-allergies"
-                    value={assistantIntake.allergies}
-                    onChange={(event) => updateAssistantIntake("allergies", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
-                    placeholder="For example: peanuts, lactose"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => setAssistantStep(1)} className="px-4 py-3 rounded-xl glass-card text-sm font-medium text-muted hover:text-foreground transition-colors btn-press">← Back</button>
-                  <button type="button" onClick={() => setAssistantStep(3)} className="flex-1 py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press">Continue →</button>
-                </div>
-              </div>
-            )}
+              )}
 
-            {assistantStep === 3 && (
-              <div className="space-y-4 fade-in-up">
-                <div>
-                  <label htmlFor="cooking-constraints" className="text-xs text-foreground font-semibold mb-1 block">What should the plan fit around?</label>
-                  <p className="text-[11px] text-muted mb-2">Tell me about cooking time, budget, work schedule, or other practical limits.</p>
-                  <textarea
-                    id="cooking-constraints"
-                    value={assistantIntake.cookingConstraints}
-                    onChange={(event) => updateAssistantIntake("cookingConstraints", event.target.value)}
-                    className="w-full min-h-20 px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
-                    placeholder="For example: under 20 minutes on weekdays, affordable ingredients"
-                  />
+              {assistantStep === 3 && (
+                <div className="space-y-6 fade-in-up">
+                  <div className="mb-2">
+                    <h3 className="text-lg font-bold text-foreground mb-1">Make the plan fit your routine</h3>
+                    <p className="text-xs text-muted">Tell us how you live and cook so the plan feels practical on your busiest days.</p>
+                  </div>
+                  <div className="grid lg:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="cooking-constraints" className="text-sm text-foreground font-semibold mb-1 block">Cooking time, budget, and schedule</label>
+                      <textarea
+                        id="cooking-constraints"
+                        value={assistantIntake.cookingConstraints}
+                        onChange={(event) => updateAssistantIntake("cookingConstraints", event.target.value)}
+                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
+                        placeholder="For example: under 30 minutes on weekdays, affordable ingredients, meal prep on Sunday"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="meals-per-day" className="text-sm text-foreground font-semibold mb-1 block">How many meals or eating occasions suit you?</label>
+                      <select
+                        id="meals-per-day"
+                        value={assistantIntake.mealsPerDay}
+                        onChange={(event) => updateAssistantIntake("mealsPerDay", Number(event.target.value))}
+                        className="w-full px-4 py-3.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all appearance-none"
+                      >
+                        <option value={3}>3 meals</option>
+                        <option value={4}>4 meals</option>
+                        <option value={5}>5 meals</option>
+                        <option value={6}>6 meals</option>
+                      </select>
+                      <p className="text-[11px] text-muted mt-3">You can still choose different dishes for variety within your selected meal structure.</p>
+                    </div>
+                  </div>
+                  {assistantError && <p className="text-xs font-semibold text-rose-400 bg-rose-400/10 border border-rose-400/20 p-3 rounded-xl" role="alert">{assistantError}</p>}
+                  <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2 justify-end">
+                    <button type="button" onClick={() => setAssistantStep(2)} className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-white/15 bg-white/[0.02] text-sm font-bold text-foreground hover:bg-white/[0.05] transition-colors btn-press">Back</button>
+                    <button type="button" onClick={generateAssistantPlan} disabled={isGeneratingAssistant} className="w-full sm:w-auto px-8 py-3.5 rounded-xl accent-gradient text-black font-extrabold text-sm btn-press shadow-[0_0_20px_rgba(192,255,0,0.2)] disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2">
+                      {isGeneratingAssistant ? <><Loader2 className="animate-spin" size={18} /> Creating your personalized plan...</> : <><Sparkles size={18} /> Create my personalized plan</>}
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="meals-per-day" className="text-xs text-foreground font-semibold mb-1 block">How many eating occasions work for you?</label>
-                  <select
-                    id="meals-per-day"
-                    value={assistantIntake.mealsPerDay}
-                    onChange={(event) => updateAssistantIntake("mealsPerDay", Number(event.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40"
-                  >
-                    <option value={3}>3 meals</option>
-                    <option value={4}>4 meals</option>
-                    <option value={5}>5 meals</option>
-                    <option value={6}>6 meals</option>
-                  </select>
-                </div>
-                {assistantError && <p className="text-xs text-rose-300" role="alert">{assistantError}</p>}
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => setAssistantStep(2)} className="px-4 py-3 rounded-xl glass-card text-sm font-medium text-muted hover:text-foreground transition-colors btn-press">← Back</button>
-                  <button type="button" onClick={generateAssistantPlan} disabled={isGeneratingAssistant} className="flex-1 py-3 rounded-xl accent-gradient text-black font-bold text-sm btn-press disabled:opacity-60 flex items-center justify-center gap-2">
-                    {isGeneratingAssistant ? <><Loader2 className="animate-spin" size={17} /> Building your plan...</> : <><Sparkles size={17} /> Build my plan</>}
-                  </button>
-                </div>
+              )}
+            </div>
+
+            {/* Privacy Note */}
+            <div className="mt-8 pt-5 border-t border-white/[0.08] flex justify-center fade-in-up">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white/[0.02] border border-white/[0.05]">
+                <ShieldCheck size={14} className="text-muted flex-shrink-0" />
+                <p className="text-[10px] text-muted/80 leading-relaxed max-w-md text-center sm:text-left">
+                  Your answers are used only to personalize your nutrition recommendations. This plan is for general wellness and is not medical advice.
+                </p>
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
@@ -804,11 +899,11 @@ export default function DietPage() {
       </div>
 
       <div className="space-y-4 mb-10">
-        {mealPlan.breakfast && <MealCard meal={mealPlan.breakfast} mealTime="Breakfast" />}
-        {mealPlan.morningSnack && <MealCard meal={mealPlan.morningSnack} mealTime="Morning Snack" />}
-        {mealPlan.lunch && <MealCard meal={mealPlan.lunch} mealTime="Lunch" />}
-        {mealPlan.eveningSnack && <MealCard meal={mealPlan.eveningSnack} mealTime="Evening Snack" />}
-        {mealPlan.dinner && <MealCard meal={mealPlan.dinner} mealTime="Dinner" />}
+        {mealPlan.breakfast && <MealCard meal={mealPlan.breakfast} mealTime="Breakfast" selectedOptionIndex={selectedMealOptions.breakfast || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, breakfast: idx }))} />}
+        {mealPlan.morningSnack && <MealCard meal={mealPlan.morningSnack} mealTime="Morning Snack" selectedOptionIndex={selectedMealOptions.morningSnack || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, morningSnack: idx }))} />}
+        {mealPlan.lunch && <MealCard meal={mealPlan.lunch} mealTime="Lunch" selectedOptionIndex={selectedMealOptions.lunch || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, lunch: idx }))} />}
+        {mealPlan.eveningSnack && <MealCard meal={mealPlan.eveningSnack} mealTime="Evening Snack" selectedOptionIndex={selectedMealOptions.eveningSnack || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, eveningSnack: idx }))} />}
+        {mealPlan.dinner && <MealCard meal={mealPlan.dinner} mealTime="Dinner" selectedOptionIndex={selectedMealOptions.dinner || 0} onSelectOption={(idx) => setSelectedMealOptions(prev => ({ ...prev, dinner: idx }))} />}
       </div>
         {/* AI Reasoning (for standard AI plan only) */}
         {!assistantPlan && aiPlan && (
@@ -834,20 +929,20 @@ export default function DietPage() {
             <div className="sm:border-r border-white/10 sm:pr-4">
               <p className="text-[10px] text-muted mb-0.5">Calories</p>
               <span className="text-foreground font-black text-sm sm:text-base">
-                {mealPlan.totalCalories}
+                {dynamicTotals.totalCalories}
               </span>
             </div>
             <div className="sm:border-r border-white/10 sm:pr-4">
               <p className="text-[10px] text-muted mb-0.5">Protein</p>
-              <span className="text-green-400 font-bold text-sm sm:text-base">{mealPlan.totalProtein}g</span>
+              <span className="text-green-400 font-bold text-sm sm:text-base">{dynamicTotals.totalProtein}g</span>
             </div>
             <div className="sm:border-r border-white/10 sm:pr-4">
               <p className="text-[10px] text-muted mb-0.5">Carbs</p>
-              <span className="text-blue-400 font-bold text-sm sm:text-base">{mealPlan.totalCarbs}g</span>
+              <span className="text-blue-400 font-bold text-sm sm:text-base">{dynamicTotals.totalCarbs}g</span>
             </div>
             <div>
               <p className="text-[10px] text-muted mb-0.5">Fat</p>
-              <span className="text-orange-400 font-bold text-sm sm:text-base">{mealPlan.totalFat}g</span>
+              <span className="text-orange-400 font-bold text-sm sm:text-base">{dynamicTotals.totalFat}g</span>
             </div>
           </div>
         </div>

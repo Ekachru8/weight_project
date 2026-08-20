@@ -135,7 +135,7 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
     return forbiddenTerms.some(term => lower.includes(term));
   };
 
-  const getAlternative = (originalCalories: number, originalProtein: number, originalCarbs: number, originalFat: number): Meal => {
+  const getAlternative = (originalCalories: number, originalProtein: number, originalCarbs: number, originalFat: number, baseName: string): Meal => {
     const safeProteins: string[] = [];
     if (!isForbidden("lentils") && !isForbidden("dal")) safeProteins.push("Lentils", "Dal");
     if (!isForbidden("paneer") && !isForbidden("dairy") && !isForbidden("milk")) safeProteins.push("Paneer");
@@ -153,23 +153,64 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
     if (!isForbidden("potato")) safeCarbs.push("Sweet Potato");
     if (safeCarbs.length === 0) safeCarbs.push("Mixed Veggies");
 
-    const p = safeProteins[Math.floor(Math.random() * safeProteins.length)];
-    const c = safeCarbs[Math.floor(Math.random() * safeCarbs.length)];
+    const options: import("./meals").RecipeOption[] = [];
+    for (let i = 0; i < 4; i++) {
+       const p = safeProteins[i % safeProteins.length];
+       const c = safeCarbs[i % safeCarbs.length];
+       options.push({
+         name: `${p} & ${c} Variation ${i + 1}`,
+         ingredients: [`1 portion of ${p}`, `1 portion of ${c}`, "Spices to taste", "1 tsp oil"],
+         instructions: ["Gather all ingredients.", "Prepare the protein and carbohydrates.", "Cook thoroughly.", "Serve hot."],
+         prepMinutes: 15 + (i * 5),
+         calories: originalCalories,
+         protein: originalProtein,
+         carbs: originalCarbs,
+         fat: originalFat
+       });
+    }
+
+    const p = safeProteins[0];
+    const c = safeCarbs[0];
 
     return {
-      name: `${p} & ${c} Bowl`,
+      name: `${p} & ${c} Safe Bowl`,
       items: `A safe, customized portion of ${p.toLowerCase()} and ${c.toLowerCase()} tailored to your restrictions.`,
+      instructions: ["Gather all ingredients.", "Prepare the protein and carbohydrates.", "Cook thoroughly.", "Serve hot."],
+      prepMinutes: 20,
       calories: originalCalories,
       protein: originalProtein,
       carbs: originalCarbs,
-      fat: originalFat
+      fat: originalFat,
+      options
     };
   };
 
   const sanitizeMeal = (meal: Meal): Meal => {
-    if (isForbidden(meal.name) || isForbidden(meal.items)) {
-      return getAlternative(meal.calories, meal.protein, meal.carbs, meal.fat);
+    const sanitizedOptions = meal.options?.filter(opt => {
+      if (isForbidden(opt.name)) return false;
+      if (opt.ingredients.some(isForbidden)) return false;
+      if (opt.instructions.some(isForbidden)) return false;
+      return true;
+    }) || [];
+
+    const isMainForbidden = isForbidden(meal.name) || isForbidden(meal.items) || (meal.instructions && meal.instructions.some(isForbidden));
+
+    if (isMainForbidden || sanitizedOptions.length < 4) {
+      const alt = getAlternative(meal.calories, meal.protein, meal.carbs, meal.fat, meal.name);
+      
+      if (isMainForbidden) {
+         meal.name = alt.name;
+         meal.items = alt.items;
+         meal.instructions = alt.instructions;
+         meal.prepMinutes = alt.prepMinutes;
+      }
+      
+      while (sanitizedOptions.length < 4) {
+         sanitizedOptions.push(alt.options![sanitizedOptions.length % 4]);
+      }
     }
+    
+    meal.options = sanitizedOptions;
     return meal;
   };
 

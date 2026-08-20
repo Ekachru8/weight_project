@@ -14,18 +14,46 @@ const DIET_TYPES = new Set<DietType>([
   "eggetarian",
 ]);
 
+const RECIPE_OPTION_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    name: { type: "string" },
+    ingredients: { type: "array", items: { type: "string" } },
+    instructions: { type: "array", items: { type: "string" } },
+    prepMinutes: { type: "number" },
+    calories: { type: "number" },
+    protein: { type: "number" },
+    carbs: { type: "number" },
+    fat: { type: "number" },
+  },
+  required: [
+    "name",
+    "ingredients",
+    "instructions",
+    "prepMinutes",
+    "calories",
+    "protein",
+    "carbs",
+    "fat",
+  ],
+};
+
 const MEAL_SCHEMA = {
   type: "object",
   additionalProperties: false,
   properties: {
     name: { type: "string" },
     items: { type: "string" },
+    instructions: { type: "array", items: { type: "string" } },
+    prepMinutes: { type: "number" },
     calories: { type: "number" },
     protein: { type: "number" },
     carbs: { type: "number" },
     fat: { type: "number" },
+    options: { type: "array", items: RECIPE_OPTION_SCHEMA },
   },
-  required: ["name", "items", "calories", "protein", "carbs", "fat"],
+  required: ["name", "items", "instructions", "prepMinutes", "calories", "protein", "carbs", "fat", "options"],
 };
 
 const PLAN_SCHEMA = {
@@ -200,7 +228,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         model,
         temperature: 0.35,
-        max_completion_tokens: 1400,
+        max_completion_tokens: 4000,
         // json_object is supported by more OpenAI-compatible providers than
         // json_schema. The system message still requires the exact shape.
         response_format: { type: "json_object" },
@@ -219,6 +247,9 @@ export async function POST(request: Request) {
               "Set summary to follow this exact format: 'A <meals>-meal, <dietType> plan designed to support <goal> at approximately <calories> kcal per day. It prioritizes foods you enjoy, respects your exclusions, and fits your cooking routine.' (Adjust wording slightly if constraints are missing).",
               "If the user excluded items, explicitly state '<Item> has been excluded based on your preferences.' in the summary. Never use 'I have left out'.",
               "Set safetyNote strictly to: 'This plan is intended for general wellness and is not medical advice. If you have a medical condition, take medication, are pregnant, or have a food allergy, consult a qualified clinician or dietitian before following it.'",
+              "CRITICAL: For EVERY meal, you must generate exactly one recommended dish AND at least four completely distinct, interchangeable recipe options in the `options` array.",
+              "Every option must be a genuinely different dish. Do not just change the title.",
+              "Every recommended dish and option must include detailed step-by-step `instructions`, a list of `ingredients` with quantities, and `prepMinutes`.",
               `The JSON shape is: ${JSON.stringify(PLAN_SCHEMA)}`,
             ].join(" "),
           },

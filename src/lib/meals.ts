@@ -6,13 +6,27 @@
 
 export type DietType = "vegetarian" | "non_vegetarian" | "eggetarian";
 
-export interface Meal {
+export interface RecipeOption {
   name: string;
-  items: string;
+  ingredients: string[];
+  instructions: string[];
+  prepMinutes: number;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
+}
+
+export interface Meal {
+  name: string;
+  items: string;
+  instructions?: string[];
+  prepMinutes?: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  options?: RecipeOption[];
 }
 
 export interface MealPlan {
