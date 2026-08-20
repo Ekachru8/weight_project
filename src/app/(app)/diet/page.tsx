@@ -492,7 +492,12 @@ export default function DietPage() {
     );
   }
 
-  const mealPlan = assistantPlan?.meals || (aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType));
+  const mealPlan = assistantPlan?.meals ?? (aiPlan ? aiPlan.meals : getSampleMealPlan(diet.targetCalories, dietType));
+
+  const displayedCalories = assistantPlan?.meals.totalCalories ?? diet.targetCalories;
+  const displayedProtein = assistantPlan?.meals.totalProtein ?? diet.proteinG;
+  const displayedCarbs = assistantPlan?.meals.totalCarbs ?? diet.carbsG;
+  const displayedFat = assistantPlan?.meals.totalFat ?? diet.fatG;
 
   return (
     <div className="space-y-6">
@@ -680,7 +685,7 @@ export default function DietPage() {
       <div className="glass-card p-6 text-center glow fade-in-up opacity-0 delay-100">
         <Flame className="mx-auto mb-2 text-accent fire-pulse" size={28} />
         <p className="text-5xl font-black accent-text count-up-pop">
-          {diet.targetCalories}
+          {displayedCalories}
         </p>
         <p className="text-sm text-muted mt-1">calories per day</p>
         <div className="flex justify-center gap-6 mt-3 text-xs text-muted">
@@ -696,17 +701,17 @@ export default function DietPage() {
       {/* Macro ring */}
       <div className="fade-in-up opacity-0 delay-200">
         <MacroRing
-          proteinG={diet.proteinG}
-          carbsG={diet.carbsG}
-          fatG={diet.fatG}
-          calories={diet.targetCalories}
+          proteinG={displayedProtein}
+          carbsG={displayedCarbs}
+          fatG={displayedFat}
+          calories={displayedCalories}
         />
       </div>
 
       {/* Diet type toggle */}
       <div className="fade-in-up opacity-0 delay-300">
         <h3 className="text-sm font-semibold text-foreground mb-3">
-          Sample Meal Plan
+          {assistantPlan ? "Your Personalized Meal Plan" : "Sample Meal Plan"}
         </h3>
         <div className="pill-scroll mb-4">
           {[
@@ -741,7 +746,19 @@ export default function DietPage() {
         </div>
 
         {/* AI Reasoning */}
-        {aiPlan && (
+        {assistantPlan ? (
+          <div className="glass-card p-4 mt-4 bg-accent/5 border-accent/20 flex items-start gap-3 fade-in-up">
+            <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Sparkles className="text-black" size={14} />
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-accent mb-1">Personalized Plan</h4>
+              <p className="text-xs text-muted leading-relaxed">
+                {assistantPlan.summary}
+              </p>
+            </div>
+          </div>
+        ) : aiPlan ? (
           <div className="glass-card p-4 mt-4 bg-accent/5 border-accent/20 flex items-start gap-3 fade-in-up">
             <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-black text-xs font-bold">AI</span>
@@ -753,12 +770,12 @@ export default function DietPage() {
               </p>
             </div>
           </div>
-        )}
+        ) : null}
 
         {/* Meal plan totals */}
         <div className="glass-card p-4 mt-4 hover-lift">
           <p className="text-xs text-muted mb-2 font-medium">
-            Sample Day Totals
+            {assistantPlan ? "Your Day Totals" : "Sample Day Totals"}
           </p>
           <div className="flex justify-between text-sm">
             <span className="text-foreground font-bold">
