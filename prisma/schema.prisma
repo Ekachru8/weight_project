@@ -4,7 +4,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 // ── NextAuth Models ──
@@ -73,18 +74,33 @@ model User {
 }
 
 model Exercise {
-  id            Int     @id @default(autoincrement())
-  dayNumber     Int     // 1–6 (no exercises for day 7 rest)
-  dayName       String  // "Chest", "Back", "Legs", "Shoulders", "Arms", "Core"
-  name          String
-  muscleGroup   String
-  equipment     String
-  sets          Int
-  reps          String  // String to support "30–45 sec", "12/side", "15 steps/side"
-  formCue       String
-  sortOrder     Int
-  hoverVideoUrl String?
-  fullVideoUrl  String?
+  id                         Int      @id @default(autoincrement())
+  slug                       String   @unique
+  name                       String
+  category                   String
+  difficulty                 String   @default("Beginner")
+  equipment                  String
+  targetMuscles              String[]
+  movementPattern            String   @default("Compound")
+  description                String   @default("")
+  formCues                   String[]
+  instructions               String[]
+  commonMistakes             String[]
+  safetyTips                 String[]
+  defaultSets                Int      @default(3)
+  defaultReps                String   @default("10-12")
+  estimatedCaloriesPerMinute Int      @default(5)
+  videoUrl                   String?
+  videoStatus                String   @default("not_started")
+  videoExerciseSlug          String?
+
+  // Legacy program fields
+  dayNumber                  Int?
+  dayName                    String?
+  sortOrder                  Int?
+  muscleGroup                String?
+  sets                       Int?
+  reps                       String?
 }
 
 model WorkoutLog {

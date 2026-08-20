@@ -5,15 +5,20 @@ import DayPill from "@/components/DayPill";
 import { Loader2, Dumbbell, Zap, CircleDot, Battery, Star } from "lucide-react";
 
 interface Exercise {
-  id: number;
+  slug: string;
   dayNumber: number;
   dayName: string;
   name: string;
+  category?: string;
+  muscleGroup: string;
+  equipment: string;
   sets: number;
   reps: string;
-  equipment: string;
-  muscleGroup: string;
-  formCue: string;
+  targetMuscles: string[];
+  instructions: string[];
+  formCues: string[];
+  videoUrl?: string;
+  videoStatus: string;
 }
 
 const DAYS = [
@@ -173,7 +178,7 @@ export default function SchedulePage() {
               <div className="space-y-2">
                 {dayExercises.map((ex, i) => (
                   <div
-                    key={ex.id}
+                    key={ex.slug}
                     className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0 group hover:bg-white/[0.02] rounded-lg transition-colors px-1 -mx-1"
                   >
                     <span className="text-accent text-xs font-bold w-5 text-right">
@@ -183,7 +188,7 @@ export default function SchedulePage() {
                       <p className="text-sm font-medium text-foreground truncate">
                         {ex.name}
                       </p>
-                      <p className="text-[10px] text-muted">{ex.formCue}</p>
+                      <p className="text-[10px] text-muted">{ex.formCues?.[0]}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="text-[10px] text-muted flex items-center gap-0.5">
