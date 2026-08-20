@@ -22,6 +22,7 @@ import {
   Sparkles,
   RefreshCw,
   ShieldCheck,
+  Check,
 } from "lucide-react";
 
 interface UserData {
@@ -653,69 +654,132 @@ export default function DietPage() {
         )}
       </div>
 
+      {/* Redesigned Daily Macros Section */}
+      <div className="glass-card p-6 lg:p-8 border-white/10 fade-in-up mt-8 relative overflow-hidden">
+        <div className="absolute top-[-50px] right-[-50px] w-[250px] h-[250px] bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
+        
+        <div className="mb-8 relative z-10">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Your Daily Nutrition Targets</h2>
+          <p className="text-sm text-muted mt-1.5">Personalized to support your goal and daily routine.</p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8 items-center relative z-10">
+          <div>
+            <div className="mb-8">
+              <p className="text-5xl font-black accent-text count-up-pop tracking-tight flex items-baseline gap-2">
+                {displayedCalories} <span className="text-xl text-foreground font-bold tracking-normal">kcal</span>
+              </p>
+              <p className="text-[11px] uppercase tracking-widest text-muted font-bold mt-2">Daily energy target</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
+                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Protein</p>
+                <p className="text-2xl font-black text-green-400">{displayedProtein} <span className="text-sm font-bold text-muted ml-0.5">g</span></p>
+              </div>
+              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
+                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Carbohydrates</p>
+                <p className="text-2xl font-black text-blue-400">{displayedCarbs} <span className="text-sm font-bold text-muted ml-0.5">g</span></p>
+              </div>
+              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
+                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Fat</p>
+                <p className="text-2xl font-black text-orange-400">{displayedFat} <span className="text-sm font-bold text-muted ml-0.5">g</span></p>
+              </div>
+              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
+                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Meals</p>
+                <p className="text-2xl font-black text-accent">{assistantIntake.mealsPerDay || 5}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center pt-4 lg:pt-0">
+            <MacroRing
+              proteinG={displayedProtein}
+              carbsG={displayedCarbs}
+              fatG={displayedFat}
+              calories={displayedCalories}
+            />
+          </div>
+        </div>
+
+        <div className="mt-8 border-t border-white/10 pt-4 text-center relative z-10">
+          <p className="text-[11px] text-muted/60">Your targets are calculated from your current goal, body metrics, activity level, and personalized meal plan.</p>
+        </div>
+      </div>
+
+      {/* Premium Plan Summary */}
       {assistantPlan && (
-        <div className="glass-card p-5 border-accent/20 fade-in-up">
-          <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0">
-              {assistantPlan.source === "ai" ? <Sparkles className="text-accent" size={18} /> : <ShieldCheck className="text-accent" size={18} />}
+        <div className="glass-card p-6 lg:p-8 border-accent/20 fade-in-up mt-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-accent/5 rounded-full blur-[80px] pointer-events-none" />
+          
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 relative z-10">
+            <div className="w-14 h-14 rounded-2xl accent-gradient flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(192,255,0,0.2)]">
+              {assistantPlan.source === "ai" ? <Sparkles className="text-black" size={28} /> : <ShieldCheck className="text-black" size={28} />}
             </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-accent">{assistantPlan.source === "ai" ? "AI personalized" : "Personalized starter"}</p>
-                <span className="text-[10px] text-muted">Built from your answers</span>
-              </div>
-              <h2 className="text-lg font-bold text-foreground mt-1">{assistantPlan.headline}</h2>
-              <p className="text-sm text-muted leading-relaxed mt-1">{assistantPlan.summary}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] uppercase tracking-[0.16em] font-bold text-accent mb-2">Your Personalized Plan</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground">A nutrition plan built around your lifestyle</h3>
+              <p className="text-sm text-foreground/80 leading-relaxed mt-3 max-w-3xl">
+                A {assistantIntake.mealsPerDay || 5}-meal {dietType.replace('_', ' ')} plan designed to support your {user?.goal || "wellness"} goal at approximately {displayedCalories} kcal per day. It prioritizes foods you enjoy, respects your exclusions, and fits your cooking routine. Foods you marked as unsuitable have been excluded from this plan.
+              </p>
             </div>
           </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            {assistantPlan.swaps.slice(0, 3).map((swap, index) => (
-              <div key={`${swap}-${index}`} className="rounded-xl bg-white/[0.035] border border-white/[0.06] p-3">
-                <p className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">{index === 0 ? "Flexible" : index === 1 ? "Protein" : "Routine"}</p>
-                <p className="text-xs text-foreground/80 leading-relaxed">{swap}</p>
-              </div>
-            ))}
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 relative z-10">
+            <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-5 hover-lift">
+              <p className="text-[10px] uppercase tracking-[0.12em] text-accent font-bold mb-2">Built Around Your Preferences</p>
+              <p className="text-xs text-foreground/80 leading-relaxed">Prioritizes familiar foods you enjoy and are comfortable preparing.</p>
+            </div>
+            <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-5 hover-lift">
+              <p className="text-[10px] uppercase tracking-[0.12em] text-accent font-bold mb-2">Balanced for Your Goal</p>
+              <p className="text-xs text-foreground/80 leading-relaxed">Provides approximately {displayedProtein} g protein, {displayedCarbs} g carbohydrates, and {displayedFat} g fat.</p>
+            </div>
+            <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-5 hover-lift">
+              <p className="text-[10px] uppercase tracking-[0.12em] text-accent font-bold mb-2">Designed for Your Routine</p>
+              <p className="text-xs text-foreground/80 leading-relaxed">
+                {assistantIntake.cookingConstraints 
+                  ? `Built to fit your schedule and cooking limits: ${assistantIntake.cookingConstraints}.`
+                  : "Designed to be practical, flexible, and easy to follow."}
+              </p>
+            </div>
           </div>
-          <div className="mt-4 flex items-start gap-2 rounded-xl bg-yellow-400/[0.06] border border-yellow-400/15 p-3">
-            <ShieldCheck className="text-yellow-300 flex-shrink-0 mt-0.5" size={15} />
-            <p className="text-[11px] text-yellow-100/75 leading-relaxed">{assistantPlan.safetyNote}</p>
+
+          {assistantPlan.swaps && assistantPlan.swaps.length > 0 && (
+            <div className="mt-8 border-t border-white/10 pt-6 relative z-10">
+              <h4 className="text-[11px] uppercase tracking-[0.12em] text-muted font-bold mb-4">Smart Substitutions</h4>
+              <ul className="space-y-3">
+                {assistantPlan.swaps.map((swap, index) => (
+                  <li key={index} className="flex items-start gap-3 text-xs sm:text-sm text-foreground/80 leading-relaxed">
+                    <Check className="text-accent flex-shrink-0 mt-0.5" size={16} />
+                    <span>{swap}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-6 border-t border-white/10 pt-5 flex items-start gap-2.5 relative z-10">
+            <ShieldCheck className="text-muted flex-shrink-0 mt-0.5" size={16} />
+            <p className="text-[11px] text-muted leading-relaxed">
+              <strong className="text-foreground font-semibold">Nutrition note: </strong>
+              This plan is intended for general wellness and is not medical advice. If you have a medical condition, take medication, are pregnant, or have a food allergy, consult a qualified clinician or dietitian before following it.
+            </p>
           </div>
         </div>
       )}
 
-      {/* Calorie target hero with animated counter effect */}
-      <div className="glass-card p-6 text-center glow fade-in-up opacity-0 delay-100">
-        <Flame className="mx-auto mb-2 text-accent fire-pulse" size={28} />
-        <p className="text-5xl font-black accent-text count-up-pop">
-          {displayedCalories}
-        </p>
-        <p className="text-sm text-muted mt-1">calories per day</p>
-        <div className="flex justify-center gap-6 mt-3 text-xs text-muted">
-          <span>
-            BMR: <strong className="text-foreground">{diet.bmr}</strong>
-          </span>
-          <span>
-            TDEE: <strong className="text-foreground">{diet.tdee}</strong>
-          </span>
-        </div>
-      </div>
-
-      {/* Macro ring */}
-      <div className="fade-in-up opacity-0 delay-200">
-        <MacroRing
-          proteinG={displayedProtein}
-          carbsG={displayedCarbs}
-          fatG={displayedFat}
-          calories={displayedCalories}
-        />
-      </div>
-
-      {/* Diet type toggle */}
-      <div className="fade-in-up opacity-0 delay-300">
-        <h3 className="text-sm font-semibold text-foreground mb-3">
+      {/* Redesigned Meal Plan Section */}
+      <div className="fade-in-up mt-10 mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
           {assistantPlan ? "Your Personalized Meal Plan" : "Sample Meal Plan"}
-        </h3>
-        <div className="pill-scroll mb-4">
+        </h2>
+        {assistantPlan && (
+          <p className="text-sm text-muted mt-2">Meals selected around your preferences, exclusions, nutrition targets, and daily routine.</p>
+        )}
+      </div>
+
+      <div className="fade-in-up mb-6 flex justify-start">
+        <div className="flex bg-white/[0.035] border border-white/10 p-1.5 rounded-2xl w-full sm:w-auto overflow-x-auto snap-x hide-scrollbar shadow-inner">
           {[
             { value: "non_vegetarian" as DietType, label: "🍗 Non-Veg" },
             { value: "vegetarian" as DietType, label: "🥬 Vegetarian" },
@@ -727,68 +791,66 @@ export default function DietPage() {
                 setDietType(dt.value);
                 setAssistantPlan(null);
               }}
-              className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-500 ease-out border flex items-center justify-center backdrop-blur-md ${
+              className={`snap-center flex-1 sm:flex-none whitespace-nowrap px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ease-out ${
                 dietType === dt.value
-                  ? "bg-white/[0.08] border-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-                  : "bg-white/[0.02] border-white/[0.05] text-muted hover:bg-white/[0.04] hover:border-white/10 hover:text-white"
+                  ? "bg-white/[0.1] text-white shadow-md border-white/10 border"
+                  : "text-muted hover:text-white hover:bg-white/[0.05] border border-transparent"
               }`}
             >
               {dt.label}
             </button>
           ))}
         </div>
+      </div>
 
-        {/* Meal cards */}
-        <div className="space-y-3">
-          <MealCard meal={mealPlan.breakfast} mealTime="Breakfast" />
-          <MealCard meal={mealPlan.morningSnack} mealTime="Morning Snack" />
-          <MealCard meal={mealPlan.lunch} mealTime="Lunch" />
-          <MealCard meal={mealPlan.eveningSnack} mealTime="Evening Snack" />
-          <MealCard meal={mealPlan.dinner} mealTime="Dinner" />
-        </div>
-
-        {/* AI Reasoning */}
-        {assistantPlan ? (
+      <div className="space-y-4 mb-10">
+        {mealPlan.breakfast && <MealCard meal={mealPlan.breakfast} mealTime="Breakfast" />}
+        {mealPlan.morningSnack && <MealCard meal={mealPlan.morningSnack} mealTime="Morning Snack" />}
+        {mealPlan.lunch && <MealCard meal={mealPlan.lunch} mealTime="Lunch" />}
+        {mealPlan.eveningSnack && <MealCard meal={mealPlan.eveningSnack} mealTime="Evening Snack" />}
+        {mealPlan.dinner && <MealCard meal={mealPlan.dinner} mealTime="Dinner" />}
+      </div>
+        {/* AI Reasoning (for standard AI plan only) */}
+        {!assistantPlan && aiPlan && (
           <div className="glass-card p-4 mt-4 bg-accent/5 border-accent/20 flex items-start gap-3 fade-in-up">
-            <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Sparkles className="text-black" size={14} />
+            <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+              <span className="text-black text-[10px] font-extrabold uppercase tracking-widest">AI</span>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-accent mb-1">Personalized Plan</h4>
-              <p className="text-xs text-muted leading-relaxed">
-                {assistantPlan.summary}
-              </p>
-            </div>
-          </div>
-        ) : aiPlan ? (
-          <div className="glass-card p-4 mt-4 bg-accent/5 border-accent/20 flex items-start gap-3 fade-in-up">
-            <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-black text-xs font-bold">AI</span>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-accent mb-1">Why this plan?</h4>
+              <h4 className="text-xs uppercase tracking-widest text-accent font-bold mb-1.5">Why this plan?</h4>
               <p className="text-xs text-muted leading-relaxed">
                 {aiPlan.aiReasoning}
               </p>
             </div>
           </div>
-        ) : null}
+        )}
 
         {/* Meal plan totals */}
-        <div className="glass-card p-4 mt-4 hover-lift">
-          <p className="text-xs text-muted mb-2 font-medium">
+        <div className="glass-card p-5 mt-6 hover-lift bg-white/[0.02]">
+          <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-3">
             {assistantPlan ? "Your Day Totals" : "Sample Day Totals"}
           </p>
-          <div className="flex justify-between text-sm">
-            <span className="text-foreground font-bold">
-              {mealPlan.totalCalories} kcal
-            </span>
-            <span className="text-green-400">P: {mealPlan.totalProtein}g</span>
-            <span className="text-blue-400">C: {mealPlan.totalCarbs}g</span>
-            <span className="text-orange-400">F: {mealPlan.totalFat}g</span>
+          <div className="grid grid-cols-4 gap-2 sm:gap-4 text-center sm:text-left">
+            <div className="sm:border-r border-white/10 sm:pr-4">
+              <p className="text-[10px] text-muted mb-0.5">Calories</p>
+              <span className="text-foreground font-black text-sm sm:text-base">
+                {mealPlan.totalCalories}
+              </span>
+            </div>
+            <div className="sm:border-r border-white/10 sm:pr-4">
+              <p className="text-[10px] text-muted mb-0.5">Protein</p>
+              <span className="text-green-400 font-bold text-sm sm:text-base">{mealPlan.totalProtein}g</span>
+            </div>
+            <div className="sm:border-r border-white/10 sm:pr-4">
+              <p className="text-[10px] text-muted mb-0.5">Carbs</p>
+              <span className="text-blue-400 font-bold text-sm sm:text-base">{mealPlan.totalCarbs}g</span>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted mb-0.5">Fat</p>
+              <span className="text-orange-400 font-bold text-sm sm:text-base">{mealPlan.totalFat}g</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }

@@ -95,16 +95,17 @@ export function buildFallbackDietAssistantPlan(
   const favorite = firstListItem(intake.comfortableFoods) || firstListItem(intake.foodsTheyEat);
   const avoid = firstListItem(intake.foodsToAvoid);
   const mealCount = Math.min(6, Math.max(3, intake.mealsPerDay || 5));
-  const goalLabel = goal === "lose" ? "fat-loss" : goal === "gain" ? "muscle-gain" : "maintenance";
-  const foodLine = favorite
-    ? ` It gives priority to foods you are comfortable with, starting with ${favorite}.`
-    : " It uses familiar, balanced foods that are easy to swap as your preferences become clearer.";
-  const avoidLine = avoid ? ` I have left out ${avoid} from the suggestions.` : "";
+  const goalLabel = goal === "lose" ? "fat loss" : goal === "gain" ? "muscle gain" : "maintenance";
+  const capitalizedAvoid = avoid ? avoid.charAt(0).toUpperCase() + avoid.slice(1) : "";
+  
+  const constraintsText = intake.cookingConstraints ? ` and fits your cooking routine` : "";
+  const favText = favorite ? ` It prioritizes foods you enjoy, respects your exclusions,${constraintsText}.` : ` It uses familiar, balanced foods, respects your exclusions,${constraintsText}.`;
+  const exclusionsText = avoid ? ` ${capitalizedAvoid} has been excluded based on your preferences.` : "";
 
   return {
     meals,
-    headline: `${goalLabel[0].toUpperCase()}${goalLabel.slice(1)} plan, made around you`,
-    summary: `A ${mealCount}-meal ${dietLabel(dietType)} day targeting about ${targetCalories} kcal and your existing macro targets.${foodLine}${avoidLine}`,
+    headline: "A nutrition plan built around your lifestyle",
+    summary: `A ${mealCount}-meal, ${dietLabel(dietType)} plan designed to support ${goalLabel} at approximately ${targetCalories} kcal per day.${favText}${exclusionsText}`,
     aiReasoning: `This starter plan keeps your ${dietLabel(dietType)} preference and ${goalLabel} goal in view while targeting approximately ${targetCalories} kcal for your current ${weight} kg body weight. Use the swaps below to make it fit your routine.`,
     swaps: [
       "Swap rice, roti, oats, or potatoes in similar portions when you want a different carbohydrate source.",
@@ -113,7 +114,7 @@ export function buildFallbackDietAssistantPlan(
         ? `Cooking constraint noted: ${intake.cookingConstraints}. Choose the quickest preparation method available.`
         : "Batch-cook one protein and one carbohydrate source to make the plan easier to follow.",
     ],
-    safetyNote: "This is general wellness guidance, not medical care. If you have a medical condition, take medication, are pregnant, or have a food allergy, confirm the plan with a qualified clinician or dietitian.",
+    safetyNote: "This plan is intended for general wellness and is not medical advice. If you have a medical condition, take medication, are pregnant, or have a food allergy, consult a qualified clinician or dietitian before following it.",
     source: "fallback",
   };
 }
