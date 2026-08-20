@@ -309,7 +309,7 @@ export default function OnboardingPage() {
                   value={data.age}
                   onChange={(e) => updateField("age", e.target.value)}
                   placeholder="25"
-                  className="auth-input"
+                  className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200"
                 />
               </div>
             </div>
@@ -340,7 +340,7 @@ export default function OnboardingPage() {
                   value={data.heightCm}
                   onChange={(e) => updateField("heightCm", e.target.value)}
                   placeholder="175"
-                  className="auth-input"
+                  className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200"
                 />
               </div>
 
@@ -365,7 +365,7 @@ export default function OnboardingPage() {
                     value={data.weightKg}
                     onChange={(e) => updateField("weightKg", e.target.value)}
                     placeholder="75.0"
-                    className="auth-input pl-10"
+                    className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10"
                   />
                 </div>
               </div>
@@ -405,7 +405,7 @@ export default function OnboardingPage() {
                       updateField("targetWeightKg", e.target.value)
                     }
                     placeholder="70.0"
-                    className="auth-input pl-10"
+                    className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10"
                   />
                 </div>
                 {data.goal && (

@@ -14,11 +14,10 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/schedule", label: "Schedule", icon: Calendar },
-  { href: "/exercises", label: "Exercises", icon: Dumbbell },
-  { href: "/progress", label: "Progress", icon: TrendingUp },
+  { href: "/dashboard", label: "Overview", icon: Home },
   { href: "/diet", label: "Diet", icon: Utensils },
+  { href: "/progress", label: "Progress", icon: TrendingUp },
+  { href: "/exercises", label: "Workouts", icon: Dumbbell },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
@@ -77,8 +76,8 @@ export default function Navbar() {
         className="hidden md:flex fixed left-0 top-0 bottom-0 w-20 flex-col items-center py-6 gap-2 bg-[#0d1117]/80 backdrop-blur-xl border-r border-border z-50 justify-between"
       >
         <div className="flex flex-col items-center w-full gap-2">
-          <div className="w-10 h-10 rounded-xl accent-gradient flex items-center justify-center mb-6 hover-lift shadow-[0_0_20px_rgba(192,255,0,0.2)]">
-            <Dumbbell size={20} className="text-black" />
+          <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6">
+            <span className="text-accent font-black text-lg">H</span>
           </div>
           {navItems.map((item) => {
             const isActive =
@@ -93,17 +92,19 @@ export default function Navbar() {
                 id={`nav-desktop-${item.label.toLowerCase()}`}
                 className={`group relative flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-14 ${
                   isActive
-                    ? "text-accent bg-accent-dim shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
+                    ? "text-accent bg-accent/5 shadow-[inset_0_1px_1px_rgba(180,245,53,0.1)]"
                     : "text-muted hover:text-foreground hover:bg-card"
                 }`}
               >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent rounded-r-full" />
+                )}
                 <Icon
-                  size={20}
-                  strokeWidth={isActive ? 2.5 : 1.5}
-                  className={`transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-105"}`}
+                  size={22}
+                  strokeWidth={isActive ? 2 : 1.5}
+                  className={`transition-transform duration-300 ${isActive ? "scale-105" : ""}`}
                 />
-                <span className="text-[9px] font-medium">{item.label}</span>
-                <span className="absolute left-full ml-3 px-2 py-1 bg-[#1a1f2e] text-foreground text-xs font-medium rounded-lg opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap border border-border shadow-lg">
+                <span className="text-[9px] font-medium hidden md:block opacity-0 group-hover:opacity-100 absolute left-16 bg-black/80 px-2 py-1 rounded border border-white/10 pointer-events-none transition-opacity whitespace-nowrap">
                   {item.label}
                 </span>
               </Link>

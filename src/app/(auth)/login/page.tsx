@@ -89,7 +89,7 @@ export default function LoginPage() {
               Welcome Back
             </h1>
             <p className="text-sm text-muted">
-              Sign in to continue your journey
+              Sign in to securely access your plan
             </p>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function LoginPage() {
                     : "+91 98765 43210"
                 }
                 required
-                className="auth-input pl-10"
+                className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10"
               />
             </div>
 
@@ -197,7 +197,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Your password"
                 required
-                className="auth-input pl-10 pr-12"
+                className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10 pr-12"
               />
               <button
                 type="button"

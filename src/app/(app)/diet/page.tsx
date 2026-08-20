@@ -307,12 +307,11 @@ export default function DietPage() {
           <div className="w-16 h-16 rounded-2xl accent-gradient flex items-center justify-center mx-auto mb-4 hover-lift">
             <Target size={28} className="text-black" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-2">
-            Set Up Your Diet Plan
+          <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
+            Your nutrition plan
           </h1>
           <p className="text-sm text-muted">
-            Tell us about yourself so we can calculate your daily calorie and
-            macro targets.
+            Meals and recipes selected around your goal, preferences, and routine.
           </p>
         </div>
 
@@ -1009,7 +1008,7 @@ export default function DietPage() {
         <div className="absolute top-[-50px] right-[-50px] w-[250px] h-[250px] bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
         
         <div className="mb-8 relative z-10">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Your Daily Nutrition Targets</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Your daily nutrition targets</h2>
           <p className="text-sm text-muted mt-1.5">Personalized to support your goal and daily routine.</p>
         </div>
 
@@ -1120,9 +1119,11 @@ export default function DietPage() {
 
       {/* Redesigned Meal Plan Section */}
       <div className="fade-in-up mt-10 mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-          {assistantPlan ? "Your Personalized Meal Plan" : "Sample Meal Plan"}
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+            {assistantPlan ? "Your personalized meal plan" : "Sample meal plan"}
+          </h2>
+        </div>
         {assistantPlan && (
           <p className="text-sm text-muted mt-2">Meals selected around your preferences, exclusions, nutrition targets, and daily routine.</p>
         )}

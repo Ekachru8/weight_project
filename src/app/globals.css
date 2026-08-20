@@ -17,18 +17,18 @@
 }
 
 :root {
-  --background: #030303;
-  --foreground: #f8fafc;
+  --background: #0a0a0a;
+  --foreground: #f4f4f5;
   --card: rgba(255, 255, 255, 0.02);
   --card-hover: rgba(255, 255, 255, 0.04);
-  --border: rgba(255, 255, 255, 0.06);
-  --accent: #c0ff00;
-  --accent-dim: rgba(192, 255, 0, 0.1);
-  --accent-glow: rgba(192, 255, 0, 0.25);
-  --muted: #8492a6;
-  --danger: #ff3366;
-  --success: #00e676;
-  --warning: #ffaa00;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent: #b4f535;
+  --accent-dim: rgba(180, 245, 53, 0.1);
+  --accent-glow: rgba(180, 245, 53, 0.2);
+  --muted: #a1a1aa;
+  --danger: #fb7185;
+  --success: #34d399;
+  --warning: #fbbf24;
 }
 
 * {
@@ -79,24 +79,18 @@ body::before {
 /* ── Glassmorphism card ── */
 .glass-card {
   background: var(--card);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border);
-  border-radius: 1.25rem;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.02),
-    0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.2);
 }
 
 .glass-card:hover {
   background: var(--card-hover);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow:
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
-    inset 0 -1px 1px 0 rgba(255, 255, 255, 0.03),
-    0 12px 40px 0 rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Accent gradient ── */
@@ -129,22 +123,21 @@ body::before {
 
 /* ── Glow effect ── */
 .glow {
-  box-shadow: 0 0 30px rgba(192, 255, 0, 0.15),
-    0 0 80px rgba(192, 255, 0, 0.05);
+  box-shadow: 0 0 20px rgba(180, 245, 53, 0.1);
 }
 
-/* ── Pulse animation ── */
+/* ── Pulse animation (Muted) ── */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(192, 255, 0, 0.15);
+    box-shadow: 0 0 10px rgba(180, 245, 53, 0.1);
   }
   50% {
-    box-shadow: 0 0 30px rgba(192, 255, 0, 0.35);
+    box-shadow: 0 0 20px rgba(180, 245, 53, 0.15);
   }
 }
 
 .pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulse-glow 3s ease-in-out infinite;
 }
 
 /* ── Fade in animation ── */

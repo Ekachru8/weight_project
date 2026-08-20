@@ -86,7 +86,7 @@ export default function MacroRing({
           return (
             <div key={d.name} className="flex items-center gap-3">
               <div
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-[0_0_10px_currentColor]"
+                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                 style={{ backgroundColor: d.color, color: d.color }}
               />
               <div className="flex-1">
@@ -105,7 +105,6 @@ export default function MacroRing({
                     style={{
                       width: `${percent}%`,
                       backgroundColor: d.color,
-                      boxShadow: `0 0 10px ${d.color}`,
                       animationDelay: "300ms",
                     }}
                   />

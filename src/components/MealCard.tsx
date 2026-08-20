@@ -105,9 +105,7 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
               }}
               className="flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-white transition-colors btn-press"
             >
-              {mealTime.toLowerCase().includes("snack")
-                ? "Explore snack options"
-                : `Explore ${mealTime.toLowerCase()} options`}
+              Explore other recipes
               {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
           </div>
@@ -174,7 +172,7 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
                       }}
                       className="w-full mt-4 py-2 rounded-lg border border-accent/30 text-accent hover:bg-accent/10 transition-colors text-xs font-bold btn-press"
                     >
-                      Choose this option
+                      Choose this recipe
                     </button>
                   )}
                 </div>

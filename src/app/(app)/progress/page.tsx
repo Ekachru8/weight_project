@@ -21,6 +21,7 @@ export default function ProgressPage() {
   const [weightLogs, setWeightLogs] = useState<WeightEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [registrationDate, setRegistrationDate] = useState<string>("");
+  const [user, setUser] = useState<any>(null);
   const [newWeight, setNewWeight] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -36,6 +37,7 @@ export default function ProgressPage() {
       const userData = await userRes.json();
       setLogs(logsData);
       setWeightLogs(weightData);
+      setUser(userData);
       setRegistrationDate(userData.createdAt?.split("T")[0] || new Date().toISOString().split("T")[0]);
     } catch (error) {
       console.error("Failed to fetch progress data:", error);
@@ -117,116 +119,131 @@ export default function ProgressPage() {
     : null;
   const weightDeltaNum = weightDelta ? parseFloat(weightDelta) : 0;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="animate-spin text-accent" size={32} />
-      </div>
-    );
+  // Goal progress
+  let progressPct = 0;
+  if (user?.weightKg && user?.targetWeightKg) {
+    const diff = Math.abs(user.weightKg - user.targetWeightKg);
+    progressPct = Math.max(0, Math.min(100, 100 - (diff * 5))); // Rough estimation
   }
 
   return (
-    <div className="space-y-6">
-      <div className="fade-in-up">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground mb-1">
-          Progress
+    <div className="space-y-8 fade-in-up pb-8">
+      {/* Header */}
+      <div>
+        <p className="text-xs uppercase tracking-[0.2em] font-bold text-accent mb-2">Progress</p>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-2">
+          Your progress, at a glance.
         </h1>
-        <p className="text-sm text-muted">
-          Track your consistency and weight trend
+        <p className="text-sm text-foreground/70">
+          Small steps. Real progress. Consistency is what matters most.
         </p>
       </div>
 
-      {/* Stats grid with animated counters */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 fade-in-up opacity-0 delay-100">
-        <div className="glass-card p-4 text-center hover-lift">
-          <Flame className="mx-auto mb-1 text-accent" size={18} />
-          <p className="text-2xl font-extrabold accent-text count-up-pop">{currentStreak}</p>
-          <p className="text-[10px] text-muted">Current Streak</p>
-        </div>
-        <div className="glass-card p-4 text-center hover-lift">
-          <Trophy className="mx-auto mb-1 text-yellow-500" size={18} />
-          <p className="text-2xl font-extrabold text-yellow-400 count-up-pop" style={{ animationDelay: "100ms" }}>
-            {longestStreak}
+      {/* Goal & Weight Summary */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="glass-card p-5 border-white/5 hover-lift">
+          <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Current Weight</p>
+          <p className="text-2xl sm:text-3xl font-black text-foreground">
+            {user?.weightKg || 0} <span className="text-sm font-bold text-muted ml-1 tracking-normal">kg</span>
           </p>
-          <p className="text-[10px] text-muted">Best Streak</p>
         </div>
-        <div className="glass-card p-4 text-center hover-lift">
-          <Calendar className="mx-auto mb-1 text-blue-400" size={18} />
-          <p className="text-2xl font-extrabold text-blue-400 count-up-pop" style={{ animationDelay: "200ms" }}>
-            {monthCompleted}
+        <div className="glass-card p-5 border-white/5 hover-lift">
+          <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Target Weight</p>
+          <p className="text-2xl sm:text-3xl font-black text-blue-400">
+            {user?.targetWeightKg || 0} <span className="text-sm font-bold text-muted ml-1 tracking-normal">kg</span>
           </p>
-          <p className="text-[10px] text-muted">This Month</p>
         </div>
-        <div className="glass-card p-4 text-center hover-lift">
-          <TrendingUp className="mx-auto mb-1 text-emerald-400" size={18} />
-          <p className="text-2xl font-extrabold text-emerald-400 count-up-pop" style={{ animationDelay: "300ms" }}>
-            {completionRate}%
+        <div className="glass-card p-5 border-white/5 hover-lift">
+          <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Total Change</p>
+          <p className={`text-2xl sm:text-3xl font-black flex items-center gap-1 ${weightDeltaNum < 0 ? "text-emerald-400" : weightDeltaNum > 0 ? "text-orange-400" : "text-muted"}`}>
+            {weightDeltaNum < 0 ? <ArrowDown size={18} /> : weightDeltaNum > 0 ? <ArrowUp size={18} /> : <Minus size={18} />}
+            {Math.abs(weightDeltaNum)} <span className="text-sm font-bold text-muted ml-1 tracking-normal">kg</span>
           </p>
-          <p className="text-[10px] text-muted">All-Time Rate</p>
         </div>
-      </div>
-
-      {/* Weight delta badge */}
-      {weightDelta !== null && (
-        <div className="fade-in-up opacity-0 delay-200">
-          <div className="glass-card p-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Scale size={16} className="text-muted" />
-              <span className="text-xs text-muted">Weight Change</span>
-            </div>
-            <div className={`flex items-center gap-1 text-sm font-bold ${
-              weightDeltaNum < 0 ? "text-blue-400" : weightDeltaNum > 0 ? "text-emerald-400" : "text-muted"
-            }`}>
-              {weightDeltaNum < 0 ? <ArrowDown size={14} /> : weightDeltaNum > 0 ? <ArrowUp size={14} /> : <Minus size={14} />}
-              {weightDeltaNum > 0 ? "+" : ""}{weightDelta} kg
-            </div>
+        <div className="glass-card p-5 border-white/5 hover-lift flex flex-col justify-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-[40px]" />
+          <div className="flex justify-between items-end mb-2 relative z-10">
+            <span className="text-[10px] uppercase tracking-wider text-muted font-bold">Goal Progress</span>
+            <span className="text-xs font-bold text-accent">{Math.round(progressPct)}%</span>
           </div>
-        </div>
-      )}
-
-      {/* Calendar Heatmap */}
-      <div className="fade-in-up opacity-0 delay-200">
-        <CalendarHeatmap logs={logs} registrationDate={registrationDate} />
-      </div>
-
-      {/* Weight Logging */}
-      <div className="fade-in-up opacity-0 delay-300">
-        <div className="glass-card p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Scale size={16} className="text-accent" />
-            <h3 className="text-sm font-semibold text-foreground">
-              Log Weight
-            </h3>
-          </div>
-          <div className="flex gap-2">
-            <input
-              id="weight-input"
-              type="number"
-              step="0.1"
-              placeholder="Weight in kg"
-              value={newWeight}
-              onChange={(e) => setNewWeight(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-lg bg-background border border-border text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all duration-200"
+          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden relative z-10">
+            <div 
+              className="h-full accent-gradient rounded-full" 
+              style={{ width: `${progressPct}%` }}
             />
-            <button
-              id="log-weight-btn"
-              onClick={logWeight}
-              disabled={!newWeight || saving}
-              className="px-4 py-2 rounded-lg bg-gradient-to-b from-accent/20 to-accent/5 text-accent border border-accent/20 ring-1 ring-accent shadow-sm shadow-accent/10 text-sm font-semibold btn-press disabled:opacity-50 transition-all hover:bg-white/[0.02]"
-            >
-              {saving ? (
-                <Loader2 className="animate-spin" size={16} />
-              ) : (
-                "Log"
-              )}
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Weight Trend Chart */}
-      <div className="fade-in-up opacity-0 delay-400">
-        <WeightChart data={weightLogs} />
+      {/* Weight Chart and Logging */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="glass-card p-6 border-white/5">
+            <h2 className="text-lg font-bold text-foreground mb-4">Weight History</h2>
+            {weightLogs.length > 0 ? (
+              <WeightChart data={weightLogs} />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4">
+                  <Scale className="text-muted/50" size={24} />
+                </div>
+                <p className="text-sm font-medium text-foreground/80 mb-1">No entries yet</p>
+                <p className="text-xs text-muted max-w-sm">Your progress history will appear here after your first check-in.</p>
+              </div>
+            )}
+          </div>
+
+          <div className="glass-card p-6 border-white/5">
+            <h2 className="text-lg font-bold text-foreground mb-4">Workout Consistency</h2>
+            <CalendarHeatmap logs={logs} registrationDate={registrationDate} />
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="glass-card p-6 border-white/5">
+            <h2 className="text-lg font-bold text-foreground mb-4">Log Today&apos;s Weight</h2>
+            <p className="text-xs text-muted mb-4">Record your weight to keep your progress chart up to date.</p>
+            <div className="flex gap-2">
+              <input
+                id="weight-input"
+                type="number"
+                step="0.1"
+                placeholder="Weight in kg"
+                value={newWeight}
+                onChange={(e) => setNewWeight(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200"
+              />
+              <button
+                id="log-weight-btn"
+                onClick={logWeight}
+                disabled={!newWeight || saving}
+                className="px-6 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-foreground text-sm font-bold btn-press disabled:opacity-50 transition-all hover:bg-white/[0.1] flex items-center justify-center min-w-[80px]"
+              >
+                {saving ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  "Save"
+                )}
+              </button>
+            </div>
+          </div>
+          
+          <div className="glass-card p-6 border-white/5">
+            <h2 className="text-lg font-bold text-foreground mb-4">Recent Entries</h2>
+            {weightLogs.length > 0 ? (
+              <div className="space-y-1">
+                {[...weightLogs].reverse().slice(0, 5).map((log, i) => (
+                  <div key={i} className="flex justify-between items-center py-2.5 border-b border-white/5 last:border-0">
+                    <span className="text-xs text-muted font-medium">{new Date(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <span className="text-sm font-bold text-foreground">{log.weightKg} kg</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-muted py-4 text-center">No recent entries</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

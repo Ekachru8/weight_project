@@ -105,9 +105,13 @@ export default function SignupPage() {
               Create Account
             </h1>
             <p className="text-sm text-muted">
-              Start your premium fitness journey
+              Start your personal health journey
             </p>
           </div>
+        </div>
+
+        <div className="text-xs text-center text-muted mb-6">
+          We use these details to build recommendations that fit your routine.
         </div>
 
         <div className="glass-card p-6 sm:p-8 fade-in-up opacity-0 shadow-[0_0_50px_rgba(192,255,0,0.05)]" style={{ animationDelay: "100ms" }}>
@@ -186,7 +190,7 @@ export default function SignupPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your full name"
                 required
-                className="auth-input pl-10"
+                className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10"
               />
             </div>
 
@@ -213,7 +217,7 @@ export default function SignupPage() {
                     : "+91 98765 43210"
                 }
                 required
-                className="auth-input pl-10"
+                className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10"
               />
             </div>
 
@@ -230,7 +234,7 @@ export default function SignupPage() {
                 placeholder="Create password (min 6 chars)"
                 required
                 minLength={6}
-                className="auth-input pl-10 pr-12"
+                className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/10 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/40 transition-all duration-200 pl-10 pr-12"
               />
               <button
                 type="button"
