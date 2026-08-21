@@ -105,7 +105,7 @@ export default function MealCard({ meal, mealTime, selectedOptionIndex = 0, isMa
               }}
               className="flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-white transition-colors btn-press"
             >
-              Explore other recipes
+              Choose a different option
               {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
           </div>

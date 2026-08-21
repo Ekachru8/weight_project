@@ -17,7 +17,17 @@ export async function GET(request: NextRequest) {
       orderBy: [{ dayNumber: "asc" }, { sortOrder: "asc" }],
     });
 
-    return NextResponse.json(exercises);
+    const { EXERCISE_ASSETS } = await import("@/data/exercise-assets");
+
+    const mergedExercises = exercises.map(ex => {
+      const asset = EXERCISE_ASSETS[ex.slug];
+      if (asset) {
+        return { ...ex, ...asset };
+      }
+      return ex;
+    });
+
+    return NextResponse.json(mergedExercises);
   } catch (error) {
     console.error("GET /api/exercises error:", error);
     return NextResponse.json(

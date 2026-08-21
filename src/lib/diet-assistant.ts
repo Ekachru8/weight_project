@@ -13,6 +13,8 @@ export interface AssistantIntake {
   allergies: string;
   cookingConstraints: string;
   mealsPerDay: number;
+  budget: string;
+  openToNewFoods: boolean;
 }
 
 export interface DietAssistantPlan {
@@ -46,6 +48,8 @@ export const EMPTY_ASSISTANT_INTAKE: AssistantIntake = {
   allergies: "",
   cookingConstraints: "",
   mealsPerDay: 5,
+  budget: "flexible",
+  openToNewFoods: false,
 };
 
 function firstListItem(value: string): string | null {
@@ -154,12 +158,12 @@ export function sanitizeMealPlan(mealPlan: MealPlan, intake: AssistantIntake, di
     if (!isForbidden("potato")) safeCarbs.push("Sweet Potato");
     if (safeCarbs.length === 0) safeCarbs.push("Mixed Veggies");
 
-    const options: import("./meals").RecipeOption[] = [];
-    for (let i = 0; i < 8; i++) {
-       const p = safeProteins[i % safeProteins.length];
-       const c = safeCarbs[i % safeCarbs.length];
-       options.push({
-         name: `${p} & ${c} Variation ${i + 1}`,
+       const options: import("./meals").RecipeOption[] = [];
+       for (let i = 0; i < 4; i++) {
+         const p = safeProteins[i % safeProteins.length];
+         const c = safeCarbs[i % safeCarbs.length];
+         options.push({
+           name: `${p} & ${c} Variation ${i + 1}`,
          mealType: mealType as "breakfast" | "morningSnack" | "lunch" | "eveningSnack" | "dinner",
          ingredients: [`1 portion of ${p}`, `1 portion of ${c}`, "Spices to taste", "1 tsp oil"],
          instructions: ["Gather all ingredients.", "Prepare the protein and carbohydrates.", "Cook thoroughly.", "Serve hot."],

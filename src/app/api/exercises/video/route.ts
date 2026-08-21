@@ -25,32 +25,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Build the prompt from the validated exercise metadata
-    const targetMusclesStr = (exercise.targetMuscles || []).join(", ");
-    const cuesStr = (exercise.formCues || []).join(" ");
+    const { EXERCISE_ASSETS } = await import("@/data/exercise-assets");
+    const asset = EXERCISE_ASSETS[exercise.slug];
 
-    const videoPrompt = `Create a realistic instructional fitness video demonstrating ${exercise.name}. The athlete must perform only ${exercise.name}, using ${exercise.equipment}, targeting ${targetMusclesStr}, with correct technique: ${cuesStr}. Show the full body from a clear camera angle, with natural movement and 3 controlled repetitions. Use a clean neutral home-workout or studio background. Do not show animals, fantasy characters, unrelated exercises, unrelated equipment, food, scenery, or random objects.`;
+    if (!asset || !asset.videoUrl) {
+      return NextResponse.json(
+        { error: "Video demonstration coming soon", status: "unavailable" },
+        { status: 404 }
+      );
+    }
 
-    const negativePrompt = `Do not perform any exercise other than ${exercise.name}. Do not change the exercise identity. Do not show unrelated footage, animation, animals, fantasy objects, random scenery, or incorrect equipment.`;
-
-    console.log("----- AI VIDEO GENERATION INITIATED -----");
-    console.log("Prompt:", videoPrompt);
-    console.log("Negative Prompt:", negativePrompt);
-
-    // Simulate AI Generation Delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // Return a mocked successful response matching the strict requirements
-    // This mocks the provider returning a valid asset correctly mapped to the slug
-    // We will use a placeholder URL since we don't have actual files for all slugs, 
-    // but the mapping is exact.
-    const mockVideoUrl = `https://www.w3schools.com/html/mov_bbb.mp4#${exercise.slug}`;
-
-    // Save it under the same exercise slug
+    // Save it under the same exercise slug if needed, but we rely on the static map primarily now.
+    // We'll update Prisma to keep it in sync for any queries that don't merge.
     await prisma.exercise.update({
       where: { slug: exercise.slug },
       data: {
-        videoUrl: mockVideoUrl,
+        videoUrl: asset.videoUrl,
         videoStatus: "ready",
         videoExerciseSlug: exercise.slug
       }
@@ -58,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       exerciseSlug: exercise.slug,
-      videoUrl: mockVideoUrl,
+      videoUrl: asset.videoUrl,
       status: "ready"
     });
 

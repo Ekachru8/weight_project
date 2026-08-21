@@ -75,6 +75,8 @@ function parseIntake(value: unknown): AssistantIntake {
     allergies: text(input.allergies),
     cookingConstraints: text(input.cookingConstraints),
     mealsPerDay: Number.isFinite(mealsPerDay) ? Math.min(6, Math.max(3, mealsPerDay)) : 5,
+    budget: typeof input.budget === "string" && input.budget ? input.budget : "flexible",
+    openToNewFoods: !!input.openToNewFoods,
   };
 }
 
@@ -137,7 +139,7 @@ async function fetchOpenAI(apiKey: string, schema: any, systemPrompt: string, us
     body: JSON.stringify({
       model,
       temperature: 0.35,
-      max_completion_tokens: 3000, // Safe for 8 recipes
+      max_completion_tokens: 3000, // Safe for 4 recipes per slot
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: systemPrompt },
@@ -202,6 +204,7 @@ export async function POST(request: Request) {
       "Return only valid JSON matching the requested shape.",
       "Set headline to 'A nutrition plan built around your lifestyle'.",
       "Set summary to follow this exact format: 'A <meals>-meal, <dietType> plan designed to support <goal> at approximately <calories> kcal per day. It prioritizes foods you enjoy, respects your exclusions, and fits your cooking routine.'",
+      "Set aiReasoning strictly to: 'Built around the foods you enjoy, with practical portions and flexible alternatives to help you stay consistent. If the plan includes your preferred calorie-dense foods, they are included in a practical portion so they fit within your daily target.'",
       "Set safetyNote strictly to: 'This plan is intended for general wellness and is not medical advice. If you have a medical condition, take medication, are pregnant, or have a food allergy, consult a qualified clinician or dietitian before following it.'",
       `The JSON shape is: ${JSON.stringify(METADATA_SCHEMA)}`,
     ].join(" ");
@@ -212,19 +215,26 @@ export async function POST(request: Request) {
     const mealTypes = ["breakfast", "morningSnack", "lunch", "eveningSnack", "dinner"] as const;
     const mealPromises = mealTypes.map(async (mealType) => {
       const mealPrompt = [
-        "You are a nutrition-planning assistant. Return only valid JSON matching the requested shape.",
-        "Generate meal-type-specific recipes. Breakfast must contain breakfast dishes only. Morning snacks must be light snack foods only. Lunch and dinner must be complete meals.",
-        "Do not reuse the same recipe template across meal types. Return at least 8 genuinely different options for each meal slot. Every option must have the correct mealType.",
-        "Never include a listed allergen or a food the user asked to avoid.",
+        "You are a compassionate, non-judgmental nutrition-planning assistant. Return only valid JSON matching the requested shape.",
+        "Respect the user's stated food preferences. Do not shame, lecture, or reprimand the user. Do not force foods they dislike.",
+        "Priority 1: Allergies and medical restrictions. Never include foods listed as allergies.",
+        "Priority 2: Foods the user explicitly dislikes or wants to avoid. Do not include them unless the user later approves them.",
+        "Priority 3: Foods the user enjoys and is comfortable eating. Use these as the main building blocks of the plan.",
+        "Priority 4: Nutrition improvement. Make gentle improvements through portions, preparation methods, protein balance, fiber where accepted, and affordable substitutions. Do not override the user's preferences.",
+        "If the user enjoys foods that are commonly considered less nutritious (e.g., pizza, noodles), help them include those foods through realistic portions, preparation methods, accepted pairings, and practical alternatives. Be honest about trade-offs without moralizing.",
+        `If the user's budget is '${intake.budget}', prioritize affordable, accessible ingredients. Avoid expensive specialty items unless explicitly requested.`,
+        intake.openToNewFoods ? "The user is open to new foods. Suggest healthy alternatives and new ingredients." : "Only use the user's accepted foods plus neutral basic ingredients needed to complete the meal.",
+        "Generate exactly 4 different options for each meal slot, and ensure every option matches the meal type. Breakfast must contain breakfast dishes only. Snacks must be light snack foods only. Lunch and dinner must be complete meals.",
+        "Do not reuse the same recipe template across meal types. Return exactly 4 genuinely different options for each meal slot.",
         "Respect vegetarian and eggetarian restrictions strictly.",
-        "If a userMessage is provided, adapt the recipes to fulfill the user's specific request (e.g., 'Make it easier to cook', 'Increase protein'). Do NOT break any dietary rules while doing so.",
+        "If a userMessage is provided, adapt the recipes to fulfill the user's specific request. Do NOT break any dietary rules while doing so.",
         `The JSON shape is: ${JSON.stringify(MEAL_SCHEMA)}`,
       ].join(" ");
 
       const payload = {
         ...userPayload,
         mealType,
-        requiredOptionCount: 8,
+        requiredOptionCount: 4,
       };
 
       return fetchOpenAI(apiKey, MEAL_SCHEMA, mealPrompt, payload);

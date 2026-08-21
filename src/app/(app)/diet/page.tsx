@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Check,
   X,
+  Info,
 } from "lucide-react";
 
 interface UserData {
@@ -147,7 +148,7 @@ export default function DietPage() {
     }
   }, [assistantIntake, diet, dietType, user]);
 
-  const updateAssistantIntake = (field: keyof AssistantIntake, value: string | number) => {
+  const updateAssistantIntake = (field: keyof AssistantIntake, value: string | number | boolean) => {
     setAssistantIntake((previous) => ({ ...previous, [field]: value }));
     setAssistantPlan(null);
     setManualSelections({ date: "", options: {} });
@@ -665,9 +666,9 @@ export default function DietPage() {
                 <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-bold text-accent mb-2">AI Dietician</p>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-foreground leading-tight">Build a nutrition plan that fits your life</h2>
                 <p className="text-sm text-foreground/80 leading-relaxed mt-2.5 max-w-2xl">
-                  Answer a few simple questions about your preferences, routine, and food choices. We’ll create a practical meal plan that supports your goals and is easy to follow.
+                  Answer a few simple questions about your preferences, routine, and food choices. We&apos;ll create a practical meal plan that supports your goals and is easy to follow.
                 </p>
-                <p className="text-[11px] uppercase tracking-wider text-muted font-bold mt-3">Personalized nutrition • Flexible meals • Smarter choices</p>
+                <p className="text-[11px] uppercase tracking-wider text-muted font-bold mt-3">Built around your preferences • Flexible meals • Smarter choices</p>
               </div>
             </div>
             
@@ -696,7 +697,7 @@ export default function DietPage() {
                 <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-accent mb-0.5">AI Dietician</p>
                 <h2 className="text-lg font-bold text-foreground">Your plan is ready</h2>
                 <p className="text-xs text-foreground/70 mt-0.5">
-                  Personalized around your goals, preferences, exclusions, and daily routine.
+                  Built around the foods you enjoy, with practical portions and flexible alternatives to help you stay consistent.
                 </p>
               </div>
             </div>
@@ -882,15 +883,31 @@ export default function DietPage() {
                   )}
                   <div className="grid lg:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="foods-they-eat" className="text-sm text-foreground font-semibold mb-1 block">What foods are already part of your routine?</label>
-                      <p className="text-[11px] sm:text-xs text-muted mb-3 leading-relaxed">Tell us what you usually eat so we can build around familiar foods instead of forcing you into an unrealistic plan.</p>
+                      <label htmlFor="foods-they-eat" className="text-sm text-foreground font-semibold mb-1 block">Foods you enjoy</label>
                       <textarea
                         id="foods-they-eat"
                         value={assistantIntake.foodsTheyEat}
                         onChange={(event) => updateAssistantIntake("foodsTheyEat", event.target.value)}
                         className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
-                        placeholder="For example: rice, dal, chicken, curd, bananas, roti"
+                        placeholder="For example: rice, dal, chicken, curd, bananas, roti, pizza, noodles"
                       />
+                      <div className="mt-3 bg-black/40 border border-white/5 p-3 rounded-xl flex items-start gap-2.5">
+                        <Info className="text-muted shrink-0 mt-0.5" size={16} />
+                        <p className="text-[11px] sm:text-xs text-muted leading-relaxed">
+                          Tell us what you genuinely enjoy eating. We will work with your preferences, budget, and routine rather than forcing foods you dislike. If you are open to anything, we can suggest a wider range of options based on your profile and goals.
+                        </p>
+                      </div>
+                      
+                      <div className="mt-4 flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="open-to-new"
+                          checked={assistantIntake.openToNewFoods}
+                          onChange={(e) => updateAssistantIntake("openToNewFoods", e.target.checked)}
+                          className="w-4 h-4 rounded bg-black/40 border-white/15 text-accent focus:ring-accent/40"
+                        />
+                        <label htmlFor="open-to-new" className="text-sm text-foreground/80 cursor-pointer">Open to new foods?</label>
+                      </div>
                     </div>
                     <div>
                       <label htmlFor="comfortable-foods" className="text-sm text-foreground font-semibold mb-1 block">Which foods do you enjoy and feel comfortable preparing?</label>
@@ -918,7 +935,7 @@ export default function DietPage() {
                   </div>
                   <div className="grid lg:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="foods-to-avoid" className="text-sm text-foreground font-semibold mb-1 block">Foods you dislike or want to avoid</label>
+                      <label htmlFor="foods-to-avoid" className="text-sm text-foreground font-semibold mb-1 block">Foods you want to avoid</label>
                       <textarea
                         id="foods-to-avoid"
                         value={assistantIntake.foodsToAvoid}
@@ -954,14 +971,26 @@ export default function DietPage() {
                   </div>
                   <div className="grid lg:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="cooking-constraints" className="text-sm text-foreground font-semibold mb-1 block">Cooking time, budget, and schedule</label>
+                      <label htmlFor="cooking-constraints" className="text-sm text-foreground font-semibold mb-1 block">Cooking time and schedule</label>
                       <textarea
                         id="cooking-constraints"
                         value={assistantIntake.cookingConstraints}
                         onChange={(event) => updateAssistantIntake("cookingConstraints", event.target.value)}
-                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all"
-                        placeholder="For example: under 30 minutes on weekdays, affordable ingredients, meal prep on Sunday"
+                        className="w-full min-h-[120px] px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y transition-all mb-4"
+                        placeholder="For example: under 30 minutes on weekdays, meal prep on Sunday"
                       />
+                      
+                      <label htmlFor="budget" className="text-sm text-foreground font-semibold mb-1 block">Affordable meal options</label>
+                      <select
+                        id="budget"
+                        value={assistantIntake.budget}
+                        onChange={(event) => updateAssistantIntake("budget", event.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-[#101010] border border-white/15 text-sm text-white [color-scheme:dark] placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-accent/40 transition-all appearance-none"
+                      >
+                        <option value="low">Low budget (simple, very affordable ingredients)</option>
+                        <option value="moderate">Moderate budget</option>
+                        <option value="flexible">Flexible budget</option>
+                      </select>
                     </div>
                     <div>
                       <label htmlFor="meals-per-day" className="text-sm text-foreground font-semibold mb-1 block">How many meals or eating occasions suit you?</label>
@@ -983,7 +1012,7 @@ export default function DietPage() {
                   <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2 justify-end">
                     <button type="button" onClick={() => setAssistantStep(2)} className="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-white/15 bg-white/[0.02] text-sm font-bold text-foreground hover:bg-white/[0.05] transition-colors btn-press">Back</button>
                     <button type="button" onClick={() => generateAssistantPlan()} disabled={isGeneratingAssistant} className="w-full sm:w-auto px-8 py-3.5 rounded-xl accent-gradient text-black font-extrabold text-sm btn-press shadow-[0_0_20px_rgba(192,255,0,0.2)] disabled:opacity-70 disabled:shadow-none flex items-center justify-center gap-2">
-                      {isGeneratingAssistant ? <><Loader2 className="animate-spin" size={18} /> Creating your personalized plan...</> : <><Sparkles size={18} /> Create my personalized plan</>}
+                      {isGeneratingAssistant ? <><Loader2 className="animate-spin" size={18} /> Creating your personalized plan...</> : <><Sparkles size={18} /> Create my flexible meal plan</>}
                     </button>
                   </div>
                 </div>

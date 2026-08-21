@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2, X, Clock, AlertTriangle, Info, Activity } from "lucide-react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Loader2, Search, Dumbbell, Zap, CircleDot, Flame, Trophy, Play, CheckCircle2, X, Clock, AlertTriangle, Info, Activity, Volume2, VolumeX, FileText, Pause, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { weeklyWorkoutSchedule } from "@/lib/workout-schedule";
+import { FitnessAssistant, FitnessReadiness } from "@/components/FitnessAssistant";
 
 interface Exercise {
   id: number;
@@ -24,6 +26,12 @@ interface Exercise {
   videoUrl?: string;
   videoStatus: string;
   videoExerciseSlug?: string;
+  voiceoverUrl?: string;
+  voiceoverStatus?: string;
+  transcript?: string;
+  videoSource?: string;
+  videoSourcePage?: string;
+  pixabayAssetId?: string;
 
   // Legacy for "today" workout
   dayNumber?: number;
@@ -167,6 +175,10 @@ export default function ExercisesPage() {
   const [todayData, setTodayData] = useState<any>(null);
   const [logs, setLogs] = useState<WorkoutLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [fitnessReadiness, setFitnessReadiness] = useState<FitnessReadiness | null>(null);
+  const [assistantState, setAssistantState] = useState<'loading' | 'chat' | 'ready_card' | 'workout'>('loading');
+  const [generatingWorkout, setGeneratingWorkout] = useState(false);
   
   // Library Filters
   const [search, setSearch] = useState("");
@@ -180,14 +192,48 @@ export default function ExercisesPage() {
   const [selectedVideo, setSelectedVideo] = useState<Exercise | null>(null);
   const [videoState, setVideoState] = useState<'loading' | 'ready' | 'error'>('ready');
   const [completedExIds, setCompletedExIds] = useState<Set<number>>(new Set());
+  
+  // Audio / Video controls state
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
+  const [showTranscript, setShowTranscript] = useState(false);
+  const [audioProgress, setAudioProgress] = useState(0);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleSelectVideo = async (ex: Exercise) => {
     setSelectedVideo(ex);
-    // Strict verification: only show as ready if the generated video matches the slug
-    if (!ex.videoUrl || ex.videoExerciseSlug !== ex.slug) {
-      fetchVideo(ex);
-    } else {
+    setIsPlayingAudio(false);
+    setShowTranscript(false);
+    setAudioProgress(0);
+    
+    // Check if videoUrl is already provided by EXERCISE_ASSETS (which means it's ready)
+    if (ex.videoUrl && ex.videoExerciseSlug === ex.slug) {
       setVideoState('ready');
+      // Fetch voiceover if not already present
+      if (!ex.voiceoverUrl) {
+        fetchVoiceover(ex);
+      }
+    } else {
+      fetchVideo(ex);
+    }
+  };
+
+  const fetchVoiceover = async (ex: Exercise) => {
+    try {
+      const res = await fetch('/api/exercises/voiceover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exerciseSlug: ex.slug })
+      });
+      const data = await res.json();
+      if (res.ok && data.voiceoverUrl) {
+        setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, voiceoverUrl: data.voiceoverUrl, transcript: data.transcript, voiceoverStatus: 'ready' } : prev);
+        setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, voiceoverUrl: data.voiceoverUrl, transcript: data.transcript, voiceoverStatus: 'ready' } : p));
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -212,6 +258,9 @@ export default function ExercisesPage() {
         setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoUrl: data.videoUrl, videoExerciseSlug: data.exerciseSlug, videoStatus: 'ready' } : prev);
         setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoUrl: data.videoUrl, videoExerciseSlug: data.exerciseSlug, videoStatus: 'ready' } : p));
         setVideoState('ready');
+        
+        // Fetch voiceover after video is ready
+        fetchVoiceover(ex);
       } else {
         setVideoState('error');
       }
@@ -231,31 +280,140 @@ export default function ExercisesPage() {
 
   const allExercisesCompleted = todayData?.exercises?.length > 0 && completedExIds.size === todayData.exercises.length;
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [exercisesRes, todayRes, logsRes] = await Promise.all([
-          fetch("/api/exercises"),
-          fetch("/api/today"),
-          fetch("/api/workout-log"),
-        ]);
-        
-        const exData = await exercisesRes.json();
-        const td = await todayRes.json();
-        const logsData = await logsRes.json();
-
-        setExercises(exData.error ? [] : exData);
-        setTodayData(td.error ? null : td);
-        if (Array.isArray(logsData)) setLogs(logsData);
-
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    setLoading(true);
+    setHasError(false);
+    try {
+      const localWeekday = new Date().getDay();
+      const [exercisesRes, todayRes, logsRes, readinessRes] = await Promise.all([
+        fetch("/api/exercises"),
+        fetch(`/api/today?weekday=${localWeekday}`),
+        fetch("/api/workout-log"),
+        fetch("/api/user/readiness"),
+      ]);
+      
+      const exData = await exercisesRes.json();
+      const logsData = await logsRes.json();
+      
+      let readinessData = null;
+      if (readinessRes.ok) {
+         const r = await readinessRes.json();
+         if (r.fitnessReadiness) readinessData = r.fitnessReadiness;
       }
+      setFitnessReadiness(readinessData);
+      
+      if (!readinessData) {
+        setAssistantState('chat');
+      } else {
+        setAssistantState('ready_card');
+      }
+
+      const validExercises = Array.isArray(exData) ? exData : [];
+      setExercises(validExercises);
+      if (Array.isArray(logsData)) setLogs(logsData);
+
+      let td = null;
+      if (todayRes.ok) {
+        const rawTd = await todayRes.json();
+        if (!rawTd.error) td = rawTd;
+      }
+
+      if (!td) {
+        // Fallback logic
+        const schedule = weeklyWorkoutSchedule[localWeekday];
+        if (schedule) {
+          const isRestDay = localWeekday === 0;
+          let fallbackExercises: any[] = [];
+          if (!isRestDay && schedule.exercises) {
+            fallbackExercises = schedule.exercises
+              .map(slug => validExercises.find(ex => ex.slug === slug))
+              .filter(Boolean);
+          }
+          
+          td = {
+            dayNumber: localWeekday,
+            dayName: schedule.day,
+            title: schedule.title,
+            isRestDay,
+            exercises: fallbackExercises,
+            isCompleted: false,
+            isLogged: false,
+            date: new Date().toISOString().split('T')[0]
+          };
+        } else {
+          setHasError(true);
+        }
+      }
+      setTodayData(td);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      setHasError(true);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
+
+  const handleCompleteReadiness = async (profile: FitnessReadiness) => {
+    setAssistantState('loading');
+    try {
+      await fetch('/api/user/readiness', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fitnessReadiness: profile })
+      });
+      setFitnessReadiness(profile);
+      generatePersonalizedWorkout(profile);
+    } catch (err) {
+      console.error(err);
+      setAssistantState('chat');
+    }
+  };
+
+  const generatePersonalizedWorkout = async (profile: FitnessReadiness) => {
+    setGeneratingWorkout(true);
+    setAssistantState('workout');
+    try {
+      const localWeekday = new Date().getDay();
+      const res = await fetch('/api/today/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fitnessReadiness: profile,
+          todaySchedule: weeklyWorkoutSchedule[localWeekday],
+          availableExercises: exercises
+        })
+      });
+      const data = await res.json();
+      if (res.ok && !data.error) {
+         const mappedExercises = data.exercises.map((aiEx: any) => {
+            const base = exercises.find(e => e.slug === aiEx.exerciseSlug);
+            return {
+              ...base,
+              sets: aiEx.sets,
+              reps: aiEx.reps,
+              description: aiEx.modification, // override description with modification
+              formCues: [aiEx.formCue] // override form cue
+            };
+         });
+         setTodayData((prev: any) => ({
+           ...prev,
+           title: data.title,
+           description: data.description,
+           safetyNote: data.safetyNote,
+           exercises: mappedExercises,
+           isRestDay: data.intensity === "Rest" || mappedExercises.length === 0,
+         }));
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setGeneratingWorkout(false);
+    }
+  };
 
   const currentStreak = useMemo(() => {
     if (!logs.length) return 0;
@@ -285,7 +443,12 @@ export default function ExercisesPage() {
     return longest;
   }, [logs]);
 
-  const weeklyCompleted = logs.filter((l) => l.completed && new Date(l.date) >= new Date(Date.now() - 7*86400000)).length;
+  const [weeklyCompleted, setWeeklyCompleted] = useState(0);
+
+  useEffect(() => {
+    const weekAgo = new Date(Date.now() - 7*86400000);
+    setWeeklyCompleted(logs.filter((l) => l.completed && new Date(l.date) >= weekAgo).length);
+  }, [logs]);
 
   const markComplete = async () => {
     if (!todayData || marking) return;
@@ -334,8 +497,9 @@ export default function ExercisesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] flex-col gap-4">
         <Loader2 className="animate-spin text-accent" size={32} />
+        <p className="text-muted text-sm font-bold uppercase tracking-widest">Loading today&apos;s workout...</p>
       </div>
     );
   }
@@ -374,22 +538,108 @@ export default function ExercisesPage() {
             </div>
           </motion.div>
 
-          {!todayData ? (
+          {assistantState === 'chat' && (
+            <FitnessAssistant onComplete={handleCompleteReadiness} />
+          )}
+
+          {assistantState === 'ready_card' && (
+            <motion.div variants={itemVariants} className="max-w-md mx-auto glass-card p-8 text-center rounded-3xl border border-white/10">
+              <div className="w-16 h-16 rounded-full bg-accent/20 mx-auto mb-6 flex items-center justify-center border border-accent/30 shadow-[0_0_20px_rgba(192,255,0,0.2)]">
+                <CheckCircle2 size={32} className="text-accent" />
+              </div>
+              <h2 className="text-2xl font-black text-white mb-2">Your fitness profile is ready.</h2>
+              <p className="text-muted mb-8 text-sm">We&apos;ll use your readiness profile to customize today&apos;s workout.</p>
+              
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => generatePersonalizedWorkout(fitnessReadiness!)}
+                  className="w-full bg-accent text-black font-black py-4 rounded-xl hover:scale-105 transition-transform"
+                >
+                  Continue to today&apos;s workout
+                </button>
+                <button 
+                  onClick={() => setAssistantState('chat')}
+                  className="w-full bg-white/5 border border-white/10 text-white font-bold py-4 rounded-xl hover:bg-white/10 transition-colors"
+                >
+                  Update my readiness
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {assistantState === 'workout' && hasError ? (
+            <div className="text-center py-16 text-muted glass-card rounded-2xl border-white/5 flex flex-col items-center justify-center">
+              <AlertTriangle className="text-red-500/50 mb-4" size={48} />
+              <p className="text-lg font-bold text-white mb-6">We couldn&apos;t load your workout. Try again.</p>
+              <button onClick={fetchData} className="px-6 py-2 bg-white/10 rounded-lg text-white font-bold hover:bg-white/20 transition">Try again</button>
+            </div>
+          ) : assistantState === 'workout' && !todayData ? (
              <div className="text-center py-16 text-muted glass-card rounded-2xl border-white/5">
                <Dumbbell className="mx-auto mb-4 opacity-30" size={48} />
                <p className="text-lg font-medium text-white/50">Your workout plan is being prepared.</p>
              </div>
-          ) : todayData.isRestDay ? (
-            <motion.div variants={itemVariants} className="glass-card p-12 text-center flex flex-col items-center justify-center border-dashed border-2 border-white/10">
+          ) : assistantState === 'workout' && generatingWorkout ? (
+             <div className="text-center py-16 text-muted glass-card rounded-2xl border-white/5 flex flex-col items-center">
+               <Loader2 className="animate-spin text-accent mb-4" size={48} />
+               <p className="text-lg font-bold text-white">Customizing your workout...</p>
+             </div>
+          ) : assistantState === 'workout' && todayData.isRestDay ? (
+            <motion.div variants={itemVariants} className="glass-card p-12 text-center flex flex-col items-center justify-center border border-white/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -ml-32 -mb-32 pointer-events-none" />
+              
               <Zap className="text-accent mb-6" size={56} />
-              <h2 className="text-3xl font-black mb-3 text-white">Rest & Recover</h2>
-              <p className="text-muted max-w-sm">Muscles grow when you rest. Take this time to stretch, hydrate, and prepare for tomorrow.</p>
+              <h2 className="text-3xl sm:text-5xl font-black mb-3 text-white">Sunday — Rest Day</h2>
+              <p className="text-muted text-lg max-w-md mx-auto mb-8">Recover today so you can train well tomorrow.</p>
+              
+              <div className="text-left w-full max-w-sm mb-8 space-y-4">
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-start gap-4">
+                  <div className="mt-1 flex-shrink-0"><CheckCircle2 className="text-accent" size={20}/></div>
+                  <p className="text-sm text-white/80"><strong className="text-white">Take an easy walk.</strong> Light activity promotes blood flow for recovery.</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-start gap-4">
+                  <div className="mt-1 flex-shrink-0"><CheckCircle2 className="text-accent" size={20}/></div>
+                  <p className="text-sm text-white/80"><strong className="text-white">Do 5–10 minutes of light mobility.</strong> Keep your joints feeling healthy and smooth.</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-xl border border-white/10 flex items-start gap-4">
+                  <div className="mt-1 flex-shrink-0"><CheckCircle2 className="text-accent" size={20}/></div>
+                  <p className="text-sm text-white/80"><strong className="text-white">Prioritize hydration and sleep.</strong> Real progress happens while you rest.</p>
+                </div>
+              </div>
+              
+              <button 
+                onClick={() => { setActiveTab("library"); setCategoryFilter("Mobility"); }} 
+                className="px-6 py-3 bg-white/10 rounded-xl text-white font-bold hover:bg-white/20 transition-colors border border-white/10 flex items-center gap-2"
+              >
+                View mobility exercises
+              </button>
             </motion.div>
-          ) : (
+          ) : assistantState === 'workout' && (
             <>
+              {fitnessReadiness && (
+                <motion.div variants={itemVariants} className="mb-8 glass-card p-4 rounded-2xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <h4 className="text-white font-bold mb-1 flex items-center gap-2"><Activity size={16} className="text-accent"/> Your movement profile</h4>
+                    <p className="text-xs text-muted">
+                      {fitnessReadiness.fitnessLevel} • {fitnessReadiness.intensityPreference} intensity • {fitnessReadiness.equipment.join(", ")}
+                    </p>
+                  </div>
+                  <button onClick={() => setAssistantState('chat')} className="text-xs font-bold text-accent bg-accent/10 px-3 py-1.5 rounded-lg hover:bg-accent/20 transition">
+                    Update readiness
+                  </button>
+                </motion.div>
+              )}
+
+              {todayData.safetyNote && (
+                <motion.div variants={itemVariants} className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
+                   <AlertTriangle className="text-red-400 shrink-0 mt-0.5" size={20} />
+                   <p className="text-sm text-red-200/80 leading-relaxed">{todayData.safetyNote}</p>
+                </motion.div>
+              )}
+
               <motion.div variants={itemVariants} className="mb-6">
-                <h2 className="text-3xl sm:text-5xl font-black text-white mb-2 tracking-tight">Day {todayData.dayNumber} — {todayData.dayName}</h2>
-                <p className="text-muted text-lg">{todayData.exercises?.length || 0} exercises to crush today.</p>
+                <h2 className="text-3xl sm:text-5xl font-black text-white mb-2 tracking-tight">{todayData.dayName} — {todayData.title}</h2>
+                <p className="text-muted text-lg">{todayData.description || `${todayData.exercises?.length || 0} exercises selected for today.`}</p>
               </motion.div>
               <div className="space-y-4">
                 {todayData.exercises?.map((ex: any) => {
@@ -408,7 +658,17 @@ export default function ExercisesPage() {
                             <button onClick={() => handleSelectVideo(ex)} className="text-xs text-accent hover:text-white flex items-center gap-1 transition-colors bg-accent/10 px-2 py-0.5 rounded"><Play size={10} /> Watch Form</button>
                           </div>
                           <h3 className={`font-black text-xl mb-1 transition-colors ${isDone ? 'text-accent' : 'text-white'}`}>{ex.name}</h3>
-                          <p className="text-sm text-muted italic line-clamp-2">&quot;{ex.formCues?.[0] || ex.description}&quot;</p>
+                          <p className="text-sm text-muted italic mb-1">&quot;{ex.formCues?.[0] || ex.description}&quot;</p>
+                          {ex.modification && (
+                            <div className="mt-2 bg-blue-500/10 border border-blue-500/20 p-2 rounded-lg">
+                              <p className="text-xs text-blue-200/90 font-medium"><strong className="text-blue-400">Mod:</strong> {ex.modification}</p>
+                            </div>
+                          )}
+                          {ex.stopCondition && (
+                            <div className="mt-1 bg-red-500/10 border border-red-500/20 p-2 rounded-lg">
+                              <p className="text-xs text-red-200/90 font-medium"><strong className="text-red-400">Stop:</strong> {ex.stopCondition}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-wrap sm:flex-col items-center sm:items-end gap-3 sm:gap-2 text-sm font-medium border-t border-white/5 sm:border-0 pt-3 sm:pt-0">
@@ -513,7 +773,10 @@ export default function ExercisesPage() {
               onClick={(e) => e.stopPropagation()}
               className="w-full max-w-4xl max-h-[90vh] flex flex-col glass-card border border-white/10 overflow-hidden relative shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-3xl"
             >
-              <button onClick={() => setSelectedVideo(null)} className="absolute top-4 right-4 z-20 p-2.5 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"><X size={20} /></button>
+              <button onClick={() => {
+                if (audioRef.current) audioRef.current.pause();
+                setSelectedVideo(null);
+              }} className="absolute top-4 right-4 z-20 p-2.5 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10"><X size={20} /></button>
               
               <div className="flex-shrink-0 w-full aspect-video bg-black relative border-b border-white/5">
                 {videoState === 'loading' ? (
@@ -522,13 +785,94 @@ export default function ExercisesPage() {
                   <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center px-4"><AlertTriangle className="text-yellow-500 opacity-50" size={40} /><p className="text-white text-sm font-bold">Video unavailable for this exercise.</p><button onClick={() => fetchVideo(selectedVideo)} className="px-6 py-2 bg-white/10 rounded-lg text-white font-bold hover:bg-white/20 transition">Try again</button></div>
                 ) : (
                   <>
-                    <video src={selectedVideo.videoUrl} controls autoPlay className="w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-md border border-white/10"><div className="w-2 h-2 rounded-full bg-accent animate-pulse" /><span className="text-[10px] font-bold text-white uppercase tracking-widest">AI Demonstration</span></div>
+                    <video ref={videoRef} src={selectedVideo.videoUrl} autoPlay muted={isVideoMuted} loop playsInline className="w-full h-full object-cover" />
+                    <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-md border border-white/10"><div className="w-2 h-2 rounded-full bg-accent animate-pulse" /><span className="text-[10px] font-bold text-white uppercase tracking-widest">Watch demonstration</span></div>
+                    
+                    <button onClick={() => setIsVideoMuted(!isVideoMuted)} className="absolute bottom-4 right-4 p-2.5 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 z-20">
+                      {isVideoMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                    </button>
+                    
+                    {selectedVideo.voiceoverUrl && (
+                      <audio 
+                        ref={audioRef} 
+                        src={selectedVideo.voiceoverUrl} 
+                        onEnded={() => setIsPlayingAudio(false)}
+                        onTimeUpdate={() => {
+                          if (audioRef.current) {
+                            setAudioProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
+                          }
+                        }}
+                      />
+                    )}
                   </>
                 )}
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar">
+                
+                {/* Voiceover Controls */}
+                {selectedVideo.voiceoverUrl ? (
+                  <div className="mb-6 p-4 rounded-xl border border-accent/20 bg-accent/5 flex flex-col gap-4">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <button 
+                          onClick={() => {
+                            if (audioRef.current) {
+                              if (isPlayingAudio) {
+                                audioRef.current.pause();
+                                setIsPlayingAudio(false);
+                              } else {
+                                audioRef.current.play();
+                                setIsPlayingAudio(true);
+                              }
+                            }
+                          }} 
+                          className="flex items-center gap-2 px-4 py-2 bg-accent text-black font-bold rounded-lg hover:bg-accent/90 transition-colors shadow-[0_0_15px_rgba(192,255,0,0.3)]"
+                        >
+                          {isPlayingAudio ? <Pause size={16} /> : <Play size={16} />}
+                          {isPlayingAudio ? "Pause guidance" : "Listen to form guidance"}
+                        </button>
+                        
+                        <button 
+                          onClick={() => {
+                            if (audioRef.current) {
+                              audioRef.current.currentTime = 0;
+                              audioRef.current.play();
+                              setIsPlayingAudio(true);
+                            }
+                          }}
+                          className="p-2 text-muted hover:text-white transition-colors"
+                          title="Replay guidance"
+                        >
+                          <RotateCcw size={18} />
+                        </button>
+                      </div>
+                      
+                      <button 
+                        onClick={() => setShowTranscript(!showTranscript)}
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted hover:text-white transition-colors"
+                      >
+                        <FileText size={14} />
+                        {showTranscript ? "Hide transcript" : "Show transcript"}
+                      </button>
+                    </div>
+
+                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-accent transition-all duration-100 ease-linear" style={{ width: `${audioProgress}%` }} />
+                    </div>
+
+                    {showTranscript && selectedVideo.transcript && (
+                      <div className="mt-2 p-4 bg-black/40 rounded-lg border border-white/5 text-sm text-white/80 leading-relaxed italic">
+                        <span className="block text-[10px] text-accent font-bold uppercase tracking-widest mb-2 not-italic">Form guidance</span>
+                        &quot;{selectedVideo.transcript}&quot;
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="mb-6 p-4 rounded-xl border border-white/5 bg-white/5 flex items-center justify-center">
+                    <p className="text-sm text-muted font-bold flex items-center gap-2"><VolumeX size={16}/> Audio guidance unavailable</p>
+                  </div>
+                )}
                 <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-white/10 text-white rounded-full">{selectedVideo.category}</span>
                   <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${getDifficultyColor(selectedVideo.difficulty)}`}>{selectedVideo.difficulty}</span>
@@ -603,6 +947,24 @@ export default function ExercisesPage() {
                           {selectedVideo.safetyTips.map((tip, i) => <li key={i}>{tip}</li>)}
                         </ul>
                       </div>
+                    )}
+                    
+                    {selectedVideo.videoSource && (
+                      <details className="bg-white/5 rounded-2xl p-4 border border-white/10 group">
+                        <summary className="text-[10px] font-bold text-muted uppercase tracking-widest cursor-pointer list-none flex justify-between items-center outline-none">
+                          Video source
+                          <span className="text-muted group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <div className="mt-4 text-xs text-muted/80 space-y-2 border-t border-white/5 pt-4">
+                          <p><strong className="text-muted">Source:</strong> <span className="capitalize">{selectedVideo.videoSource}</span></p>
+                          {selectedVideo.videoSourcePage && (
+                            <p><strong className="text-muted">Original Page:</strong> <a href={selectedVideo.videoSourcePage} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline break-all">{selectedVideo.videoSourcePage}</a></p>
+                          )}
+                          {selectedVideo.pixabayAssetId && (
+                            <p><strong className="text-muted">Asset ID:</strong> {selectedVideo.pixabayAssetId}</p>
+                          )}
+                        </div>
+                      </details>
                     )}
                   </div>
                 </div>

@@ -65,6 +65,7 @@ model User {
   dietPreference  String?      // "veg" | "non_veg" | "both"
   equipment       String       @default("Dumbbells, Resistance Band, Yoga Mat")
   onboardingDone  Boolean      @default(false)
+  fitnessReadiness Json?
   createdAt       DateTime     @default(now())
   accounts        Account[]
   sessions        Session[]
