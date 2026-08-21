@@ -2,11 +2,25 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateDiet } from "@/lib/diet";
 import type { Gender, ActivityLevel, Goal } from "@/lib/diet";
+import { auth } from "@/lib/auth";
 
 // GET /api/diet — Fetch latest diet target + full calculation details
 export async function GET() {
   try {
-    const user = await prisma.user.findFirst({ where: { id: 1 } });
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      // Return public demo data for guests
+      return NextResponse.json({
+        onboardingRequired: false,
+        user: { name: "Guest User", dietPreference: "both" },
+        diet: { targetCalories: 2200, proteinG: 150, carbsG: 220, fatG: 70 },
+        savedTarget: { calories: 2200, proteinG: 150, carbsG: 220, fatG: 70, generatedAt: new Date().toISOString() },
+      });
+    }
+
+    const user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -30,7 +44,7 @@ export async function GET() {
     );
 
     const latestTarget = await prisma.dietTarget.findFirst({
-      where: { userId: 1 },
+      where: { userId },
       orderBy: { generatedAt: "desc" },
     });
 
@@ -52,6 +66,16 @@ export async function GET() {
 // POST /api/diet — Save diet onboarding data and calculate targets
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { age, gender, heightCm, weightKg, targetWeightKg, activityLevel, goal, dietPreference } = body;
 
@@ -64,7 +88,7 @@ export async function POST(request: Request) {
 
     // Update user profile
     await prisma.user.update({
-      where: { id: 1 },
+      where: { id: userId },
       data: {
         age: Number(age),
         gender,
@@ -94,7 +118,7 @@ export async function POST(request: Request) {
     // Save diet target
     const target = await prisma.dietTarget.create({
       data: {
-        userId: 1,
+        userId,
         calories: dietResult.targetCalories,
         proteinG: dietResult.proteinG,
         carbsG: dietResult.carbsG,

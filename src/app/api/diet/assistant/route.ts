@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import {
   buildFallbackDietAssistantPlan,
   sanitizeMealPlan,
@@ -159,6 +160,14 @@ export async function POST(request: Request) {
   let fallbackPlan: ReturnType<typeof buildFallbackDietAssistantPlan> | null = null;
 
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const context = parseContext(body?.context);
     const userMessage = typeof body?.userMessage === "string" ? body.userMessage : null;

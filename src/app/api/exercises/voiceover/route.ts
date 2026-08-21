@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { EXERCISE_ASSETS } from "@/data/exercise-assets";
+import { generateVoiceover } from "@/lib/voiceover";
+import { getExerciseProvider } from "@/lib/exercise-provider";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { exerciseSlug } = body;
+    const { exerciseSlug, exerciseName, setupInstruction, movementInstruction, formCue, commonMistake } = body;
 
-    if (!exerciseSlug) {
+    if (!exerciseSlug || !exerciseName) {
       return NextResponse.json(
-        { error: "exerciseSlug is required" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const exercise = await prisma.exercise.findUnique({
-      where: { slug: exerciseSlug },
-    });
-
+    // Optionally: Verify the exercise exists in the provider
+    const provider = getExerciseProvider();
+    const exercise = await provider.getBySlug(exerciseSlug);
+    
     if (!exercise) {
       return NextResponse.json(
         { error: "Invalid exercise slug" },
@@ -25,38 +25,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const asset = EXERCISE_ASSETS[exerciseSlug];
-    if (!asset || !asset.voiceoverUrl) {
+    // Construct professional transcript exactly as requested
+    const safeSetup = setupInstruction || "Get into a comfortable starting position.";
+    const safeMovement = movementInstruction || "Perform the movement smoothly.";
+    const safeCue = formCue || "proper form";
+    const safeMistake = commonMistake || "rushing the movement";
+
+    const transcript = `Start in the correct position for ${exerciseName}. ${safeSetup} Move with control. ${safeMovement} Breathe naturally and focus on ${safeCue}. Avoid ${safeMistake}. Use the easier variation if needed. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.`;
+
+    const result = await generateVoiceover({ exerciseSlug, transcript });
+
+    if (result.status === "error") {
       return NextResponse.json(
-        { error: "Audio guidance unavailable", status: "unavailable" },
-        { status: 404 }
+        { error: result.error || "Failed to generate audio" },
+        { status: 500 }
       );
     }
 
-    // Serve exact transcript from static assets
-    const transcript = asset.transcript;
-
-    const voicePrompt = `Speak in clear, warm, professional English with a calm fitness-coach tone. Use a steady instructional pace and brief pauses between steps. Do not sound dramatic or overexcited: ${transcript}`;
-
-    console.log("----- AI VOICEOVER GENERATION INITIATED -----");
-    console.log("Style Prompt:", voicePrompt);
-
-    // Simulate AI Generation Delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Return the mapped URL and transcript
     return NextResponse.json({
-      exerciseSlug: exercise.slug,
-      voiceoverUrl: asset.voiceoverUrl,
-      voiceoverExerciseSlug: asset.voiceoverExerciseSlug,
-      transcript,
-      status: asset.status
+      audioUrl: result.audioUrl,
+      transcript
     });
 
   } catch (error) {
     console.error("POST /api/exercises/voiceover error:", error);
     return NextResponse.json(
-      { error: "Failed to generate voiceover", status: "unavailable" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -2,12 +2,26 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateDiet } from "@/lib/diet";
 import type { Gender, ActivityLevel, Goal } from "@/lib/diet";
+import { auth } from "@/lib/auth";
 
 // GET /api/user — Fetch the single user
 export async function GET() {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      // Return public demo data for guests
+      return NextResponse.json({
+        id: "guest",
+        name: "Guest User",
+        email: "",
+        onboardingDone: false,
+      });
+    }
+
     const user = await prisma.user.findFirst({
-      where: { id: 1 },
+      where: { id: userId },
       include: {
         dietTargets: { orderBy: { generatedAt: "desc" }, take: 1 },
       },
@@ -30,11 +44,21 @@ export async function GET() {
 // PUT /api/user — Update user profile and recalculate diet
 export async function PUT(request: Request) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { name, age, gender, heightCm, weightKg, targetWeightKg, activityLevel, goal, equipment } = body;
 
     const user = await prisma.user.update({
-      where: { id: 1 },
+      where: { id: userId },
       data: {
         ...(name !== undefined && { name }),
         ...(age !== undefined && { age: Number(age) }),
@@ -62,7 +86,7 @@ export async function PUT(request: Request) {
 
       await prisma.dietTarget.create({
         data: {
-          userId: 1,
+          userId,
           calories: dietResult.targetCalories,
           proteinG: dietResult.proteinG,
           carbsG: dietResult.carbsG,
@@ -72,7 +96,7 @@ export async function PUT(request: Request) {
     }
 
     const updatedUser = await prisma.user.findFirst({
-      where: { id: 1 },
+      where: { id: userId },
       include: {
         dietTargets: { orderBy: { generatedAt: "desc" }, take: 1 },
       },
@@ -91,6 +115,16 @@ export async function PUT(request: Request) {
 // PATCH /api/user — Update user profile (supports onboarding fields)
 export async function PATCH(request: Request) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const {
       name, age, gender, heightCm, weightKg,
@@ -99,7 +133,7 @@ export async function PATCH(request: Request) {
     } = body;
 
     const user = await prisma.user.update({
-      where: { id: 1 },
+      where: { id: userId },
       data: {
         ...(name !== undefined && { name }),
         ...(age !== undefined && { age: Number(age) }),
@@ -128,7 +162,7 @@ export async function PATCH(request: Request) {
 
       await prisma.dietTarget.create({
         data: {
-          userId: 1,
+          userId,
           calories: dietResult.targetCalories,
           proteinG: dietResult.proteinG,
           carbsG: dietResult.carbsG,
@@ -138,7 +172,7 @@ export async function PATCH(request: Request) {
     }
 
     const updatedUser = await prisma.user.findFirst({
-      where: { id: 1 },
+      where: { id: userId },
       include: {
         dietTargets: { orderBy: { generatedAt: "desc" }, take: 1 },
       },

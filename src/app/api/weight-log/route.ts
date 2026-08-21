@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 // GET /api/weight-log — Fetch weight history
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json([]);
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = Number(searchParams.get("limit") || 50);
 
     const logs = await prisma.weightLog.findMany({
-      where: { userId: 1 },
+      where: { userId },
       orderBy: { date: "asc" },
       take: limit,
     });
@@ -26,6 +34,16 @@ export async function GET(request: NextRequest) {
 // POST /api/weight-log — Log a weight entry
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { date, weightKg } = body;
 
@@ -37,10 +55,10 @@ export async function POST(request: Request) {
     }
 
     const log = await prisma.weightLog.upsert({
-      where: { userId_date: { userId: 1, date } },
+      where: { userId_date: { userId, date } },
       update: { weightKg: Number(weightKg) },
       create: {
-        userId: 1,
+        userId,
         date,
         weightKg: Number(weightKg),
       },

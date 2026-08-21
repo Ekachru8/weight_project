@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 // GET /api/workout-log?from=2025-01-01&to=2025-12-31
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json([]);
+    }
+
     const { searchParams } = new URL(request.url);
     const from = searchParams.get("from");
     const to = searchParams.get("to");
 
-    const where: Record<string, unknown> = { userId: 1 };
+    const where: Record<string, unknown> = { userId };
     if (from && to) {
       where.date = { gte: from, lte: to };
     } else if (from) {
@@ -35,6 +43,16 @@ export async function GET(request: NextRequest) {
 // POST /api/workout-log — Log a day as completed or skipped
 export async function POST(request: Request) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { date, dayNumber, completed, notes } = body;
 
@@ -46,10 +64,10 @@ export async function POST(request: Request) {
     }
 
     const log = await prisma.workoutLog.upsert({
-      where: { userId_date: { userId: 1, date } },
+      where: { userId_date: { userId, date } },
       update: { completed, notes, dayNumber },
       create: {
-        userId: 1,
+        userId,
         date,
         dayNumber,
         completed,

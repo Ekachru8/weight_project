@@ -1,19 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getDayNumberForDate, getDayName } from "@/lib/utils";
 import { weeklyWorkoutSchedule } from "@/lib/workout-schedule";
+import { auth } from "@/lib/auth";
 
 // GET /api/today — Get today's workout day info + exercises
 export async function GET(request: Request) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
     const { searchParams } = new URL(request.url);
     const localDateParam = searchParams.get("localDate");
     const weekdayParam = searchParams.get("weekday");
-
-    const user = await prisma.user.findFirst({ where: { id: 1 } });
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
 
     let targetDate = new Date();
     if (localDateParam) {
@@ -39,9 +37,16 @@ export async function GET(request: Request) {
 
     const dateStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, "0")}-${String(targetDate.getDate()).padStart(2, "0")}`;
     
-    const todayLog = await prisma.workoutLog.findUnique({
-      where: { userId_date: { userId: 1, date: dateStr } },
-    });
+    let isCompleted = false;
+    let isLogged = false;
+
+    if (userId) {
+      const todayLog = await prisma.workoutLog.findUnique({
+        where: { userId_date: { userId, date: dateStr } },
+      });
+      isCompleted = todayLog?.completed ?? false;
+      isLogged = !!todayLog;
+    }
 
     return NextResponse.json({
       dayNumber: weekday, // Map dayNumber to weekday for backwards compatibility if needed
@@ -49,8 +54,8 @@ export async function GET(request: Request) {
       title: schedule.title,
       isRestDay,
       exercises,
-      isCompleted: todayLog?.completed ?? false,
-      isLogged: !!todayLog,
+      isCompleted,
+      isLogged,
       date: dateStr,
     });
   } catch (error) {

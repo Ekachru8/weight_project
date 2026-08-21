@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 function checkSafetyFlags(healthNotes: string): boolean {
   if (!healthNotes) return false;
@@ -12,6 +13,14 @@ function checkSafetyFlags(healthNotes: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { fitnessReadiness, todaySchedule, availableExercises } = body;
 

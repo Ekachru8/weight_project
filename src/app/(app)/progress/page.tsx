@@ -126,6 +126,21 @@ export default function ProgressPage() {
     progressPct = Math.max(0, Math.min(100, 100 - (diff * 5))); // Rough estimation
   }
 
+  if (user?.id === "guest") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 fade-in-up">
+        <div className="w-16 h-16 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center mb-6">
+          <TrendingUp className="text-muted/50" size={24} />
+        </div>
+        <h1 className="text-2xl font-bold text-foreground mb-2">Your Progress</h1>
+        <p className="text-sm text-muted max-w-sm mb-6">Your progress will appear here after you create an account.</p>
+        <a href="/signup" className="px-6 py-2.5 rounded-xl bg-accent text-black font-bold hover:brightness-110 transition-all text-sm">
+          Create Account
+        </a>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 fade-in-up pb-8">
       {/* Header */}

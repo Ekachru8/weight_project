@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const user = await prisma.user.findFirst({ where: { id: 1 } });
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json({ fitnessReadiness: null });
+    }
+
+    const user = await prisma.user.findFirst({ where: { id: userId } });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -19,9 +27,19 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    const userId = session?.user?.id ? Number(session.user.id) : null;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Please sign in to use this feature" },
+        { status: 401 }
+      );
+    }
+
     const { fitnessReadiness } = await request.json();
     const user = await prisma.user.update({
-      where: { id: 1 },
+      where: { id: userId },
       data: { fitnessReadiness },
     });
     return NextResponse.json({ fitnessReadiness: user.fitnessReadiness });

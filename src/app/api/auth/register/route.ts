@@ -22,15 +22,16 @@ export async function POST(request: Request) {
     }
 
     // Determine if identifier is email or phone
-    const isEmail = identifier.includes("@");
-    const emailValue = isEmail ? identifier : null;
-    const phoneValue = isEmail ? null : identifier;
+    const rawIdentifier = String(identifier ?? "").trim();
+    const isEmail = rawIdentifier.includes("@");
+    const emailValue = isEmail ? rawIdentifier.toLowerCase() : null;
+    const phoneValue = isEmail ? null : rawIdentifier.replace(/[^0-9+]/g, "");
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
-          ...(emailValue ? [{ email: emailValue }] : []),
+          ...(emailValue ? [{ email: { equals: emailValue, mode: "insensitive" as any } }] : []),
           ...(phoneValue ? [{ phoneNumber: phoneValue }] : []),
         ],
       },

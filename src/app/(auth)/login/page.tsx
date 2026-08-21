@@ -94,6 +94,10 @@ export default function LoginPage() {
           </div>
         </div>
 
+        <div className="text-xs text-center text-muted mb-6">
+          Browse the HomeFit experience without an account. Sign in or create an account when you want personalized plans, progress tracking, or saved changes.
+        </div>
+
         <div className="glass-card p-6 sm:p-8 fade-in-up opacity-0 shadow-[0_0_50px_rgba(192,255,0,0.05)]" style={{ animationDelay: "100ms" }}>
           <button
             id="google-signin-btn"
@@ -233,6 +237,21 @@ export default function LoginPage() {
             <Link href="/signup" className="text-accent font-semibold hover:underline">
               Sign Up
             </Link>
+          </div>
+          
+          <div className="mt-6 pt-6 border-t border-border flex flex-col items-center gap-3">
+             <button
+                onClick={async () => {
+                   setLoading(true);
+                   const { enterGuestMode } = await import("@/lib/guest");
+                   await enterGuestMode();
+                   router.push("/dashboard");
+                }}
+                disabled={loading}
+                className="w-full py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5 transition-colors"
+             >
+                Continue as Guest
+             </button>
           </div>
         </div>
       </div>

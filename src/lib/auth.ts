@@ -24,21 +24,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        identifier: { label: "Email or Phone", type: "text" },
+        identifier: { label: "Email or phone", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.identifier || !credentials?.password) return null;
+        const rawIdentifier = String(credentials?.identifier ?? "").trim();
+        const password = String(credentials?.password ?? "");
 
-        const identifier = credentials.identifier as string;
-        const password = credentials.password as string;
+        if (!rawIdentifier || !password) return null;
 
-        // Find user by email or phone
+        const identifier = rawIdentifier.toLowerCase();
+        const normalizedPhone = rawIdentifier.replace(/[^0-9+]/g, "");
+
+        // Find user by email (case-insensitive) or normalized phone
         const user = await prisma.user.findFirst({
           where: {
             OR: [
-              { email: identifier },
-              { phoneNumber: identifier },
+              { email: { equals: identifier, mode: "insensitive" } },
+              { phoneNumber: normalizedPhone },
             ],
           },
         });

@@ -41,15 +41,18 @@ export default function SignupPage() {
         body: JSON.stringify({ name, identifier, password }),
       });
 
+      let data;
       if (!res.ok) {
-        const data = await res.json();
+        data = await res.json();
         setError(data.error || "Registration failed");
         setLoading(false);
         return;
       }
+      
+      data = await res.json();
 
       const result = await signIn("credentials", {
-        identifier,
+        identifier: data.email ?? data.phoneNumber ?? identifier, // Use normalized email/phone if provided
         password,
         redirect: false,
       });
@@ -111,7 +114,7 @@ export default function SignupPage() {
         </div>
 
         <div className="text-xs text-center text-muted mb-6">
-          We use these details to build recommendations that fit your routine.
+          Browse the HomeFit experience without an account. Sign in or create an account when you want personalized plans, progress tracking, or saved changes.
         </div>
 
         <div className="glass-card p-6 sm:p-8 fade-in-up opacity-0 shadow-[0_0_50px_rgba(192,255,0,0.05)]" style={{ animationDelay: "100ms" }}>
@@ -270,6 +273,21 @@ export default function SignupPage() {
             <Link href="/login" className="text-accent font-semibold hover:underline">
               Sign In
             </Link>
+          </div>
+          
+          <div className="mt-6 pt-6 border-t border-border flex flex-col items-center gap-3">
+             <button
+                onClick={async () => {
+                   setLoading(true);
+                   const { enterGuestMode } = await import("@/lib/guest");
+                   await enterGuestMode();
+                   router.push("/dashboard");
+                }}
+                disabled={loading}
+                className="w-full py-3 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5 transition-colors"
+             >
+                Continue as Guest
+             </button>
           </div>
         </div>
       </div>
