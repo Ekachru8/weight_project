@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import OpenAI from "openai";
 
 export interface VoiceoverOptions {
   exerciseSlug: string;
@@ -13,22 +14,22 @@ export interface VoiceoverResult {
 }
 
 /**
- * Creates an exercise-specific narration using a TTS provider.
- * Uses a caching mechanism based on exercise slug and transcript hash.
+ * Creates an exercise-specific narration using OpenAI TTS.
+ * Caches the output locally in /public/exercises/ to avoid duplicate API calls.
  */
 export async function generateVoiceover({ exerciseSlug, transcript }: VoiceoverOptions): Promise<VoiceoverResult> {
-  const provider = process.env.TTS_PROVIDER || "local";
-  const apiKey = process.env.TTS_API_KEY || "";
+  const provider = process.env.TTS_PROVIDER || "openai";
+  const apiKey = process.env.OPENAI_API_KEY || process.env.TTS_API_KEY;
   
   // Clean, professional, safe filename
   const safeSlug = exerciseSlug.replace(/[^a-z0-9-]/gi, "").toLowerCase();
   const fileName = `${safeSlug}-voiceover.mp3`;
-  const publicPath = path.join(process.cwd(), "public", "exercises", fileName);
+  const publicDir = path.join(process.cwd(), "public", "exercises");
+  const publicPath = path.join(publicDir, fileName);
   const audioUrl = `/exercises/${fileName}`;
 
   try {
     // Basic caching: if it already exists, return the existing URL.
-    // In production, we'd hash the transcript to see if it changed.
     try {
       await fs.access(publicPath);
       return { audioUrl, status: "success" };
@@ -36,36 +37,30 @@ export async function generateVoiceover({ exerciseSlug, transcript }: VoiceoverO
       // File doesn't exist, proceed to generate
     }
 
-    if (provider === "local" || !apiKey) {
-      // Fallback for development without an API key
-      console.warn("No TTS provider/API key configured. Returning existing or mock URL.");
+    if (provider !== "openai" || !apiKey) {
+      console.warn("No OpenAI API key configured. Returning existing or mock URL.");
       return { audioUrl, status: "success" };
     }
 
-    // Example TTS Provider Integration (e.g. ElevenLabs, OpenAI, Google)
-    console.log(`Generating voiceover for ${safeSlug} via ${provider}...`);
+    console.log(`Generating professional voiceover for ${safeSlug} via OpenAI...`);
     
-    /* 
-    const response = await fetch(`https://api.example-tts.com/v1/audio/speech`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        input: transcript,
-        voice: "professional-coach-voice-id",
-        speed: 1.0,
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error("TTS Generation failed");
+    const openai = new OpenAI({ apiKey });
+    
+    // Ensure directory exists
+    try {
+      await fs.mkdir(publicDir, { recursive: true });
+    } catch (e) {
+      // Ignore if it already exists
     }
 
-    const buffer = await response.arrayBuffer();
-    await fs.writeFile(publicPath, Buffer.from(buffer));
-    */
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1",
+      voice: "onyx", // Onyx and Nova are good professional, calm voices for fitness
+      input: transcript,
+    });
+
+    const buffer = Buffer.from(await mp3.arrayBuffer());
+    await fs.writeFile(publicPath, buffer);
 
     return { audioUrl, status: "success" };
   } catch (error) {
@@ -73,3 +68,4 @@ export async function generateVoiceover({ exerciseSlug, transcript }: VoiceoverO
     return { audioUrl: "", status: "error", error: "Failed to generate audio" };
   }
 }
+
