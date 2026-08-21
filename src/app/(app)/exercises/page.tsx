@@ -50,6 +50,8 @@ interface WorkoutLog {
 const CATEGORIES = ["All", "Chest", "Back", "Legs", "Glutes", "Shoulders", "Arms", "Core", "Full Body", "Cardio", "Mobility"];
 const DIFFICULTIES = ["All", "Beginner", "Intermediate", "Advanced"];
 const EQUIPMENT_TYPES = ["All", "Bodyweight", "Dumbbells", "Resistance Band", "Chair", "Mat", "Pull-up Bar"];
+const MOVEMENT_PATTERNS = ["All", "Push", "Pull", "Squat", "Hinge", "Lunge", "Core", "Carry", "Isolation", "Cardio"];
+const SORT_OPTIONS = ["Recommended", "Beginner friendly", "Shortest workout", "Most popular"];
 
 const getEquipmentIcon = (eq: string) => {
   switch (eq.toLowerCase()) {
@@ -113,19 +115,17 @@ function InlineTimer({ defaultSeconds = 60 }: { defaultSeconds?: number }) {
 
 function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: () => void, itemVariants: any }) {
   const [isHovered, setIsHovered] = useState(false);
-  
-  // Ensure we only show the video if the generated video exactly matches this exercise slug
   const hasValidVideo = (ex as any).videoStatus === "ready" && ex.videoExerciseSlug === ex.slug;
 
   return (
     <motion.div 
       variants={itemVariants}
-      className="glass-card flex flex-col hover:-translate-y-1 transition-transform group border border-white/5 hover:border-accent/30 overflow-hidden cursor-pointer relative"
+      className="glass-card flex flex-col hover:-translate-y-1 transition-transform group border border-white/5 hover:border-accent/30 overflow-hidden cursor-pointer relative shadow-lg"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className="relative w-full h-36 bg-black/50 border-b border-white/5 overflow-hidden flex flex-col justify-center items-center">
+      <div className="relative w-full h-40 bg-black/50 border-b border-white/5 overflow-hidden flex flex-col justify-center items-center">
         {hasValidVideo ? (
           isHovered ? (
             <video 
@@ -142,8 +142,8 @@ function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: ()
           )
         ) : (
           <div className="px-4 text-center">
+            <Activity className="mx-auto text-muted/30 mb-2" size={32} />
             <p className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1">Video demonstration coming soon</p>
-            <p className="text-[10px] text-white/40 italic line-clamp-2">&quot;{ex.formCues?.[0] || ex.description}&quot;</p>
           </div>
         )}
         <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] font-bold text-accent uppercase tracking-widest backdrop-blur-md">
@@ -152,18 +152,35 @@ function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: ()
         <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border ${getDifficultyColor(ex.difficulty)}`}>
           {ex.difficulty}
         </div>
+        {hasValidVideo && (
+          <div className="absolute bottom-2 left-2 px-2 py-1 bg-emerald-500/80 rounded text-[9px] font-bold text-white uppercase tracking-widest backdrop-blur-md flex items-center gap-1">
+            <Play size={10}/> Video Available
+          </div>
+        )}
       </div>
 
       <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-black text-lg text-white mb-1 leading-tight group-hover:text-accent transition-colors">{ex.name}</h3>
-        <p className="text-xs text-muted italic mb-3 line-clamp-1">{ex.description}</p>
+        <h3 className="font-black text-lg text-white mb-1 leading-tight group-hover:text-accent transition-colors line-clamp-1">{ex.name}</h3>
+        <p className="text-xs text-muted italic mb-3 line-clamp-2">&quot;{ex.formCues?.[0] || ex.description}&quot;</p>
         
-        <div className="mt-auto flex justify-between items-center text-sm font-medium">
-          <div className="flex items-center gap-1 text-xs text-muted">
-            {getEquipmentIcon(ex.equipment)}
-            <span>{ex.equipment}</span>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/5 text-muted rounded-md flex items-center gap-1">{getEquipmentIcon(ex.equipment)} {ex.equipment}</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/5 text-muted rounded-md flex items-center gap-1"><CircleDot size={12}/> {ex.targetMuscles?.[0] || "Various"}</span>
+        </div>
+
+        <div className="mt-auto pt-4 border-t border-white/5 flex flex-col gap-2">
+          <div className="flex justify-between items-center text-sm font-medium">
+            <span className="text-[10px] text-muted font-bold uppercase tracking-widest">Prescription</span>
+            <span className="text-white font-bold bg-white/5 px-2 py-1 rounded text-xs">{ex.defaultSets} Sets × {ex.defaultReps}</span>
           </div>
-          <span className="text-white font-bold bg-white/5 px-2 py-1 rounded text-xs">{ex.defaultSets} × {ex.defaultReps}</span>
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            {hasValidVideo ? (
+              <button className="col-span-1 text-[10px] font-bold text-black bg-accent hover:bg-accent/80 transition-colors py-2 rounded-lg flex items-center justify-center gap-1"><Play size={12}/> Watch</button>
+            ) : (
+               <div className="col-span-1" />
+            )}
+            <button className={`text-[10px] font-bold text-white bg-white/10 hover:bg-white/20 transition-colors py-2 rounded-lg flex items-center justify-center gap-1 ${hasValidVideo ? 'col-span-1' : 'col-span-2'}`}><Info size={12}/> View details</button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -185,6 +202,10 @@ export default function ExercisesPage() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [equipmentFilter, setEquipmentFilter] = useState("All");
+  const [movementTypeFilter, setMovementTypeFilter] = useState("All");
+  const [withVideoOnly, setWithVideoOnly] = useState(false);
+  const [noEquipmentOnly, setNoEquipmentOnly] = useState(false);
+  const [sortBy, setSortBy] = useState("Recommended");
   
   const [activeTab, setActiveTab] = useState<"today" | "library">("today");
   const [marking, setMarking] = useState(false);
@@ -469,7 +490,7 @@ export default function ExercisesPage() {
   };
 
   const filteredExercises = useMemo(() => {
-    return exercises.filter((e) => {
+    let result = exercises.filter((e) => {
       const matchesSearch = !search || 
         [e.name, e.category, e.equipment, e.movementPattern, ...e.targetMuscles].some(str => 
           str?.toLowerCase().includes(search.toLowerCase())
@@ -477,9 +498,31 @@ export default function ExercisesPage() {
       const matchesCategory = categoryFilter === "All" || e.category === categoryFilter;
       const matchesDifficulty = difficultyFilter === "All" || e.difficulty === difficultyFilter;
       const matchesEquipment = equipmentFilter === "All" || e.equipment === equipmentFilter;
-      return matchesSearch && matchesCategory && matchesDifficulty && matchesEquipment;
+      const matchesMovement = movementTypeFilter === "All" || e.movementPattern === movementTypeFilter;
+      
+      const hasValidVideo = (e as any).videoStatus === "ready" && e.videoExerciseSlug === e.slug;
+      const matchesVideo = !withVideoOnly || hasValidVideo;
+      
+      const isNoEq = e.equipment.toLowerCase() === "bodyweight";
+      const matchesNoEq = !noEquipmentOnly || isNoEq;
+
+      return matchesSearch && matchesCategory && matchesDifficulty && matchesEquipment && matchesMovement && matchesVideo && matchesNoEq;
     });
-  }, [exercises, search, categoryFilter, difficultyFilter, equipmentFilter]);
+
+    if (sortBy === "Beginner friendly") {
+      result.sort((a, b) => {
+         const getVal = (d: string) => d === "Beginner" ? 1 : d === "Intermediate" ? 2 : 3;
+         return getVal(a.difficulty) - getVal(b.difficulty);
+      });
+    } else if (sortBy === "Shortest workout") {
+      result.sort((a, b) => {
+         return a.defaultSets - b.defaultSets;
+      });
+    } else if (sortBy === "Most popular") {
+       result.sort((a, b) => b.estimatedCaloriesPerMinute - a.estimatedCaloriesPerMinute);
+    }
+    return result;
+  }, [exercises, search, categoryFilter, difficultyFilter, equipmentFilter, movementTypeFilter, withVideoOnly, noEquipmentOnly, sortBy]);
 
   const [confettiParticles, setConfettiParticles] = useState<any[]>([]);
   useEffect(() => {
@@ -706,41 +749,73 @@ export default function ExercisesPage() {
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8">
           
           <motion.div variants={itemVariants} className="text-center py-8">
-            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Move better. Train with confidence.</h1>
-            <p className="text-muted text-lg max-w-2xl mx-auto">Explore over 100 exercises with detailed instructions, AI demonstrations, and proper form cues.</p>
+            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Move with confidence.</h1>
+            <p className="text-muted text-lg max-w-2xl mx-auto">Explore clear, guided exercises for strength, mobility, cardio, and everyday movement.</p>
           </motion.div>
 
           <motion.div variants={itemVariants} className="flex flex-col gap-4 bg-white/[0.02] p-4 rounded-2xl border border-white/5">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={20} />
-              <input type="text" placeholder="Search exercises, muscles, movement patterns..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-muted focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all font-medium" />
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={20} />
+                <input type="text" placeholder="Search exercises..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-muted focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all font-medium text-sm" />
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-[10px] text-muted font-bold uppercase tracking-widest">Sort By</label>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="bg-[#1a1a1a] border border-white/10 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-accent">
+                  {SORT_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              </div>
+              <button 
+                onClick={() => {
+                  setSearch(""); setCategoryFilter("All"); setDifficultyFilter("All"); setEquipmentFilter("All");
+                  setMovementTypeFilter("All"); setWithVideoOnly(false); setNoEquipmentOnly(false); setSortBy("Recommended");
+                }}
+                className="text-xs font-bold text-red-400 hover:text-red-300 transition-colors uppercase tracking-widest px-3 py-2"
+              >
+                Clear all filters
+              </button>
             </div>
             
-            <div className="flex flex-wrap gap-x-6 gap-y-3">
-              <div className="flex-1 min-w-[200px]">
+            <div className="flex flex-wrap gap-x-6 gap-y-3 pt-2 border-t border-white/5 mt-2">
+              <div className="flex-1 min-w-[150px]">
                 <label className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1 block">Category</label>
-                <div className="pill-scroll pb-1">
-                  {CATEGORIES.map(c => (
-                    <button key={c} onClick={() => setCategoryFilter(c)} className={`shrink-0 whitespace-nowrap px-4 py-1.5 text-xs font-semibold rounded-lg transition-all border ${categoryFilter === c ? "bg-white/10 border-white/20 text-white" : "bg-transparent border-transparent text-muted hover:text-white"}`}>{c}</button>
-                  ))}
-                </div>
+                <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/10 text-white text-xs rounded-lg px-3 py-2">
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
-              <div className="flex-1 min-w-[200px]">
+              <div className="flex-1 min-w-[150px]">
                 <label className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1 block">Difficulty</label>
-                <div className="pill-scroll pb-1">
-                  {DIFFICULTIES.map(d => (
-                    <button key={d} onClick={() => setDifficultyFilter(d)} className={`shrink-0 whitespace-nowrap px-4 py-1.5 text-xs font-semibold rounded-lg transition-all border ${difficultyFilter === d ? "bg-white/10 border-white/20 text-white" : "bg-transparent border-transparent text-muted hover:text-white"}`}>{d}</button>
-                  ))}
-                </div>
+                <select value={difficultyFilter} onChange={(e) => setDifficultyFilter(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/10 text-white text-xs rounded-lg px-3 py-2">
+                  {DIFFICULTIES.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
               </div>
-              <div className="flex-1 min-w-[200px]">
+              <div className="flex-1 min-w-[150px]">
                 <label className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1 block">Equipment</label>
-                <div className="pill-scroll pb-1">
-                  {EQUIPMENT_TYPES.map(e => (
-                    <button key={e} onClick={() => setEquipmentFilter(e)} className={`shrink-0 whitespace-nowrap px-4 py-1.5 text-xs font-semibold rounded-lg transition-all border ${equipmentFilter === e ? "bg-white/10 border-white/20 text-white" : "bg-transparent border-transparent text-muted hover:text-white"}`}>{e}</button>
-                  ))}
-                </div>
+                <select value={equipmentFilter} onChange={(e) => setEquipmentFilter(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/10 text-white text-xs rounded-lg px-3 py-2">
+                  {EQUIPMENT_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
+                </select>
               </div>
+              <div className="flex-1 min-w-[150px]">
+                <label className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1 block">Movement Type</label>
+                <select value={movementTypeFilter} onChange={(e) => setMovementTypeFilter(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/10 text-white text-xs rounded-lg px-3 py-2">
+                  {MOVEMENT_PATTERNS.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-4 pt-2">
+               <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                 <input type="checkbox" checked={withVideoOnly} onChange={(e) => setWithVideoOnly(e.target.checked)} className="rounded border-white/10 text-accent focus:ring-accent/50 bg-[#1a1a1a]" />
+                 <span className="font-medium">With video</span>
+               </label>
+               <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
+                 <input type="checkbox" checked={noEquipmentOnly} onChange={(e) => setNoEquipmentOnly(e.target.checked)} className="rounded border-white/10 text-accent focus:ring-accent/50 bg-[#1a1a1a]" />
+                 <span className="font-medium">No equipment</span>
+               </label>
+            </div>
+            
+            <div className="text-[10px] text-muted font-bold uppercase tracking-widest text-right">
+               {filteredExercises.length} {filteredExercises.length === 1 ? 'exercise' : 'exercises'}
             </div>
           </motion.div>
 

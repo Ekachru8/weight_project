@@ -19,38 +19,38 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     videoSource: "generated",
     voiceoverUrl: "/exercises/push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "push-ups",
-    transcript: "Set up for Push-ups. Start in a high plank. Lower your body. Push back up. Breathe naturally and keep your movements controlled. Focus on straight back and core tight. Avoid sagging hips. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong high-plank position with your hands slightly wider than your shoulders. Keep your head, hips, and heels in one straight line, and brace your core. Bend your elbows and lower your chest with control. Then press through your palms to return to the starting position. Breathe in as you lower and breathe out as you press up. Keep your elbows angled slightly back. Avoid letting your hips sag or rise. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "ready"
   },
   "incline-push-ups": {
     exerciseSlug: "incline-push-ups",
     exerciseName: "Incline push-ups",
-    videoUrl: null,
+    videoUrl: "/exercises/incline-push-ups.mp4",
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/incline-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "incline-push-ups",
-    transcript: "Set up for Incline push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
-    status: "unavailable"
+    transcript: "Place your hands on a stable elevated surface, such as a bench or sturdy table, and step your feet back until your body forms a straight line. Brace your core, bend your elbows, and lower your chest toward the surface with control. Press through your palms to return to the starting position. Keep your wrists aligned under your shoulders and avoid dropping your hips. Breathe in as you lower and breathe out as you press. Stop if you feel sharp pain or unusual discomfort.",
+    status: "ready"
   },
   "knee-push-ups": {
     exerciseSlug: "knee-push-ups",
     exerciseName: "Knee push-ups",
-    videoUrl: null,
+    videoUrl: "/exercises/knee-push-ups.mp4",
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/knee-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "knee-push-ups",
-    transcript: "Set up for Knee push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
-    status: "unavailable"
+    transcript: "Start on your hands and knees. Walk your hands forward until there is a straight line from your head to your knees. Brace your core, bend your elbows, and lower your chest toward the floor. Press through your palms to return to the starting position. Breathe in as you lower and breathe out as you press. Keep your neck neutral. Avoid letting your lower back sag. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    status: "ready"
   },
   "wide-grip-push-ups": {
     exerciseSlug: "wide-grip-push-ups",
     exerciseName: "Wide-grip push-ups",
-    videoUrl: null,
+    videoUrl: "/exercises/wide-grip-push-ups.mp4",
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/wide-grip-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "wide-grip-push-ups",
-    transcript: "Set up for Wide-grip push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
-    status: "unavailable"
+    transcript: "Start in a strong high-plank position with your hands significantly wider than your shoulders. Keep your head, hips, and heels in one straight line, and brace your core. Bend your elbows and lower your chest with control. Press through your palms to return to the starting position. Breathe in as you lower and breathe out as you press up. Avoid letting your hips sag or rise. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    status: "ready"
   },
   "diamond-push-ups": {
     exerciseSlug: "diamond-push-ups",
@@ -219,7 +219,7 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     videoSource: "generated",
     voiceoverUrl: "/exercises/bodyweight-squats-voiceover.mp3",
     voiceoverExerciseSlug: "bodyweight-squats",
-    transcript: "Set up for Bodyweight squats. Stand with feet shoulder-width apart. Lower hips. Stand back up. Breathe naturally and keep your movements controlled. Focus on chest up and knees out. Avoid knees caving in. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Stand with your feet about shoulder-width apart and keep your chest open. Brace your core, send your hips back, and bend your knees to lower into a comfortable squat. Keep your knees tracking in line with your toes, then press through your feet to stand tall. Breathe in as you lower and breathe out as you rise. Avoid collapsing your knees inward or rounding your lower back. Use a chair for support if needed, and stop if you feel sharp pain, dizziness, or unusual shortness of breath.",
     status: "ready"
   },
   "sumo-squats": {
@@ -259,7 +259,7 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     videoSource: "generated",
     voiceoverUrl: "/exercises/reverse-lunges-voiceover.mp3",
     voiceoverExerciseSlug: "reverse-lunges",
-    transcript: "Set up for Reverse Lunges. Step one foot back. Lower your hips. Return to start. Breathe naturally and keep your movements controlled. Focus on upright torso and knees 90 degrees. Avoid knee passing toe. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Stand tall with your feet together. Step one foot back and lower your hips until both knees are bent at a 90-degree angle. Keep your front knee in line with your toes and your torso upright. Push off your back foot to return to the starting position. Breathe in as you lower and breathe out as you rise. Avoid letting your front knee collapse inward. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "ready"
   },
   "forward-lunges": {
@@ -335,12 +335,12 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   "glute-bridges": {
     exerciseSlug: "glute-bridges",
     exerciseName: "Glute bridges",
-    videoUrl: null,
+    videoUrl: "/exercises/glute-bridges.mp4",
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/glute-bridges-voiceover.mp3",
     voiceoverExerciseSlug: "glute-bridges",
-    transcript: "Set up for Glute bridges. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
-    status: "unavailable"
+    transcript: "Lie on your back with your knees bent and feet flat on the floor, hip-width apart. Brace your core and press through your heels to lift your hips until your body forms a straight line from your shoulders to your knees. Squeeze your glutes at the top, then lower with control. Breathe out as you lift and breathe in as you lower. Avoid arching your lower back excessively. Stop if you feel sharp pain or unusual discomfort.",
+    status: "ready"
   },
   "single-leg-glute-bridges": {
     exerciseSlug: "single-leg-glute-bridges",
@@ -425,12 +425,12 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   "pike-push-ups": {
     exerciseSlug: "pike-push-ups",
     exerciseName: "Pike push-ups",
-    videoUrl: null,
+    videoUrl: "/exercises/pike-push-ups.mp4",
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/pike-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "pike-push-ups",
-    transcript: "Set up for Pike push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
-    status: "unavailable"
+    transcript: "Start in a downward dog position with your hips high, forming an inverted V shape. Keep your legs and back straight. Bend your elbows and lower the top of your head toward the floor between your hands. Press through your palms to return to the starting position. Breathe in as you lower and breathe out as you press up. Avoid rounding your back. Stop if you feel sharp pain, dizziness, or unusual shortness of breath.",
+    status: "ready"
   },
   "dumbbell-shoulder-press": {
     exerciseSlug: "dumbbell-shoulder-press",
@@ -439,7 +439,7 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     videoSource: "generated",
     voiceoverUrl: "/exercises/dumbbell-shoulder-press-voiceover.mp3",
     voiceoverExerciseSlug: "dumbbell-shoulder-press",
-    transcript: "Set up for Dumbbell shoulder press. Hold dumbbells at shoulders. Press overhead. Lower slowly. Breathe naturally and keep your movements controlled. Focus on brace core and controlled descent. Avoid arching back. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Stand or sit tall, holding a dumbbell in each hand at shoulder height, palms facing forward. Brace your core and press the weights straight up overhead until your arms are fully extended. Lower the weights back to your shoulders with control. Breathe out as you press up and breathe in as you lower. Avoid arching your lower back or leaning back. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "ready"
   },
   "arnold-press": {
@@ -619,7 +619,7 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     videoSource: "generated",
     voiceoverUrl: "/exercises/forearm-plank-voiceover.mp3",
     voiceoverExerciseSlug: "forearm-plank",
-    transcript: "Set up for Forearm Plank. Rest on forearms and toes. Hold position. Breathe naturally and keep your movements controlled. Focus on straight line and squeeze glutes. Avoid hips too high. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Lie face down, then prop yourself up on your forearms and toes. Ensure your elbows are directly under your shoulders. Keep your body in a straight line from your head to your heels. Brace your core tightly and squeeze your glutes. Breathe steadily throughout the hold. Avoid letting your hips sag or raising them too high. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "ready"
   },
   "high-plank": {
@@ -665,12 +665,12 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   "mountain-climbers": {
     exerciseSlug: "mountain-climbers",
     exerciseName: "Mountain climbers",
-    videoUrl: null,
+    videoUrl: "/exercises/mountain-climbers.mp4",
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/mountain-climbers-voiceover.mp3",
     voiceoverExerciseSlug: "mountain-climbers",
-    transcript: "Set up for Mountain climbers. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
-    status: "unavailable"
+    transcript: "Start in a strong high-plank position with your hands directly under your shoulders. Brace your core and quickly alternate bringing one knee toward your chest, as if running in place. Keep your hips low and stable. Breathe naturally as you move. Avoid bouncing your hips too high or letting them sag. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    status: "ready"
   },
   "bicycle-crunches": {
     exerciseSlug: "bicycle-crunches",
@@ -829,7 +829,7 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     videoSource: "generated",
     voiceoverUrl: "/exercises/jumping-jacks-voiceover.mp3",
     voiceoverExerciseSlug: "jumping-jacks",
-    transcript: "Set up for Jumping Jacks. Jump feet wide. Bring arms up. Return to start. Breathe naturally and keep your movements controlled. Focus on light on feet and full range of motion. Avoid sluggish movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Stand tall with your feet together and arms at your sides. Jump your feet wide while raising your arms overhead. Jump back to the starting position. Keep a steady pace and stay light on your feet. Breathe naturally throughout the movement. Avoid landing heavily on your heels. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "ready"
   },
   "high-knees": {
