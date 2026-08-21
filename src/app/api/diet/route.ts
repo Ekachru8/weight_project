@@ -11,13 +11,7 @@ export async function GET() {
     const userId = session?.user?.id ? Number(session.user.id) : null;
 
     if (!userId) {
-      // Return public demo data for guests
-      return NextResponse.json({
-        onboardingRequired: false,
-        user: { name: "Guest User", dietPreference: "both" },
-        diet: { targetCalories: 2200, proteinG: 150, carbsG: 220, fatG: 70 },
-        savedTarget: { calories: 2200, proteinG: 150, carbsG: 220, fatG: 70, generatedAt: new Date().toISOString() },
-      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findFirst({ where: { id: userId } });

@@ -3,13 +3,13 @@
 import { cookies } from "next/headers";
 
 export async function enterGuestMode() {
-  (await cookies()).set("guest-mode", "true", { path: "/" });
+  (await cookies()).set("homefit_guest", "true", { path: "/" });
 }
 
 export async function exitGuestMode() {
-  (await cookies()).delete("guest-mode");
+  (await cookies()).delete("homefit_guest");
 }
 
 export async function isGuestMode() {
-  return (await cookies()).get("guest-mode")?.value === "true";
+  return (await cookies()).get("homefit_guest")?.value === "true";
 }

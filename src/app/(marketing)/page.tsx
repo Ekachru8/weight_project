@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useMemo } from "react";
 import {
   Dumbbell,
@@ -110,6 +111,7 @@ function StatCounter({
 }
 
 export default function LandingPage() {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -238,7 +240,7 @@ export default function LandingPage() {
             with premium tools designed for your home fitness journey.
           </p>
 
-          <div className="fade-in-up relative z-10 opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animationDelay: "300ms" }}>
+          <div className="fade-in-up relative z-10 opacity-0 flex flex-col sm:flex-row items-center justify-center gap-4 mb-8" style={{ animationDelay: "300ms" }}>
             <Link
               href="/signup"
               id="hero-cta-btn"
@@ -250,13 +252,21 @@ export default function LandingPage() {
                 className="transition-transform group-hover:translate-x-0.5"
               />
             </Link>
-            <a
-              href="#features"
+            <button
+              onClick={() => {
+                document.cookie = "homefit_guest=true; path=/";
+                router.push("/dashboard");
+              }}
               className="px-8 py-4 rounded-2xl text-base font-semibold text-foreground bg-card border border-border hover:bg-card-hover transition-all duration-300 flex items-center gap-2"
             >
-              Explore Features
+              Continue as Guest
               <ChevronRight size={18} />
-            </a>
+            </button>
+          </div>
+          <div className="fade-in-up relative z-10 opacity-0 text-center" style={{ animationDelay: "400ms" }}>
+             <p className="text-xs text-muted max-w-md mx-auto">
+               Browse HomeFit without an account. Sign in or create an account when you want personalized plans, saved progress, and AI recommendations.
+             </p>
           </div>
         </div>
       </section>

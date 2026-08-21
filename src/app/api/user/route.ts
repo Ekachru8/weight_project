@@ -11,13 +11,7 @@ export async function GET() {
     const userId = session?.user?.id ? Number(session.user.id) : null;
 
     if (!userId) {
-      // Return public demo data for guests
-      return NextResponse.json({
-        id: "guest",
-        name: "Guest User",
-        email: "",
-        onboardingDone: false,
-      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const user = await prisma.user.findFirst({

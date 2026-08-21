@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   Home,
   Calendar,
@@ -23,6 +23,12 @@ const navItems = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  const isAuthenticated = status === "authenticated" && Boolean(session?.user);
+  const displayName = isAuthenticated
+    ? session?.user?.name?.trim() || session?.user?.email?.split("@")[0] || "User"
+    : "Guest Preview";
 
   return (
     <>
@@ -60,13 +66,23 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <button
-            onClick={() => signOut({ callbackUrl: '/' })}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-all duration-300 btn-press text-danger/80 hover:text-danger"
-          >
-            <LogOut size={20} strokeWidth={1.5} />
-            <span className="text-[9px] font-medium hidden sm:block">Logout</span>
-          </button>
+          {isAuthenticated ? (
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-all duration-300 btn-press text-danger/80 hover:text-danger"
+            >
+              <LogOut size={20} strokeWidth={1.5} />
+              <span className="text-[9px] font-medium hidden sm:block">Logout</span>
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-all duration-300 btn-press text-accent hover:text-accent/80"
+            >
+              <User size={20} strokeWidth={1.5} />
+              <span className="text-[9px] font-medium hidden sm:block">Sign In</span>
+            </Link>
+          )}
         </div>
       </nav>
 
@@ -112,16 +128,39 @@ export default function Navbar() {
           })}
         </div>
         
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="group relative flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-14 text-danger/70 hover:text-danger hover:bg-danger/10"
-        >
-          <LogOut size={20} strokeWidth={1.5} className="group-hover:scale-105 transition-transform" />
-          <span className="text-[9px] font-medium">Logout</span>
-          <span className="absolute left-full ml-3 px-2 py-1 bg-[#1a1f2e] text-foreground text-xs font-medium rounded-lg opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap border border-border shadow-lg">
-            Logout
-          </span>
-        </button>
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+              {isAuthenticated && session?.user?.image ? (
+                <img src={session.user.image} alt={displayName} className="w-full h-full object-cover" />
+              ) : (
+                <User size={16} className="text-white/50" />
+              )}
+            </div>
+            <span className="text-[8px] text-white/50 max-w-[50px] truncate text-center">{displayName}</span>
+          </div>
+        
+          {isAuthenticated ? (
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="group relative flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-14 text-danger/70 hover:text-danger hover:bg-danger/10"
+            >
+              <LogOut size={20} strokeWidth={1.5} className="group-hover:scale-105 transition-transform" />
+              <span className="text-[9px] font-medium">Logout</span>
+              <span className="absolute left-full ml-3 px-2 py-1 bg-[#1a1f2e] text-foreground text-xs font-medium rounded-lg opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 pointer-events-none whitespace-nowrap border border-border shadow-lg">
+                Logout
+              </span>
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="group relative flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-14 text-accent/70 hover:text-accent hover:bg-accent/10"
+            >
+              <User size={20} strokeWidth={1.5} className="group-hover:scale-105 transition-transform" />
+              <span className="text-[9px] font-medium text-center leading-tight">Sign In</span>
+            </Link>
+          )}
+        </div>
       </nav>
     </>
   );

@@ -42,7 +42,9 @@ export default function LoginPage() {
       if (result?.error) {
         setError("Invalid credentials. Please check your email/phone and password.");
       } else {
-        router.push("/dashboard");
+        document.cookie = "homefit_guest=; Max-Age=0; path=/";
+        router.replace("/dashboard");
+        router.refresh();
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -54,6 +56,7 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
+      document.cookie = "homefit_guest=; Max-Age=0; path=/";
       await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
       setError("Google sign-in failed. Please try again.");
@@ -241,10 +244,9 @@ export default function LoginPage() {
           
           <div className="mt-6 pt-6 border-t border-border flex flex-col items-center gap-3">
              <button
-                onClick={async () => {
+                onClick={() => {
                    setLoading(true);
-                   const { enterGuestMode } = await import("@/lib/guest");
-                   await enterGuestMode();
+                   document.cookie = "homefit_guest=true; path=/";
                    router.push("/dashboard");
                 }}
                 disabled={loading}
@@ -252,6 +254,9 @@ export default function LoginPage() {
              >
                 Continue as Guest
              </button>
+             <p className="text-xs text-center text-muted">
+               Browse HomeFit without an account. Sign in or create an account when you want personalized plans, saved progress, and AI recommendations.
+             </p>
           </div>
         </div>
       </div>
