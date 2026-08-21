@@ -41,15 +41,16 @@ export async function POST(request: NextRequest) {
       where: { slug: exercise.slug },
       data: {
         videoUrl: asset.videoUrl,
-        videoStatus: "ready",
-        videoExerciseSlug: exercise.slug
+        videoStatus: asset.status,
+        videoExerciseSlug: asset.exerciseSlug
       }
     });
 
     return NextResponse.json({
       exerciseSlug: exercise.slug,
       videoUrl: asset.videoUrl,
-      status: "ready"
+      videoExerciseSlug: asset.exerciseSlug,
+      status: asset.status
     });
 
   } catch (error) {

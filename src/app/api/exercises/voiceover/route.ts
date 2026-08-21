@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { EXERCISE_ASSETS, buildExerciseVoiceoverScript } from "@/data/exercise-assets";
+import { EXERCISE_ASSETS } from "@/data/exercise-assets";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate script from exercise metadata
-    const transcript = buildExerciseVoiceoverScript(exercise);
+    // Serve exact transcript from static assets
+    const transcript = asset.transcript;
 
     const voicePrompt = `Speak in clear, warm, professional English with a calm fitness-coach tone. Use a steady instructional pace and brief pauses between steps. Do not sound dramatic or overexcited: ${transcript}`;
 
@@ -48,8 +48,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       exerciseSlug: exercise.slug,
       voiceoverUrl: asset.voiceoverUrl,
+      voiceoverExerciseSlug: asset.voiceoverExerciseSlug,
       transcript,
-      status: "ready"
+      status: asset.status
     });
 
   } catch (error) {

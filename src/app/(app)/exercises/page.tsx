@@ -115,7 +115,7 @@ function ExerciseCard({ ex, onClick, itemVariants }: { ex: Exercise, onClick: ()
   const [isHovered, setIsHovered] = useState(false);
   
   // Ensure we only show the video if the generated video exactly matches this exercise slug
-  const hasValidVideo = ex.videoUrl && ex.videoExerciseSlug === ex.slug;
+  const hasValidVideo = (ex as any).videoStatus === "ready" && ex.videoExerciseSlug === ex.slug;
 
   return (
     <motion.div 
@@ -785,17 +785,17 @@ export default function ExercisesPage() {
                   <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center px-4"><AlertTriangle className="text-yellow-500 opacity-50" size={40} /><p className="text-white text-sm font-bold">Video unavailable for this exercise.</p><button onClick={() => fetchVideo(selectedVideo)} className="px-6 py-2 bg-white/10 rounded-lg text-white font-bold hover:bg-white/20 transition">Try again</button></div>
                 ) : (
                   <>
-                    <video ref={videoRef} src={selectedVideo.videoUrl} autoPlay muted={isVideoMuted} loop playsInline className="w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-md border border-white/10"><div className="w-2 h-2 rounded-full bg-accent animate-pulse" /><span className="text-[10px] font-bold text-white uppercase tracking-widest">Watch demonstration</span></div>
+                    <video ref={videoRef} src={(selectedVideo as any).videoUrl} autoPlay muted={isVideoMuted} loop playsInline className="w-full h-full object-cover" />
+                    <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/60 rounded-full backdrop-blur-md border border-white/10"><div className="w-2 h-2 rounded-full bg-accent animate-pulse" /><span className="text-[10px] font-bold text-white uppercase tracking-widest">{(selectedVideo as any).videoSource === 'pixabay' ? 'EXERCISE DEMONSTRATION' : 'HOMEFIT DEMONSTRATION'}</span></div>
                     
                     <button onClick={() => setIsVideoMuted(!isVideoMuted)} className="absolute bottom-4 right-4 p-2.5 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors backdrop-blur-md border border-white/10 z-20">
                       {isVideoMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                     </button>
                     
-                    {selectedVideo.voiceoverUrl && (
+                    {(selectedVideo as any).voiceoverUrl && (
                       <audio 
                         ref={audioRef} 
-                        src={selectedVideo.voiceoverUrl} 
+                        src={(selectedVideo as any).voiceoverUrl} 
                         onEnded={() => setIsPlayingAudio(false)}
                         onTimeUpdate={() => {
                           if (audioRef.current) {
@@ -811,7 +811,7 @@ export default function ExercisesPage() {
               <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar">
                 
                 {/* Voiceover Controls */}
-                {selectedVideo.voiceoverUrl ? (
+                {(selectedVideo as any).voiceoverStatus === 'ready' && (selectedVideo as any).voiceoverExerciseSlug === selectedVideo.slug ? (
                   <div className="mb-6 p-4 rounded-xl border border-accent/20 bg-accent/5 flex flex-col gap-4">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
@@ -861,16 +861,16 @@ export default function ExercisesPage() {
                       <div className="h-full bg-accent transition-all duration-100 ease-linear" style={{ width: `${audioProgress}%` }} />
                     </div>
 
-                    {showTranscript && selectedVideo.transcript && (
+                    {showTranscript && (selectedVideo as any).transcript && (
                       <div className="mt-2 p-4 bg-black/40 rounded-lg border border-white/5 text-sm text-white/80 leading-relaxed italic">
                         <span className="block text-[10px] text-accent font-bold uppercase tracking-widest mb-2 not-italic">Form guidance</span>
-                        &quot;{selectedVideo.transcript}&quot;
+                        &quot;{(selectedVideo as any).transcript}&quot;
                       </div>
                     )}
                   </div>
                 ) : (
                   <div className="mb-6 p-4 rounded-xl border border-white/5 bg-white/5 flex items-center justify-center">
-                    <p className="text-sm text-muted font-bold flex items-center gap-2"><VolumeX size={16}/> Audio guidance unavailable</p>
+                    <p className="text-sm text-muted font-bold flex items-center gap-2"><VolumeX size={16}/> Audio guidance is being prepared</p>
                   </div>
                 )}
                 <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -886,7 +886,7 @@ export default function ExercisesPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   <div className="lg:col-span-2 space-y-8">
                     <div>
-                      <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-white/10 pb-2"><CircleDot size={16} className="text-accent" /> Target Muscles</h4>
+                      <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-white/10 pb-2"><CircleDot size={16} className="text-accent" /> Muscles worked</h4>
                       <div className="flex flex-wrap gap-2">
                         {selectedVideo.targetMuscles?.map((m, i) => (
                           <span key={i} className="px-3 py-1 bg-accent/10 border border-accent/20 text-accent rounded-lg text-sm font-medium">{m}</span>
@@ -895,7 +895,7 @@ export default function ExercisesPage() {
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-white/10 pb-2"><CheckCircle2 size={16} className="text-emerald-400" /> Step-by-Step Instructions</h4>
+                      <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest border-b border-white/10 pb-2"><CheckCircle2 size={16} className="text-emerald-400" /> How to perform it</h4>
                       <ol className="text-white/80 leading-relaxed space-y-4">
                         {selectedVideo.instructions?.map((inst, i) => (
                           <li key={i} className="flex gap-4">
@@ -940,32 +940,33 @@ export default function ExercisesPage() {
                       </div>
                     )}
 
-                    {selectedVideo.safetyTips?.length > 0 && (
-                      <div className="bg-blue-400/5 rounded-2xl p-6 border border-blue-400/20">
-                        <h4 className="text-[10px] font-bold text-blue-400 mb-3 uppercase tracking-widest flex items-center gap-2"><Info size={14}/> Safety Tips</h4>
-                        <ul className="text-xs text-blue-200/80 leading-relaxed space-y-2 list-disc list-inside">
-                          {selectedVideo.safetyTips.map((tip, i) => <li key={i}>{tip}</li>)}
+                    {(selectedVideo as any).modifications?.length > 0 && (
+                      <div className="bg-yellow-400/5 rounded-2xl p-6 border border-yellow-400/20">
+                        <h4 className="text-[10px] font-bold text-yellow-400 mb-3 uppercase tracking-widest">Make it easier</h4>
+                        <ul className="text-xs text-yellow-200/80 leading-relaxed space-y-2 list-disc list-inside">
+                          {(selectedVideo as any).modifications.map((mod: string, i: number) => <li key={i}>{mod}</li>)}
                         </ul>
                       </div>
                     )}
-                    
-                    {selectedVideo.videoSource && (
-                      <details className="bg-white/5 rounded-2xl p-4 border border-white/10 group">
-                        <summary className="text-[10px] font-bold text-muted uppercase tracking-widest cursor-pointer list-none flex justify-between items-center outline-none">
-                          Video source
-                          <span className="text-muted group-open:rotate-180 transition-transform">▼</span>
-                        </summary>
-                        <div className="mt-4 text-xs text-muted/80 space-y-2 border-t border-white/5 pt-4">
-                          <p><strong className="text-muted">Source:</strong> <span className="capitalize">{selectedVideo.videoSource}</span></p>
-                          {selectedVideo.videoSourcePage && (
-                            <p><strong className="text-muted">Original Page:</strong> <a href={selectedVideo.videoSourcePage} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline break-all">{selectedVideo.videoSourcePage}</a></p>
-                          )}
-                          {selectedVideo.pixabayAssetId && (
-                            <p><strong className="text-muted">Asset ID:</strong> {selectedVideo.pixabayAssetId}</p>
-                          )}
-                        </div>
-                      </details>
+
+                    {(selectedVideo as any).progressions?.length > 0 && (
+                      <div className="bg-emerald-400/5 rounded-2xl p-6 border border-emerald-400/20">
+                        <h4 className="text-[10px] font-bold text-emerald-400 mb-3 uppercase tracking-widest">Progress when ready</h4>
+                        <ul className="text-xs text-emerald-200/80 leading-relaxed space-y-2 list-disc list-inside">
+                          {(selectedVideo as any).progressions.map((prog: string, i: number) => <li key={i}>{prog}</li>)}
+                        </ul>
+                      </div>
                     )}
+
+                    <div className="bg-blue-400/5 rounded-2xl p-6 border border-blue-400/20">
+                      <h4 className="text-[10px] font-bold text-blue-400 mb-3 uppercase tracking-widest flex items-center gap-2"><Info size={14}/> Safety Section</h4>
+                      <p className="text-sm font-bold text-white mb-2">Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.</p>
+                      {selectedVideo.safetyTips?.length > 0 && (
+                        <ul className="text-xs text-blue-200/80 leading-relaxed space-y-2 list-disc list-inside">
+                          {selectedVideo.safetyTips.map((tip, i) => <li key={i}>{tip}</li>)}
+                        </ul>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

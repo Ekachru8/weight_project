@@ -1,0 +1,1 @@
+import { PrismaClient } from '@prisma/client'; const prisma = new PrismaClient(); prisma.exercise.findMany().then(exs => { console.log(JSON.stringify(exs.map(e => ({ name: e.name, slug: e.slug })))); prisma.$disconnect(); });
