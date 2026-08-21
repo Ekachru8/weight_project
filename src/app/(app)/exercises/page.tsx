@@ -490,7 +490,7 @@ export default function ExercisesPage() {
   };
 
   const filteredExercises = useMemo(() => {
-    let result = exercises.filter((e) => {
+    const result = exercises.filter((e) => {
       const matchesSearch = !search || 
         [e.name, e.category, e.equipment, e.movementPattern, ...e.targetMuscles].some(str => 
           str?.toLowerCase().includes(search.toLowerCase())
