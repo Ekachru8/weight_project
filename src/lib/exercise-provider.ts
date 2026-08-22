@@ -1,3 +1,14 @@
+export type ExerciseAudio = {
+  exerciseSlug: string;
+  exerciseName: string;
+  audioUrl: string | null;
+  transcript: string;
+  audioStatus: "not_started" | "generating" | "ready" | "failed" | "unavailable";
+  voice: string;
+  generatedAt?: string;
+  transcriptHash?: string;
+};
+
 export type ExerciseMedia = {
   exerciseSlug: string;
   exerciseName: string;

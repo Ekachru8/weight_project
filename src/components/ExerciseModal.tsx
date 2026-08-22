@@ -49,7 +49,7 @@ export function ExerciseModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-[960px] max-h-[92vh] md:max-h-[88vh] bg-[#0a0a0a] rounded-2xl border border-white/10 overflow-hidden flex flex-col shadow-2xl relative"
+          className="w-full max-w-[860px] max-h-[92vh] md:max-h-[84vh] bg-[#0a0a0a] rounded-2xl border border-white/10 overflow-hidden flex flex-col shadow-2xl relative"
         >
           {/* Compact Sticky Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-md sticky top-0 z-20">
@@ -57,7 +57,7 @@ export function ExerciseModal({
               <h2 className="text-xl font-extrabold text-white">{ex.name}</h2>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-accent bg-accent/10 px-2 py-0.5 rounded">{ex.category}</span>
-                <span className="text-xs text-muted font-medium">{ex.targetMuscles?.join(", ") || "Various muscles"}</span>
+                {ex.difficulty && <span className="text-[10px] font-bold uppercase tracking-widest text-white/70 bg-white/10 px-2 py-0.5 rounded">{ex.difficulty}</span>}
               </div>
             </div>
             <button 
@@ -69,147 +69,136 @@ export function ExerciseModal({
           </div>
 
           {/* Scrollable Body */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
             
-            {/* Video Area */}
-            <div className="w-full bg-black relative flex items-center justify-center overflow-hidden aspect-video max-h-[230px] md:max-h-[320px] border-b border-white/5">
-              {videoState === 'loading' && (
-                <div className="flex flex-col items-center justify-center absolute inset-0 bg-black/80 z-10">
-                  <Loader2 className="animate-spin text-accent mb-2" size={24} />
-                  <span className="text-xs font-medium text-muted uppercase tracking-widest">Preparing demonstration...</span>
-                </div>
-              )}
-              {videoState === 'error' && (
-                <div className="flex flex-col items-center justify-center absolute inset-0 bg-black/80 z-10 px-4 text-center">
-                  <AlertTriangle className="text-red-400 mb-2" size={32} />
-                  <span className="text-sm font-medium text-white mb-1">Demonstration unavailable</span>
-                  <span className="text-xs text-muted max-w-sm">Written guidance is still available below.</span>
-                </div>
-              )}
-              {hasPlayableVideo && (
-                <>
-                  <video 
-                    ref={videoRef}
-                    src={ex.videoUrl!}
-                    className="w-full h-full object-contain"
-                    autoPlay
-                    loop
-                    playsInline
-                    preload="metadata"
-                    muted={isVideoMuted}
-                    onError={(e) => console.error(`[DEV] Modal video error for ${ex.slug}:`, e)}
-                  />
-                  <div className="absolute bottom-4 right-4 z-10">
+            {/* Audio Form-Guidance Panel */}
+            {hasMatchingAudio ? (
+              <div className="glass-card p-6 border-accent/20 bg-accent/5 rounded-xl flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => {
+                        if (audioRef.current) {
+                          if (isPlayingAudio) audioRef.current.pause();
+                          else audioRef.current.play();
+                          setIsPlayingAudio(!isPlayingAudio);
+                        }
+                      }}
+                      className="w-14 h-14 rounded-full accent-gradient flex items-center justify-center text-black shadow-lg shadow-accent/20 hover:brightness-110 transition-all shrink-0"
+                      aria-label={isPlayingAudio ? "Pause guidance" : "Listen to guidance"}
+                    >
+                      {isPlayingAudio ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
+                    </button>
+                    <div>
+                      <h3 className="font-black text-white text-lg">Form Guidance</h3>
+                      <p className="text-xs text-muted">AI Voice Coach</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => {
+                        if (audioRef.current) {
+                          audioRef.current.currentTime = 0;
+                          audioRef.current.play();
+                          setIsPlayingAudio(true);
+                        }
+                      }}
+                      className="text-xs font-bold bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg transition-colors text-white/80"
+                    >
+                      Replay
+                    </button>
                     <button 
                       onClick={() => setIsVideoMuted(!isVideoMuted)}
-                      className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md text-white flex items-center justify-center border border-white/10 hover:bg-black/80 transition-colors"
+                      className="text-xs font-bold bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors text-white/80"
+                      aria-label="Mute"
                     >
-                      {isVideoMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                      {isVideoMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                     </button>
+                    <select 
+                      onChange={(e) => {
+                        if (audioRef.current) audioRef.current.playbackRate = parseFloat(e.target.value);
+                      }}
+                      className="bg-black/50 text-xs font-bold text-white/80 border border-white/10 rounded-lg px-2 py-1.5"
+                    >
+                      <option value="0.75">0.75x</option>
+                      <option value="1" selected>1x</option>
+                      <option value="1.25">1.25x</option>
+                    </select>
                   </div>
-                </>
-              )}
-              {!hasPlayableVideo && videoState === 'ready' && (
-                <div className="flex flex-col items-center justify-center absolute inset-0 bg-black/80 z-10">
-                  <Activity className="text-muted/30 mb-2" size={48} />
-                  <span className="text-sm font-medium text-muted uppercase tracking-widest">Demonstration unavailable</span>
                 </div>
-              )}
+
+                <div 
+                  className="mt-2 h-2 bg-black/40 rounded-full overflow-hidden cursor-pointer"
+                  onClick={(e) => {
+                    if (audioRef.current) {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const percentage = x / rect.width;
+                      audioRef.current.currentTime = percentage * audioRef.current.duration;
+                      setAudioProgress(percentage * 100);
+                    }
+                  }}
+                >
+                  <div className="h-full bg-accent rounded-full transition-all duration-100 ease-linear" style={{ width: `${audioProgress}%` }} />
+                </div>
+                
+                <audio 
+                  ref={audioRef}
+                  src={ex.audioUrl || undefined}
+                  preload="metadata"
+                  muted={isVideoMuted}
+                  onError={(e) => {
+                    console.error("Exercise audio playback failed", { exerciseSlug: ex.slug, error: e });
+                    // Inform the user or fallback. (We could set a local error state).
+                  }}
+                  onEnded={() => {
+                    setIsPlayingAudio(false);
+                    setAudioProgress(0);
+                  }}
+                  onTimeUpdate={(e) => {
+                    const target = e.target as HTMLAudioElement;
+                    if (target.duration) {
+                      setAudioProgress((target.currentTime / target.duration) * 100);
+                    }
+                  }}
+                />
+              </div>
+            ) : ex.audioStatus === "generating" || ex.audioStatus === "queued" ? (
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-3">
+                <Loader2 className="animate-spin text-accent" size={24} />
+                <span className="text-sm font-bold text-muted">Preparing form guidance...</span>
+              </div>
+            ) : (
+              <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-6 flex items-center gap-3">
+                <AlertTriangle className="text-red-400/50" size={24} />
+                <span className="text-sm font-bold text-muted">Audio guidance unavailable</span>
+              </div>
+            )}
+
+            {/* How to perform it */}
+            <div>
+              <h3 className="text-lg font-bold text-white mb-4">How to perform it</h3>
+              <div className="space-y-4">
+                {ex.instructions?.length > 0 ? ex.instructions.map((step, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-bold text-muted shrink-0 mt-0.5">
+                      {i + 1}
+                    </div>
+                    <p className="text-sm text-white/80 leading-relaxed">{step}</p>
+                  </div>
+                )) : (
+                  <p className="text-sm text-muted">Instructions coming soon.</p>
+                )}
+              </div>
             </div>
 
-            {/* Content Below Video */}
-            <div className="p-6 md:p-8 grid md:grid-cols-3 gap-8">
-              
-              {/* Left Column: Instructions */}
-              <div className="md:col-span-2 space-y-8">
-                
-                {/* Audio Coaching Card */}
-                {hasMatchingAudio && ex.status !== "unavailable" && (
-                  <div className="glass-card p-5 border-accent/20 bg-accent/5 rounded-xl">
-                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <button 
-                          onClick={() => {
-                            if (audioRef.current) {
-                              if (isPlayingAudio) audioRef.current.pause();
-                              else audioRef.current.play();
-                              setIsPlayingAudio(!isPlayingAudio);
-                            }
-                          }}
-                          className="w-12 h-12 rounded-full accent-gradient flex items-center justify-center text-black shadow-lg shadow-accent/20 hover:brightness-110 transition-all shrink-0"
-                        >
-                          {isPlayingAudio ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
-                        </button>
-                        <div>
-                          <h3 className="font-bold text-white text-sm">Listen to form guidance</h3>
-                          <p className="text-xs text-muted">AI-generated coaching cues</p>
-                        </div>
-                      </div>
-                      
-                      {ex.transcript && (
-                        <button 
-                          onClick={() => setShowTranscript(!showTranscript)}
-                          className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-accent hover:text-white transition-colors"
-                        >
-                          <FileText size={14} /> 
-                          {showTranscript ? "Hide Transcript" : "Read Transcript"}
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="mt-4 h-1 bg-black/40 rounded-full overflow-hidden">
-                      <div className="h-full bg-accent rounded-full transition-all duration-300" style={{ width: `${audioProgress}%` }} />
-                    </div>
-
-                    <AnimatePresence>
-                      {showTranscript && ex.transcript && (
-                        <motion.div 
-                          initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                          animate={{ opacity: 1, height: "auto", marginTop: 16 }}
-                          exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="p-4 bg-black/40 rounded-lg text-sm text-white/80 leading-relaxed border border-white/5">
-                            {ex.transcript}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                    
-                    <audio 
-                      ref={audioRef}
-                      src={ex.audioUrl || undefined}
-                      onEnded={() => {
-                        setIsPlayingAudio(false);
-                        setAudioProgress(0);
-                      }}
-                      onTimeUpdate={(e) => {
-                        const target = e.target as HTMLAudioElement;
-                        setAudioProgress((target.currentTime / target.duration) * 100);
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">How to perform it</h3>
-                  <div className="space-y-3">
-                    {ex.instructions?.length > 0 ? ex.instructions.map((step, i) => (
-                      <div key={i} className="flex gap-4">
-                        <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-bold text-muted shrink-0 mt-0.5">
-                          {i + 1}
-                        </div>
-                        <p className="text-sm text-white/80 leading-relaxed">{step}</p>
-                      </div>
-                    )) : (
-                      <p className="text-sm text-muted">Instructions coming soon.</p>
-                    )}
-                  </div>
-                </div>
-
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Form cues & Mistakes */}
+              <div className="space-y-8">
                 {ex.formCues?.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-4">Form cues</h3>
+                    <h3 className="text-lg font-bold text-white mb-3">Form cues</h3>
                     <ul className="space-y-2">
                       {ex.formCues.map((cue, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-emerald-400/90 bg-emerald-400/5 p-3 rounded-lg border border-emerald-400/10">
@@ -223,7 +212,7 @@ export function ExerciseModal({
 
                 {ex.commonMistakes?.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-4">Common mistakes to avoid</h3>
+                    <h3 className="text-lg font-bold text-white mb-3">Common mistakes</h3>
                     <ul className="space-y-2">
                       {ex.commonMistakes.map((mistake, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-red-400/90 bg-red-400/5 p-3 rounded-lg border border-red-400/10">
@@ -234,38 +223,13 @@ export function ExerciseModal({
                     </ul>
                   </div>
                 )}
-
-                {ex.safetyTips?.length > 0 && (
-                  <div className="bg-yellow-400/5 border border-yellow-400/20 p-4 rounded-xl flex gap-3 items-start">
-                    <Info className="text-yellow-400 shrink-0 mt-0.5" size={18} />
-                    <div>
-                      <h4 className="font-bold text-yellow-400 text-sm mb-1">Safety Note</h4>
-                      <p className="text-sm text-yellow-400/80">{ex.safetyTips[0]}</p>
-                    </div>
-                  </div>
-                )}
               </div>
               
-              {/* Right Column: Metadata */}
+              {/* Metadata & Progress */}
               <div className="space-y-6">
-                
-                {markCompleted && (
-                  <button 
-                    onClick={markCompleted}
-                    className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
-                      isCompleted 
-                        ? 'bg-white/10 text-white border border-white/20' 
-                        : 'bg-accent text-black hover:brightness-110'
-                    }`}
-                  >
-                    {isCompleted ? <CheckCircle2 size={18} /> : <div className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin hidden" />}
-                    {isCompleted ? 'Completed' : 'Mark as Complete'}
-                  </button>
-                )}
-
                 <div className="glass-card p-5 border-white/5 rounded-xl space-y-4">
                   <div>
-                    <span className="block text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Target Muscles</span>
+                    <span className="block text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Muscles Worked</span>
                     <div className="flex flex-wrap gap-2">
                       {ex.targetMuscles?.map((m, i) => (
                         <span key={i} className="text-xs font-medium bg-white/5 text-white px-2.5 py-1 rounded-md border border-white/10">
@@ -276,19 +240,64 @@ export function ExerciseModal({
                   </div>
 
                   <div className="pt-4 border-t border-white/5">
-                    <span className="block text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Equipment Needed</span>
-                    <span className="text-sm font-medium text-white">{ex.equipment}</span>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/5">
-                    <span className="block text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Standard Prescription</span>
-                    <span className="text-sm font-medium text-white">{ex.defaultSets || 3} sets of {ex.defaultReps || "10-12 reps"}</span>
+                    <span className="block text-[10px] font-bold uppercase tracking-widest text-muted mb-1">Sets, Reps, and Rest</span>
+                    <span className="text-sm font-medium text-white">{ex.defaultSets || 3} sets of {ex.defaultReps || "10-12 reps"}. Rest 60s.</span>
                   </div>
                 </div>
 
-              </div>
+                {ex.safetyTips?.length > 0 && (
+                  <div className="bg-yellow-400/5 border border-yellow-400/20 p-4 rounded-xl flex gap-3 items-start">
+                    <Info className="text-yellow-400 shrink-0 mt-0.5" size={18} />
+                    <div>
+                      <h4 className="font-bold text-yellow-400 text-sm mb-1">Safety Note</h4>
+                      <p className="text-sm text-yellow-400/80">{ex.safetyTips[0]}</p>
+                    </div>
+                  </div>
+                )}
 
+                {markCompleted && (
+                  <button 
+                    onClick={markCompleted}
+                    className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+                      isCompleted 
+                        ? 'bg-white/10 text-white border border-white/20' 
+                        : 'bg-accent text-black hover:brightness-110'
+                    }`}
+                  >
+                    {isCompleted ? <CheckCircle2 size={18} /> : null}
+                    {isCompleted ? 'Completed' : 'Mark as Complete'}
+                  </button>
+                )}
+              </div>
             </div>
+
+            {/* Expandable Transcript */}
+            {ex.transcript && (
+              <div className="pt-6 border-t border-white/5">
+                <button 
+                  onClick={() => setShowTranscript(!showTranscript)}
+                  className="flex items-center gap-2 text-sm font-bold text-accent hover:text-white transition-colors uppercase tracking-widest"
+                >
+                  <FileText size={16} />
+                  {showTranscript ? "Hide Transcript" : "Show Transcript"}
+                </button>
+                <AnimatePresence>
+                  {showTranscript && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 bg-black/40 rounded-lg text-sm text-white/80 leading-relaxed border border-white/5">
+                        {ex.transcript}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
           </div>
         </motion.div>
       </motion.div>

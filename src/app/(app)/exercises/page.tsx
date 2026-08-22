@@ -104,11 +104,11 @@ export default function ExercisesPage() {
   const [activeTab, setActiveTab] = useState<"today" | "library">("today");
   const [marking, setMarking] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<Exercise | null>(null);
-  const [videoState, setVideoState] = useState<'loading' | 'ready' | 'error'>('ready');
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [audioState, setAudioState] = useState<'loading' | 'ready' | 'error'>('ready');
   const [completedExIds, setCompletedExIds] = useState<Set<number>>(new Set());
   
-  // Audio / Video controls state
+  // Audio controls state
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [showTranscript, setShowTranscript] = useState(false);
@@ -117,45 +117,24 @@ export default function ExercisesPage() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const handleSelectVideo = async (ex: Exercise) => {
-    setSelectedVideo(ex);
+  const handleSelectExercise = async (ex: Exercise) => {
+    setSelectedExercise(ex);
     setIsPlayingAudio(false);
     setShowTranscript(false);
     setAudioProgress(0);
     
-    // Check if videoUrl is already ready
-    if (ex.videoStatus === "ready" && Boolean(ex.videoUrl)) {
-      setVideoState('ready');
-      // Fetch voiceover if not already present
-      if (!ex.voiceoverUrl) {
-        fetchVoiceover(ex);
-      }
+    // Check if audioUrl is already ready
+    if (ex.audioStatus === "ready" && Boolean(ex.audioUrl)) {
+      setAudioState('ready');
     } else {
-      fetchVideo(ex);
+      fetchAudio(ex);
     }
   };
 
-  const fetchVoiceover = async (ex: Exercise) => {
+  const fetchAudio = async (ex: Exercise) => {
+    setAudioState('loading');
     try {
-      const res = await fetch('/api/exercises/voiceover', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ exerciseSlug: ex.slug })
-      });
-      const data = await res.json();
-      if (res.ok && data.voiceoverUrl) {
-        setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, voiceoverUrl: data.voiceoverUrl, transcript: data.transcript, voiceoverStatus: 'ready' } : prev);
-        setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, voiceoverUrl: data.voiceoverUrl, transcript: data.transcript, voiceoverStatus: 'ready' } : p));
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchVideo = async (ex: Exercise) => {
-    setVideoState('loading');
-    try {
-      const res = await fetch('/api/exercises/video/generate', {
+      const res = await fetch('/api/exercises/audio/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ exerciseSlug: ex.slug })
@@ -163,43 +142,49 @@ export default function ExercisesPage() {
       const data = await res.json();
       
       if (!res.ok || data.error) {
-        setVideoState('error');
+        setAudioState('error');
         return;
+      }
+
+      if (data.audioStatus === 'ready' && data.audioUrl) {
+         setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioUrl: data.audioUrl, audioStatus: 'ready', transcript: data.transcript } : prev);
+         setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioUrl: data.audioUrl, audioStatus: 'ready', transcript: data.transcript } : p));
+         setAudioState('ready');
+         return;
       }
 
       if (data.jobId) {
         // Start polling
         const poll = setInterval(async () => {
           try {
-            const statusRes = await fetch(`/api/exercises/video/status/${data.jobId}`);
+            const statusRes = await fetch(`/api/exercises/audio/status/${data.jobId}`);
             const statusData = await statusRes.json();
             
-            if (statusData.status === 'ready' && statusData.videoUrl) {
+            if (statusData.status === 'ready' && statusData.audioUrl) {
               clearInterval(poll);
-              setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoUrl: statusData.videoUrl, videoStatus: 'ready' } : prev);
-              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoUrl: statusData.videoUrl, videoStatus: 'ready' } : p));
-              setVideoState('ready');
-              fetchVoiceover(ex); // Fetch voiceover now
+              setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioUrl: statusData.audioUrl, audioStatus: 'ready', transcript: statusData.transcript } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioUrl: statusData.audioUrl, audioStatus: 'ready', transcript: statusData.transcript } : p));
+              setAudioState('ready');
             } else if (statusData.status === 'failed') {
               clearInterval(poll);
-              setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoStatus: 'failed' } : prev);
-              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoStatus: 'failed' } : p));
-              setVideoState('error');
+              setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioStatus: 'failed' } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioStatus: 'failed' } : p));
+              setAudioState('error');
             } else {
               // queued, generating, processing
-              setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoStatus: statusData.status } : prev);
-              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoStatus: statusData.status } : p));
+              setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioStatus: statusData.status } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioStatus: statusData.status } : p));
             }
           } catch (e) {
             clearInterval(poll);
-            setVideoState('error');
+            setAudioState('error');
           }
         }, 3000); // Poll every 3 seconds
       } else {
-         setVideoState('error');
+         setAudioState('error');
       }
     } catch (err) {
-      setVideoState('error');
+      setAudioState('error');
     }
   };
 
@@ -611,7 +596,7 @@ export default function ExercisesPage() {
                         <div>
                           <div className="flex items-center gap-2 mb-1.5">
                             <span className="text-[10px] font-bold px-2 py-0.5 bg-white/10 rounded text-white/70 tracking-widest uppercase">{ex.category || ex.muscleGroup}</span>
-                            <button onClick={() => handleSelectVideo(ex)} className="text-xs text-accent hover:text-white flex items-center gap-1 transition-colors bg-accent/10 px-2 py-0.5 rounded"><Play size={10} /> Watch Form</button>
+                            <button onClick={() => handleSelectExercise(ex)} className="text-xs text-accent hover:text-white flex items-center gap-1 transition-colors bg-accent/10 px-2 py-0.5 rounded"><Play size={10} /> View Details</button>
                           </div>
                           <h3 className={`font-black text-xl mb-1 transition-colors ${isDone ? 'text-accent' : 'text-white'}`}>{ex.name}</h3>
                           <p className="text-sm text-muted italic mb-1">&quot;{ex.formCues?.[0] || ex.description}&quot;</p>
@@ -734,7 +719,7 @@ export default function ExercisesPage() {
 
           <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredExercises.map((ex) => (
-              <ExerciseCard key={ex.id} ex={ex} itemVariants={itemVariants} onClick={() => handleSelectVideo(ex)} />
+              <ExerciseCard key={ex.id} ex={ex} itemVariants={itemVariants} onClick={() => handleSelectExercise(ex)} />
             ))}
           </motion.div>
 
@@ -750,12 +735,12 @@ export default function ExercisesPage() {
 
       {/* Premium Detail Modal */}
       <ExerciseModal 
-        ex={selectedVideo}
+        ex={selectedExercise}
         onClose={() => {
           if (audioRef.current) audioRef.current.pause();
-          setSelectedVideo(null);
+          setSelectedExercise(null);
         }}
-        videoState={videoState}
+        videoState={audioState}
         isPlayingAudio={isPlayingAudio}
         setIsPlayingAudio={setIsPlayingAudio}
         isVideoMuted={isVideoMuted}

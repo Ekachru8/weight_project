@@ -28,3 +28,34 @@ export async function storeVideoAsset(
 
   return { permanentUrl, contentHash };
 }
+
+import fs from "fs";
+import path from "path";
+
+export async function storeAudioBuffer(
+  buffer: Buffer,
+  exerciseSlug: string,
+  contentHash: string
+): Promise<{ permanentUrl: string }> {
+  
+  if (!process.env.MEDIA_STORAGE_PUBLIC_BASE_URL) {
+    console.warn("[DEV] Audio generation succeeded, but persistent media storage is not configured. Saving to local public folder.");
+    
+    // Save to public/exercises/audio folder
+    const audioDir = path.join(process.cwd(), "public", "exercises", "audio", exerciseSlug);
+    if (!fs.existsSync(audioDir)) {
+      fs.mkdirSync(audioDir, { recursive: true });
+    }
+    const filePath = path.join(audioDir, `${contentHash}.mp3`);
+    fs.writeFileSync(filePath, buffer);
+
+    return { permanentUrl: `/exercises/audio/${exerciseSlug}/${contentHash}.mp3` };
+  }
+
+  const bucketUrl = process.env.MEDIA_STORAGE_PUBLIC_BASE_URL || "";
+  const permanentUrl = `${bucketUrl}/exercises/audio/${exerciseSlug}/${contentHash}.mp3`;
+
+  // In a real app we'd upload the buffer to S3 here
+  
+  return { permanentUrl };
+}

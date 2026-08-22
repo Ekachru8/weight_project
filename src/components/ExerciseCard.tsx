@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -79,18 +78,9 @@ interface ExerciseCardProps {
 export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   
-  const hasPlayableVideo = ex.videoStatus === "ready" && Boolean(ex.videoUrl) && ex.videoUrl!.trim() !== "";
-  const isGenerating = ex.videoStatus === "queued" || ex.videoStatus === "generating" || ex.videoStatus === "processing";
-  const isFailed = ex.videoStatus === "failed";
-  
-  if (isHovered && hasPlayableVideo) {
-    console.log(`[DEV] Playing video for ${ex.slug}:`, {
-      videoUrl: ex.videoUrl,
-      videoStatus: ex.videoStatus,
-      audioUrl: ex.audioUrl,
-      audioStatus: ex.audioStatus,
-    });
-  }
+  const hasValidAudio = ex.audioStatus === "ready" && Boolean(ex.audioUrl) && Boolean(ex.transcript);
+  const isGeneratingAudio = ex.audioStatus === "queued" || ex.audioStatus === "generating" || ex.audioStatus === "processing";
+  const isAudioFailed = ex.audioStatus === "failed";
   
   return (
     <motion.div 
@@ -100,66 +90,49 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className="relative w-full h-40 bg-[#0a0a0a] border-b border-white/5 overflow-hidden flex flex-col justify-center items-center">
-        {hasPlayableVideo ? (
-          isHovered ? (
-            <video 
-              src={ex.videoUrl!} 
-              autoPlay 
-              muted 
-              loop 
-              playsInline
-              preload="metadata"
-              onError={(e) => console.error(`[DEV] Video error for ${ex.slug}:`, e)}
-              className="w-full h-full object-cover opacity-80"
-            />
-          ) : (
-            <>
-              {ex.thumbnailUrl ? (
-                <img src={ex.thumbnailUrl} alt={ex.name} className="w-full h-full object-cover opacity-60" />
-              ) : (
-                <div className="w-full h-full bg-black/50" />
-              )}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Play className="text-accent ml-1" size={20} fill="currentColor" />
-                </div>
-              </div>
-            </>
-          )
-        ) : isGenerating ? (
-          <div className="flex flex-col items-center justify-center w-full h-full bg-black/60 relative">
-            <div className="absolute inset-0 overflow-hidden">
-               <div className="w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
-            </div>
-            <Loader2 className="animate-spin text-accent mb-2 relative z-10" size={24} />
-            <p className="text-[10px] text-accent font-bold uppercase tracking-widest mb-1 relative z-10">Preparing Video...</p>
+      {/* Top Audio Panel instead of large video */}
+      <div className="relative w-full bg-[#0a0a0a] border-b border-white/5 p-4 flex flex-col gap-2">
+        <div className="flex justify-between items-center mb-1">
+          <div className="flex items-center gap-2">
+            <Activity className="text-accent" size={14} />
+            <span className="text-[10px] font-bold text-accent uppercase tracking-widest">Form Guidance</span>
           </div>
-        ) : isFailed ? (
-          <div className="px-4 text-center">
-            <AlertTriangle className="mx-auto text-red-400/50 mb-2" size={32} />
-            <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-1">Demonstration Failed</p>
+          <div className="flex gap-2">
+            <div className="px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-white uppercase tracking-widest backdrop-blur-md">
+              {ex.category}
+            </div>
+            {ex.difficulty && (
+              <div className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border ${getDifficultyColor(ex.difficulty)}`}>
+                {ex.difficulty}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {hasValidAudio ? (
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3 flex items-center justify-between group-hover:bg-white/10 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                <Play size={14} fill="currentColor" className="ml-0.5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-white">Listen to guidance</span>
+                <span className="text-[10px] text-muted">AI Voice Coach</span>
+              </div>
+            </div>
+            <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
+              <div className="w-0 h-full bg-accent rounded-full"></div>
+            </div>
+          </div>
+        ) : isGeneratingAudio ? (
+          <div className="bg-white/5 border border-white/10 rounded-lg p-3 flex items-center gap-3">
+            <Loader2 className="animate-spin text-accent" size={16} />
+            <span className="text-xs font-bold text-muted">Preparing form guidance...</span>
           </div>
         ) : (
-          <div className="px-4 text-center">
-            <Activity className="mx-auto text-muted/30 mb-2" size={32} />
-            <p className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1">Demonstration unavailable</p>
-          </div>
-        )}
-        
-        <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] font-bold text-white uppercase tracking-widest backdrop-blur-md">
-          {ex.category}
-        </div>
-        
-        {ex.difficulty && (
-          <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border ${getDifficultyColor(ex.difficulty)}`}>
-            {ex.difficulty}
-          </div>
-        )}
-        
-        {hasPlayableVideo && (
-          <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-accent uppercase tracking-widest backdrop-blur-md flex items-center gap-1">
-            <Play size={10} fill="currentColor"/> Video Available
+          <div className="bg-red-500/5 border border-red-500/10 rounded-lg p-3 flex items-center gap-3">
+            <AlertTriangle className="text-red-400/50" size={16} />
+            <span className="text-xs font-bold text-muted">Audio guidance unavailable</span>
           </div>
         )}
       </div>
@@ -178,16 +151,9 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
             <span className="text-[10px] text-muted font-bold uppercase tracking-widest">Prescription</span>
             <span className="text-white font-bold bg-white/5 px-2 py-1 rounded text-xs">{ex.defaultSets || 3} Sets × {ex.defaultReps || "10-12"}</span>
           </div>
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            {hasPlayableVideo ? (
-              <button className="col-span-1 text-[10px] font-bold text-black bg-accent hover:bg-accent/80 transition-colors py-2 rounded-lg flex items-center justify-center gap-1">
-                <Play size={12} fill="currentColor" /> Watch demonstration
-              </button>
-            ) : (
-               <div className="col-span-1" />
-            )}
-            <button className={`text-[10px] font-bold text-white bg-white/10 hover:bg-white/20 transition-colors py-2 rounded-lg flex items-center justify-center gap-1 ${hasPlayableVideo ? 'col-span-1' : 'col-span-2'}`}>
-              <Info size={12}/> View details
+          <div className="mt-2">
+            <button className="w-full text-[10px] font-bold text-white bg-white/10 hover:bg-white/20 transition-colors py-2 rounded-lg flex items-center justify-center gap-1">
+              <Info size={12}/> View written instructions
             </button>
           </div>
         </div>
