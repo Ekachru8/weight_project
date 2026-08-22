@@ -16,9 +16,15 @@ export async function storeVideoAsset(
   // Simulate hash generation
   const contentHash = Math.random().toString(36).substring(2, 15);
   
+  if (!process.env.MEDIA_STORAGE_PUBLIC_BASE_URL) {
+    console.warn("[DEV] Video generation succeeded, but persistent media storage is not configured.");
+  }
+
   // Mock permanent URL
-  const bucketUrl = process.env.MEDIA_STORAGE_PUBLIC_BASE_URL || "https://storage.homefit.example.com";
-  const permanentUrl = `${bucketUrl}/exercises/${exerciseSlug}/${contentHash}.mp4`;
+  const bucketUrl = process.env.MEDIA_STORAGE_PUBLIC_BASE_URL || "";
+  const permanentUrl = bucketUrl 
+    ? `${bucketUrl}/exercises/${exerciseSlug}/${contentHash}.mp4`
+    : `/exercises/${exerciseSlug}.mp4`; // Fallback to local structure
 
   return { permanentUrl, contentHash };
 }

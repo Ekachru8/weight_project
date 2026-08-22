@@ -32,7 +32,8 @@ export function ExerciseModal({
 }: ExerciseModalProps) {
   
   if (!ex) return null;
-  const hasValidVideo = ex.videoUrl && ex.videoUrl.trim() !== "";
+  const hasPlayableVideo = ex.videoStatus === "ready" && Boolean(ex.videoUrl) && ex.videoUrl!.trim() !== "";
+  const hasMatchingAudio = ex.audioStatus === "ready" && Boolean(ex.audioUrl) && ex.audioUrl!.trim() !== "";
 
   return (
     <AnimatePresence>
@@ -48,7 +49,7 @@ export function ExerciseModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-5xl max-h-[92vh] md:max-h-[88vh] bg-[#0a0a0a] rounded-2xl border border-white/10 overflow-hidden flex flex-col shadow-2xl relative"
+          className="w-full max-w-[960px] max-h-[92vh] md:max-h-[88vh] bg-[#0a0a0a] rounded-2xl border border-white/10 overflow-hidden flex flex-col shadow-2xl relative"
         >
           {/* Compact Sticky Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-md sticky top-0 z-20">
@@ -85,7 +86,7 @@ export function ExerciseModal({
                   <span className="text-xs text-muted max-w-sm">Written guidance is still available below.</span>
                 </div>
               )}
-              {hasValidVideo && (
+              {hasPlayableVideo && (
                 <>
                   <video 
                     ref={videoRef}
@@ -94,7 +95,9 @@ export function ExerciseModal({
                     autoPlay
                     loop
                     playsInline
+                    preload="metadata"
                     muted={isVideoMuted}
+                    onError={(e) => console.error(`[DEV] Modal video error for ${ex.slug}:`, e)}
                   />
                   <div className="absolute bottom-4 right-4 z-10">
                     <button 
@@ -106,7 +109,7 @@ export function ExerciseModal({
                   </div>
                 </>
               )}
-              {!hasValidVideo && videoState === 'ready' && (
+              {!hasPlayableVideo && videoState === 'ready' && (
                 <div className="flex flex-col items-center justify-center absolute inset-0 bg-black/80 z-10">
                   <Activity className="text-muted/30 mb-2" size={48} />
                   <span className="text-sm font-medium text-muted uppercase tracking-widest">Demonstration unavailable</span>
@@ -121,7 +124,7 @@ export function ExerciseModal({
               <div className="md:col-span-2 space-y-8">
                 
                 {/* Audio Coaching Card */}
-                {ex.voiceoverUrl && ex.status !== "unavailable" && (
+                {hasMatchingAudio && ex.status !== "unavailable" && (
                   <div className="glass-card p-5 border-accent/20 bg-accent/5 rounded-xl">
                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -175,7 +178,7 @@ export function ExerciseModal({
                     
                     <audio 
                       ref={audioRef}
-                      src={ex.voiceoverUrl}
+                      src={ex.audioUrl || undefined}
                       onEnded={() => {
                         setIsPlayingAudio(false);
                         setAudioProgress(0);

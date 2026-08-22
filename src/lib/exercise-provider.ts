@@ -1,17 +1,13 @@
 export type ExerciseMedia = {
-  providerExerciseId: string;
   exerciseSlug: string;
-  name: string;
+  exerciseName: string;
   videoUrl: string | null;
-  thumbnailUrl: string | null;
-  videoType: "mp4" | "hls" | "webm" | "unknown";
-  instructions: string[];
-  formCues: string[];
-  commonMistakes: string[];
-  muscles: string[];
-  equipment: string[];
-  difficulty: string | null;
-  source: "ymove" | "musclewiki" | "local";
+  videoType: "mp4" | "webm" | "hls" | null;
+  audioUrl: string | null;
+  transcript: string;
+  status: "queued" | "generating" | "ready" | "failed" | "unavailable";
+  videoStatus: "ready" | "failed" | "unavailable";
+  audioStatus: "ready" | "failed" | "unavailable";
 };
 
 export interface ExerciseMediaProvider {
@@ -92,20 +88,17 @@ class YMoveExerciseProvider implements ExerciseMediaProvider {
   }
 
   private normalize(ymoveExercise: any): ExerciseMedia {
+    const videoUrl = ymoveExercise.video?.url || ymoveExercise.video_url || null;
     return {
-      providerExerciseId: ymoveExercise.id?.toString() || ymoveExercise.slug,
       exerciseSlug: ymoveExercise.slug,
-      name: ymoveExercise.name,
-      videoUrl: ymoveExercise.video?.url || ymoveExercise.video_url || null,
-      thumbnailUrl: ymoveExercise.video?.thumbnail || ymoveExercise.thumbnail_url || null,
-      videoType: "mp4", // Or detect from URL
-      instructions: ymoveExercise.instructions || [],
-      formCues: ymoveExercise.cues || [],
-      commonMistakes: ymoveExercise.mistakes || [],
-      muscles: ymoveExercise.targetMuscles || [],
-      equipment: ymoveExercise.equipment ? [ymoveExercise.equipment] : [],
-      difficulty: ymoveExercise.difficulty || null,
-      source: "ymove",
+      exerciseName: ymoveExercise.name,
+      videoUrl,
+      videoType: videoUrl ? "mp4" : null,
+      audioUrl: null,
+      transcript: "",
+      status: videoUrl ? "ready" : "unavailable",
+      videoStatus: videoUrl ? "ready" : "unavailable",
+      audioStatus: "unavailable"
     };
   }
 }
@@ -167,20 +160,17 @@ class MuscleWikiExerciseProvider implements ExerciseMediaProvider {
   }
 
   private normalize(mwExercise: any): ExerciseMedia {
+    const videoUrl = mwExercise.videos?.[0]?.url || mwExercise.video_url || null;
     return {
-      providerExerciseId: mwExercise.id?.toString() || mwExercise.slug,
       exerciseSlug: mwExercise.slug,
-      name: mwExercise.title || mwExercise.name,
-      videoUrl: mwExercise.videos?.[0]?.url || mwExercise.video_url || null,
-      thumbnailUrl: mwExercise.images?.[0]?.url || mwExercise.thumbnail_url || null,
-      videoType: "mp4",
-      instructions: mwExercise.instructions || [],
-      formCues: mwExercise.formCues || [],
-      commonMistakes: mwExercise.mistakes || [],
-      muscles: mwExercise.target?.primary || [],
-      equipment: mwExercise.equipment ? [mwExercise.equipment] : [],
-      difficulty: mwExercise.difficulty || null,
-      source: "musclewiki",
+      exerciseName: mwExercise.title || mwExercise.name,
+      videoUrl,
+      videoType: videoUrl ? "mp4" : null,
+      audioUrl: null,
+      transcript: "",
+      status: videoUrl ? "ready" : "unavailable",
+      videoStatus: videoUrl ? "ready" : "unavailable",
+      audioStatus: "unavailable"
     };
   }
 }
@@ -196,21 +186,19 @@ class LocalExerciseProvider implements ExerciseMediaProvider {
   async getBySlug(slug: string): Promise<ExerciseMedia | null> {
     const { EXERCISE_ASSETS } = await import("@/data/exercise-assets");
     const asset = EXERCISE_ASSETS[slug];
-    if (asset && asset.status === "ready" && asset.videoUrl) {
+    if (asset) {
+      const vStatus = asset.videoUrl ? "ready" : "unavailable";
+      const aStatus = asset.voiceoverUrl ? "ready" : "unavailable";
       return {
-        providerExerciseId: slug,
         exerciseSlug: slug,
-        name: asset.exerciseName,
+        exerciseName: asset.exerciseName,
         videoUrl: asset.videoUrl,
-        thumbnailUrl: null,
-        videoType: "mp4",
-        instructions: [], // Falls back to local database instructions
-        formCues: [],
-        commonMistakes: [],
-        muscles: [],
-        equipment: [],
-        difficulty: null,
-        source: "local"
+        videoType: asset.videoUrl ? "mp4" : null,
+        audioUrl: asset.voiceoverUrl,
+        transcript: asset.transcript || "",
+        status: asset.status === "ready" ? "ready" : "unavailable",
+        videoStatus: vStatus,
+        audioStatus: aStatus,
       };
     }
     return null;

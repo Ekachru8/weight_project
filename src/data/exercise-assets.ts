@@ -57,9 +57,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Diamond push-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/diamond-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "diamond-push-ups",
-    transcript: "Set up for Diamond push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Diamond push-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "decline-push-ups": {
@@ -67,9 +67,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Decline push-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/decline-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "decline-push-ups",
-    transcript: "Set up for Decline push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Decline push-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "chest-squeeze-press-with-dumbbells": {
@@ -77,9 +77,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Chest squeeze press with dumbbells",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/chest-squeeze-press-with-dumbbells-voiceover.mp3",
     voiceoverExerciseSlug: "chest-squeeze-press-with-dumbbells",
-    transcript: "Set up for Chest squeeze press with dumbbells. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Chest squeeze press with dumbbells. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "floor-dumbbell-press": {
@@ -87,9 +87,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Floor dumbbell press",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/floor-dumbbell-press-voiceover.mp3",
     voiceoverExerciseSlug: "floor-dumbbell-press",
-    transcript: "Set up for Floor dumbbell press. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Floor dumbbell press. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "resistance-band-chest-press": {
@@ -97,9 +97,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Resistance-band chest press",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/resistance-band-chest-press-voiceover.mp3",
     voiceoverExerciseSlug: "resistance-band-chest-press",
-    transcript: "Set up for Resistance-band chest press. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Resistance-band chest press. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "standing-wall-push-ups": {
@@ -107,9 +107,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Standing wall push-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/standing-wall-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "standing-wall-push-ups",
-    transcript: "Set up for Standing wall push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Standing wall push-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "pull-ups": {
@@ -117,9 +117,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Pull-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/pull-ups-voiceover.mp3",
     voiceoverExerciseSlug: "pull-ups",
-    transcript: "Set up for Pull-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Pull-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "assisted-pull-ups": {
@@ -127,9 +127,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Assisted pull-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/assisted-pull-ups-voiceover.mp3",
     voiceoverExerciseSlug: "assisted-pull-ups",
-    transcript: "Set up for Assisted pull-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Assisted pull-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "resistance-band-rows": {
@@ -137,9 +137,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Resistance-band rows",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/resistance-band-rows-voiceover.mp3",
     voiceoverExerciseSlug: "resistance-band-rows",
-    transcript: "Set up for Resistance-band rows. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Resistance-band rows. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "one-arm-dumbbell-rows": {
@@ -147,9 +147,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "One-arm dumbbell rows",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/one-arm-dumbbell-rows-voiceover.mp3",
     voiceoverExerciseSlug: "one-arm-dumbbell-rows",
-    transcript: "Set up for One-arm dumbbell rows. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for One-arm dumbbell rows. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "bent-over-dumbbell-rows": {
@@ -157,9 +157,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bent-over dumbbell rows",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bent-over-dumbbell-rows-voiceover.mp3",
     voiceoverExerciseSlug: "bent-over-dumbbell-rows",
-    transcript: "Set up for Bent-over dumbbell rows. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bent-over dumbbell rows. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "superman-holds": {
@@ -167,9 +167,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Superman holds",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/superman-holds-voiceover.mp3",
     voiceoverExerciseSlug: "superman-holds",
-    transcript: "Set up for Superman holds. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Superman holds. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "reverse-snow-angels": {
@@ -177,9 +177,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Reverse snow angels",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/reverse-snow-angels-voiceover.mp3",
     voiceoverExerciseSlug: "reverse-snow-angels",
-    transcript: "Set up for Reverse snow angels. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Reverse snow angels. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "bird-dog-rows": {
@@ -187,9 +187,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bird-dog rows",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bird-dog-rows-voiceover.mp3",
     voiceoverExerciseSlug: "bird-dog-rows",
-    transcript: "Set up for Bird-dog rows. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bird-dog rows. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "doorway-rows": {
@@ -197,9 +197,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Doorway rows",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/doorway-rows-voiceover.mp3",
     voiceoverExerciseSlug: "doorway-rows",
-    transcript: "Set up for Doorway rows. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Doorway rows. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "prone-y-t-w-raises": {
@@ -207,9 +207,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Prone Y-T-W raises",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/prone-y-t-w-raises-voiceover.mp3",
     voiceoverExerciseSlug: "prone-y-t-w-raises",
-    transcript: "Set up for Prone Y-T-W raises. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Prone Y-T-W raises. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "bodyweight-squats": {
@@ -227,9 +227,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Sumo squats",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/sumo-squats-voiceover.mp3",
     voiceoverExerciseSlug: "sumo-squats",
-    transcript: "Set up for Sumo squats. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Sumo squats. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "pause-squats": {
@@ -237,9 +237,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Pause squats",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/pause-squats-voiceover.mp3",
     voiceoverExerciseSlug: "pause-squats",
-    transcript: "Set up for Pause squats. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Pause squats. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "split-squats": {
@@ -247,9 +247,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Split squats",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/split-squats-voiceover.mp3",
     voiceoverExerciseSlug: "split-squats",
-    transcript: "Set up for Split squats. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Split squats. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "reverse-lunges": {
@@ -267,9 +267,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Forward lunges",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/forward-lunges-voiceover.mp3",
     voiceoverExerciseSlug: "forward-lunges",
-    transcript: "Set up for Forward lunges. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Forward lunges. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "walking-lunges": {
@@ -277,9 +277,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Walking lunges",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/walking-lunges-voiceover.mp3",
     voiceoverExerciseSlug: "walking-lunges",
-    transcript: "Set up for Walking lunges. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Walking lunges. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "step-ups": {
@@ -287,9 +287,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Step-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/step-ups-voiceover.mp3",
     voiceoverExerciseSlug: "step-ups",
-    transcript: "Set up for Step-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Step-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "wall-sits": {
@@ -297,9 +297,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Wall sits",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/wall-sits-voiceover.mp3",
     voiceoverExerciseSlug: "wall-sits",
-    transcript: "Set up for Wall sits. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Wall sits. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "bulgarian-split-squats": {
@@ -307,9 +307,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bulgarian split squats",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bulgarian-split-squats-voiceover.mp3",
     voiceoverExerciseSlug: "bulgarian-split-squats",
-    transcript: "Set up for Bulgarian split squats. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bulgarian split squats. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "cossack-squats": {
@@ -317,9 +317,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Cossack squats",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/cossack-squats-voiceover.mp3",
     voiceoverExerciseSlug: "cossack-squats",
-    transcript: "Set up for Cossack squats. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Cossack squats. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "calf-raises": {
@@ -327,9 +327,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Calf raises",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/calf-raises-voiceover.mp3",
     voiceoverExerciseSlug: "calf-raises",
-    transcript: "Set up for Calf raises. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Calf raises. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "glute-bridges": {
@@ -347,9 +347,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Single-leg glute bridges",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/single-leg-glute-bridges-voiceover.mp3",
     voiceoverExerciseSlug: "single-leg-glute-bridges",
-    transcript: "Set up for Single-leg glute bridges. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Single-leg glute bridges. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "hip-thrusts-on-a-sofa": {
@@ -357,9 +357,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Hip thrusts on a sofa",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/hip-thrusts-on-a-sofa-voiceover.mp3",
     voiceoverExerciseSlug: "hip-thrusts-on-a-sofa",
-    transcript: "Set up for Hip thrusts on a sofa. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Hip thrusts on a sofa. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "donkey-kicks": {
@@ -367,9 +367,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Donkey kicks",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/donkey-kicks-voiceover.mp3",
     voiceoverExerciseSlug: "donkey-kicks",
-    transcript: "Set up for Donkey kicks. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Donkey kicks. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "fire-hydrants": {
@@ -377,9 +377,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Fire hydrants",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/fire-hydrants-voiceover.mp3",
     voiceoverExerciseSlug: "fire-hydrants",
-    transcript: "Set up for Fire hydrants. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Fire hydrants. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "standing-kickbacks": {
@@ -387,9 +387,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Standing kickbacks",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/standing-kickbacks-voiceover.mp3",
     voiceoverExerciseSlug: "standing-kickbacks",
-    transcript: "Set up for Standing kickbacks. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Standing kickbacks. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "frog-pumps": {
@@ -397,9 +397,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Frog pumps",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/frog-pumps-voiceover.mp3",
     voiceoverExerciseSlug: "frog-pumps",
-    transcript: "Set up for Frog pumps. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Frog pumps. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "curtsy-lunges": {
@@ -407,9 +407,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Curtsy lunges",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/curtsy-lunges-voiceover.mp3",
     voiceoverExerciseSlug: "curtsy-lunges",
-    transcript: "Set up for Curtsy lunges. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Curtsy lunges. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "banded-lateral-walks": {
@@ -417,9 +417,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Banded lateral walks",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/banded-lateral-walks-voiceover.mp3",
     voiceoverExerciseSlug: "banded-lateral-walks",
-    transcript: "Set up for Banded lateral walks. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Banded lateral walks. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "pike-push-ups": {
@@ -447,9 +447,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Arnold press",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/arnold-press-voiceover.mp3",
     voiceoverExerciseSlug: "arnold-press",
-    transcript: "Set up for Arnold press. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Arnold press. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "lateral-raises": {
@@ -457,9 +457,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Lateral raises",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/lateral-raises-voiceover.mp3",
     voiceoverExerciseSlug: "lateral-raises",
-    transcript: "Set up for Lateral raises. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Lateral raises. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "front-raises": {
@@ -467,9 +467,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Front raises",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/front-raises-voiceover.mp3",
     voiceoverExerciseSlug: "front-raises",
-    transcript: "Set up for Front raises. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Front raises. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "bent-over-reverse-flyes": {
@@ -477,9 +477,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bent-over reverse flyes",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bent-over-reverse-flyes-voiceover.mp3",
     voiceoverExerciseSlug: "bent-over-reverse-flyes",
-    transcript: "Set up for Bent-over reverse flyes. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bent-over reverse flyes. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "resistance-band-shoulder-press": {
@@ -487,9 +487,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Resistance-band shoulder press",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/resistance-band-shoulder-press-voiceover.mp3",
     voiceoverExerciseSlug: "resistance-band-shoulder-press",
-    transcript: "Set up for Resistance-band shoulder press. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Resistance-band shoulder press. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "wall-handstand-hold": {
@@ -497,9 +497,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Wall handstand hold",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/wall-handstand-hold-voiceover.mp3",
     voiceoverExerciseSlug: "wall-handstand-hold",
-    transcript: "Set up for Wall handstand hold. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Wall handstand hold. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "shoulder-taps": {
@@ -507,9 +507,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Shoulder taps",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/shoulder-taps-voiceover.mp3",
     voiceoverExerciseSlug: "shoulder-taps",
-    transcript: "Set up for Shoulder taps. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Shoulder taps. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "y-raises": {
@@ -517,9 +517,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Y-raises",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/y-raises-voiceover.mp3",
     voiceoverExerciseSlug: "y-raises",
-    transcript: "Set up for Y-raises. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Y-raises. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "close-grip-push-ups": {
@@ -527,9 +527,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Close-grip push-ups",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/close-grip-push-ups-voiceover.mp3",
     voiceoverExerciseSlug: "close-grip-push-ups",
-    transcript: "Set up for Close-grip push-ups. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Close-grip push-ups. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "chair-tricep-dips": {
@@ -537,9 +537,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Chair tricep dips",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/chair-tricep-dips-voiceover.mp3",
     voiceoverExerciseSlug: "chair-tricep-dips",
-    transcript: "Set up for Chair tricep dips. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Chair tricep dips. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "overhead-tricep-extensions": {
@@ -547,9 +547,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Overhead tricep extensions",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/overhead-tricep-extensions-voiceover.mp3",
     voiceoverExerciseSlug: "overhead-tricep-extensions",
-    transcript: "Set up for Overhead tricep extensions. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Overhead tricep extensions. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "dumbbell-bicep-curls": {
@@ -557,9 +557,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Dumbbell bicep curls",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/dumbbell-bicep-curls-voiceover.mp3",
     voiceoverExerciseSlug: "dumbbell-bicep-curls",
-    transcript: "Set up for Dumbbell bicep curls. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Dumbbell bicep curls. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "hammer-curls": {
@@ -567,9 +567,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Hammer curls",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/hammer-curls-voiceover.mp3",
     voiceoverExerciseSlug: "hammer-curls",
-    transcript: "Set up for Hammer curls. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Hammer curls. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "concentration-curls": {
@@ -577,9 +577,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Concentration curls",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/concentration-curls-voiceover.mp3",
     voiceoverExerciseSlug: "concentration-curls",
-    transcript: "Set up for Concentration curls. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Concentration curls. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "resistance-band-curls": {
@@ -587,9 +587,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Resistance-band curls",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/resistance-band-curls-voiceover.mp3",
     voiceoverExerciseSlug: "resistance-band-curls",
-    transcript: "Set up for Resistance-band curls. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Resistance-band curls. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "tricep-kickbacks": {
@@ -597,9 +597,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Tricep kickbacks",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/tricep-kickbacks-voiceover.mp3",
     voiceoverExerciseSlug: "tricep-kickbacks",
-    transcript: "Set up for Tricep kickbacks. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Tricep kickbacks. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "isometric-bicep-holds": {
@@ -607,9 +607,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Isometric bicep holds",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/isometric-bicep-holds-voiceover.mp3",
     voiceoverExerciseSlug: "isometric-bicep-holds",
-    transcript: "Set up for Isometric bicep holds. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Isometric bicep holds. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "forearm-plank": {
@@ -627,9 +627,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "High plank",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/high-plank-voiceover.mp3",
     voiceoverExerciseSlug: "high-plank",
-    transcript: "Set up for High plank. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for High plank. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "side-plank": {
@@ -637,9 +637,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Side plank",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/side-plank-voiceover.mp3",
     voiceoverExerciseSlug: "side-plank",
-    transcript: "Set up for Side plank. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Side plank. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "dead-bug": {
@@ -657,9 +657,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bird dog",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bird-dog-voiceover.mp3",
     voiceoverExerciseSlug: "bird-dog",
-    transcript: "Set up for Bird dog. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bird dog. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "mountain-climbers": {
@@ -677,9 +677,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bicycle crunches",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bicycle-crunches-voiceover.mp3",
     voiceoverExerciseSlug: "bicycle-crunches",
-    transcript: "Set up for Bicycle crunches. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bicycle crunches. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "reverse-crunches": {
@@ -687,9 +687,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Reverse crunches",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/reverse-crunches-voiceover.mp3",
     voiceoverExerciseSlug: "reverse-crunches",
-    transcript: "Set up for Reverse crunches. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Reverse crunches. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "leg-raises": {
@@ -697,9 +697,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Leg raises",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/leg-raises-voiceover.mp3",
     voiceoverExerciseSlug: "leg-raises",
-    transcript: "Set up for Leg raises. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Leg raises. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "hollow-body-hold": {
@@ -707,9 +707,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Hollow-body hold",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/hollow-body-hold-voiceover.mp3",
     voiceoverExerciseSlug: "hollow-body-hold",
-    transcript: "Set up for Hollow-body hold. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Hollow-body hold. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "russian-twists": {
@@ -717,9 +717,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Russian twists",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/russian-twists-voiceover.mp3",
     voiceoverExerciseSlug: "russian-twists",
-    transcript: "Set up for Russian twists. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Russian twists. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "bear-crawl": {
@@ -727,9 +727,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Bear crawl",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/bear-crawl-voiceover.mp3",
     voiceoverExerciseSlug: "bear-crawl",
-    transcript: "Set up for Bear crawl. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Bear crawl. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "burpees": {
@@ -747,9 +747,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Squat to reach",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/squat-to-reach-voiceover.mp3",
     voiceoverExerciseSlug: "squat-to-reach",
-    transcript: "Set up for Squat to reach. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Squat to reach. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "inchworms": {
@@ -757,9 +757,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Inchworms",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/inchworms-voiceover.mp3",
     voiceoverExerciseSlug: "inchworms",
-    transcript: "Set up for Inchworms. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Inchworms. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "devil-press": {
@@ -767,9 +767,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Devil press",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/devil-press-voiceover.mp3",
     voiceoverExerciseSlug: "devil-press",
-    transcript: "Set up for Devil press. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Devil press. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "dumbbell-thrusters": {
@@ -777,9 +777,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Dumbbell thrusters",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/dumbbell-thrusters-voiceover.mp3",
     voiceoverExerciseSlug: "dumbbell-thrusters",
-    transcript: "Set up for Dumbbell thrusters. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Dumbbell thrusters. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "man-makers": {
@@ -787,9 +787,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Man makers",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/man-makers-voiceover.mp3",
     voiceoverExerciseSlug: "man-makers",
-    transcript: "Set up for Man makers. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Man makers. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "plank-to-push-up": {
@@ -797,9 +797,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Plank to push-up",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/plank-to-push-up-voiceover.mp3",
     voiceoverExerciseSlug: "plank-to-push-up",
-    transcript: "Set up for Plank to push-up. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Plank to push-up. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "clean-and-press": {
@@ -807,9 +807,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Clean and press",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/clean-and-press-voiceover.mp3",
     voiceoverExerciseSlug: "clean-and-press",
-    transcript: "Set up for Clean and press. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Clean and press. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "reverse-lunge-to-knee-drive": {
@@ -817,9 +817,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Reverse lunge to knee drive",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/reverse-lunge-to-knee-drive-voiceover.mp3",
     voiceoverExerciseSlug: "reverse-lunge-to-knee-drive",
-    transcript: "Set up for Reverse lunge to knee drive. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Reverse lunge to knee drive. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "jumping-jacks": {
@@ -837,9 +837,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "High knees",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/high-knees-voiceover.mp3",
     voiceoverExerciseSlug: "high-knees",
-    transcript: "Set up for High knees. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for High knees. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "butt-kicks": {
@@ -847,9 +847,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Butt kicks",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/butt-kicks-voiceover.mp3",
     voiceoverExerciseSlug: "butt-kicks",
-    transcript: "Set up for Butt kicks. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Butt kicks. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "skater-hops": {
@@ -857,9 +857,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Skater hops",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/skater-hops-voiceover.mp3",
     voiceoverExerciseSlug: "skater-hops",
-    transcript: "Set up for Skater hops. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Skater hops. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "fast-feet": {
@@ -867,9 +867,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Fast feet",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/fast-feet-voiceover.mp3",
     voiceoverExerciseSlug: "fast-feet",
-    transcript: "Set up for Fast feet. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Fast feet. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "squat-jumps": {
@@ -877,9 +877,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Squat jumps",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/squat-jumps-voiceover.mp3",
     voiceoverExerciseSlug: "squat-jumps",
-    transcript: "Set up for Squat jumps. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Squat jumps. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "tuck-jumps": {
@@ -887,9 +887,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Tuck jumps",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/tuck-jumps-voiceover.mp3",
     voiceoverExerciseSlug: "tuck-jumps",
-    transcript: "Set up for Tuck jumps. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Tuck jumps. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "shadow-boxing": {
@@ -897,9 +897,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Shadow boxing",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/shadow-boxing-voiceover.mp3",
     voiceoverExerciseSlug: "shadow-boxing",
-    transcript: "Set up for Shadow boxing. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Shadow boxing. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "stair-stepping": {
@@ -907,9 +907,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Stair stepping",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/stair-stepping-voiceover.mp3",
     voiceoverExerciseSlug: "stair-stepping",
-    transcript: "Set up for Stair stepping. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Stair stepping. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "marching-in-place": {
@@ -917,9 +917,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Marching in place",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/marching-in-place-voiceover.mp3",
     voiceoverExerciseSlug: "marching-in-place",
-    transcript: "Set up for Marching in place. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Marching in place. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "cat-cow-stretch": {
@@ -927,9 +927,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Cat-cow stretch",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/cat-cow-stretch-voiceover.mp3",
     voiceoverExerciseSlug: "cat-cow-stretch",
-    transcript: "Set up for Cat-cow stretch. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Cat-cow stretch. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "childs-pose": {
@@ -937,9 +937,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Child's pose",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/childs-pose-voiceover.mp3",
     voiceoverExerciseSlug: "childs-pose",
-    transcript: "Set up for Child's pose. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Child's pose. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "worlds-greatest-stretch": {
@@ -947,9 +947,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "World's greatest stretch",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/worlds-greatest-stretch-voiceover.mp3",
     voiceoverExerciseSlug: "worlds-greatest-stretch",
-    transcript: "Set up for World's greatest stretch. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for World's greatest stretch. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "hip-flexor-stretch": {
@@ -957,9 +957,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Hip flexor stretch",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/hip-flexor-stretch-voiceover.mp3",
     voiceoverExerciseSlug: "hip-flexor-stretch",
-    transcript: "Set up for Hip flexor stretch. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Hip flexor stretch. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "hamstring-stretch": {
@@ -967,9 +967,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Hamstring stretch",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/hamstring-stretch-voiceover.mp3",
     voiceoverExerciseSlug: "hamstring-stretch",
-    transcript: "Set up for Hamstring stretch. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Hamstring stretch. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "thoracic-rotations": {
@@ -977,9 +977,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Thoracic rotations",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/thoracic-rotations-voiceover.mp3",
     voiceoverExerciseSlug: "thoracic-rotations",
-    transcript: "Set up for Thoracic rotations. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Thoracic rotations. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "shoulder-circles": {
@@ -987,9 +987,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Shoulder circles",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/shoulder-circles-voiceover.mp3",
     voiceoverExerciseSlug: "shoulder-circles",
-    transcript: "Set up for Shoulder circles. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Shoulder circles. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "ankle-mobility-rocks": {
@@ -997,9 +997,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Ankle mobility rocks",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/ankle-mobility-rocks-voiceover.mp3",
     voiceoverExerciseSlug: "ankle-mobility-rocks",
-    transcript: "Set up for Ankle mobility rocks. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Ankle mobility rocks. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "9090-hip-switches": {
@@ -1007,9 +1007,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "90/90 hip switches",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/9090-hip-switches-voiceover.mp3",
     voiceoverExerciseSlug: "9090-hip-switches",
-    transcript: "Set up for 90/90 hip switches. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for 90/90 hip switches. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
   "deep-squat-hold": {
@@ -1017,9 +1017,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
     exerciseName: "Deep squat hold",
     videoUrl: null,
     videoSource: "generated",
-    voiceoverUrl: null,
+    voiceoverUrl: "/exercises/deep-squat-hold-voiceover.mp3",
     voiceoverExerciseSlug: "deep-squat-hold",
-    transcript: "Set up for Deep squat hold. Breathe naturally and keep your movements controlled. Focus on proper form. Avoid rushing the movement. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
+    transcript: "Start in a strong position for Deep squat hold. Brace your core and keep your chest lifted. Perform the movement with control, focusing on proper form. Breathe in during the lowering phase and out during the effort. Avoid rushing the movement or losing tension. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.",
     status: "unavailable"
   },
 };

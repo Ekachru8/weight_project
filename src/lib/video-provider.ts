@@ -4,12 +4,16 @@ export async function buildVideoPrompt(exerciseSlug: string): Promise<string> {
   const ex = await prisma.exercise.findUnique({ where: { slug: exerciseSlug } });
   if (!ex) throw new Error("Exercise not found");
 
-  // Construct a prompt, e.g. for a text-to-video model
-  const prompt = `A high-quality, photorealistic fitness demonstration video of a person performing ${ex.name}. 
-The person is wearing standard athletic wear in a clean, modern home gym environment. 
-Equipment used: ${ex.equipment}. 
-The movement pattern is ${ex.movementPattern}. 
-They are performing the exercise with perfect form. 
+  const prompt = `A high-quality, photorealistic fitness demonstration video of a person performing ${ex.name}.
+Camera angle: front-facing or slight side angle to clearly show form.
+The person is wearing standard athletic wear in a clean, modern home gym environment.
+Equipment used: ${ex.equipment}.
+Target muscles: ${ex.targetMuscles.join(', ')}.
+Movement pattern: ${ex.movementPattern}.
+Instructions: ${ex.instructions.join(' ')}
+Form cues: ${ex.formCues.join(' ')}
+Avoid mistakes: ${ex.commonMistakes.join(', ')}
+They are performing the exercise with perfect form.
 Negative prompt: animals, fantasy, distortion, extra limbs, low quality, cartoon, anime.`;
 
   return prompt;

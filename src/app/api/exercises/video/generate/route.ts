@@ -10,6 +10,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing exerciseSlug" }, { status: 400 });
     }
 
+    if (!process.env.VIDEO_GENERATION_PROVIDER) {
+      console.warn("[DEV] VIDEO_GENERATION_PROVIDER is not set. Using mock generation flow.");
+    }
+
     // Look up the exercise
     const exercise = await prisma.exercise.findUnique({
       where: { slug: exerciseSlug }

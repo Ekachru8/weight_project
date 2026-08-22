@@ -28,6 +28,8 @@ export interface Exercise {
   status?: string;
   videoStatus?: string;
   videoExerciseSlug?: string;
+  audioUrl?: string | null;
+  audioStatus?: string;
   voiceoverUrl?: string;
   voiceoverStatus?: string;
   transcript?: string;
@@ -77,10 +79,18 @@ interface ExerciseCardProps {
 export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Checking both new API fields and legacy fields
-  const hasValidVideo = ex.videoUrl && ex.videoUrl.trim() !== "";
+  const hasPlayableVideo = ex.videoStatus === "ready" && Boolean(ex.videoUrl) && ex.videoUrl!.trim() !== "";
   const isGenerating = ex.videoStatus === "queued" || ex.videoStatus === "generating" || ex.videoStatus === "processing";
   const isFailed = ex.videoStatus === "failed";
+  
+  if (isHovered && hasPlayableVideo) {
+    console.log(`[DEV] Playing video for ${ex.slug}:`, {
+      videoUrl: ex.videoUrl,
+      videoStatus: ex.videoStatus,
+      audioUrl: ex.audioUrl,
+      audioStatus: ex.audioStatus,
+    });
+  }
   
   return (
     <motion.div 
@@ -91,7 +101,7 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
       onClick={onClick}
     >
       <div className="relative w-full h-40 bg-[#0a0a0a] border-b border-white/5 overflow-hidden flex flex-col justify-center items-center">
-        {hasValidVideo ? (
+        {hasPlayableVideo ? (
           isHovered ? (
             <video 
               src={ex.videoUrl!} 
@@ -99,6 +109,8 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
               muted 
               loop 
               playsInline
+              preload="metadata"
+              onError={(e) => console.error(`[DEV] Video error for ${ex.slug}:`, e)}
               className="w-full h-full object-cover opacity-80"
             />
           ) : (
@@ -145,7 +157,7 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
           </div>
         )}
         
-        {hasValidVideo && (
+        {hasPlayableVideo && (
           <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-accent uppercase tracking-widest backdrop-blur-md flex items-center gap-1">
             <Play size={10} fill="currentColor"/> Video Available
           </div>
@@ -167,14 +179,14 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
             <span className="text-white font-bold bg-white/5 px-2 py-1 rounded text-xs">{ex.defaultSets || 3} Sets × {ex.defaultReps || "10-12"}</span>
           </div>
           <div className="grid grid-cols-2 gap-2 mt-2">
-            {hasValidVideo ? (
+            {hasPlayableVideo ? (
               <button className="col-span-1 text-[10px] font-bold text-black bg-accent hover:bg-accent/80 transition-colors py-2 rounded-lg flex items-center justify-center gap-1">
-                <Play size={12} fill="currentColor" /> Watch
+                <Play size={12} fill="currentColor" /> Watch demonstration
               </button>
             ) : (
                <div className="col-span-1" />
             )}
-            <button className={`text-[10px] font-bold text-white bg-white/10 hover:bg-white/20 transition-colors py-2 rounded-lg flex items-center justify-center gap-1 ${hasValidVideo ? 'col-span-1' : 'col-span-2'}`}>
+            <button className={`text-[10px] font-bold text-white bg-white/10 hover:bg-white/20 transition-colors py-2 rounded-lg flex items-center justify-center gap-1 ${hasPlayableVideo ? 'col-span-1' : 'col-span-2'}`}>
               <Info size={12}/> View details
             </button>
           </div>

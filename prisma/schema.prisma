@@ -113,6 +113,9 @@ model Exercise {
   videoUrl                   String?
   videoStatus                String   @default("not_started")
   videoExerciseSlug          String?
+  audioUrl                   String?
+  audioStatus                String   @default("not_started")
+  transcript                 String?
 
   // Legacy program fields
   dayNumber                  Int?
@@ -164,6 +167,9 @@ model VideoJob {
   providerJobId String?
   videoUrl      String?
   thumbnailUrl  String?
+  audioUrl      String?
+  audioStatus   String?
+  transcript    String?
   prompt        String
   promptVersion String
   errorMessage  String?

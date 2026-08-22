@@ -123,8 +123,8 @@ export default function ExercisesPage() {
     setShowTranscript(false);
     setAudioProgress(0);
     
-    // Check if videoUrl is already provided by EXERCISE_ASSETS (which means it's ready)
-    if (ex.videoUrl && ex.videoExerciseSlug === ex.slug) {
+    // Check if videoUrl is already ready
+    if (ex.videoStatus === "ready" && Boolean(ex.videoUrl)) {
       setVideoState('ready');
       // Fetch voiceover if not already present
       if (!ex.voiceoverUrl) {
@@ -155,29 +155,48 @@ export default function ExercisesPage() {
   const fetchVideo = async (ex: Exercise) => {
     setVideoState('loading');
     try {
-      const res = await fetch('/api/exercises/video', {
+      const res = await fetch('/api/exercises/video/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          exerciseSlug: ex.slug,
-          exerciseName: ex.name,
-          category: ex.category,
-          targetMuscles: ex.targetMuscles,
-          equipment: ex.equipment,
-          instructions: ex.instructions,
-          formCues: ex.formCues
-        })
+        body: JSON.stringify({ exerciseSlug: ex.slug })
       });
       const data = await res.json();
-      if (res.ok && data.videoUrl) {
-        setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoUrl: data.videoUrl, videoExerciseSlug: data.exerciseSlug, videoStatus: 'ready' } : prev);
-        setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoUrl: data.videoUrl, videoExerciseSlug: data.exerciseSlug, videoStatus: 'ready' } : p));
-        setVideoState('ready');
-        
-        // Fetch voiceover after video is ready
-        fetchVoiceover(ex);
-      } else {
+      
+      if (!res.ok || data.error) {
         setVideoState('error');
+        return;
+      }
+
+      if (data.jobId) {
+        // Start polling
+        const poll = setInterval(async () => {
+          try {
+            const statusRes = await fetch(`/api/exercises/video/status/${data.jobId}`);
+            const statusData = await statusRes.json();
+            
+            if (statusData.status === 'ready' && statusData.videoUrl) {
+              clearInterval(poll);
+              setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoUrl: statusData.videoUrl, videoStatus: 'ready' } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoUrl: statusData.videoUrl, videoStatus: 'ready' } : p));
+              setVideoState('ready');
+              fetchVoiceover(ex); // Fetch voiceover now
+            } else if (statusData.status === 'failed') {
+              clearInterval(poll);
+              setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoStatus: 'failed' } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoStatus: 'failed' } : p));
+              setVideoState('error');
+            } else {
+              // queued, generating, processing
+              setSelectedVideo(prev => prev?.slug === ex.slug ? { ...prev, videoStatus: statusData.status } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, videoStatus: statusData.status } : p));
+            }
+          } catch (e) {
+            clearInterval(poll);
+            setVideoState('error');
+          }
+        }, 3000); // Poll every 3 seconds
+      } else {
+         setVideoState('error');
       }
     } catch (err) {
       setVideoState('error');
@@ -394,8 +413,8 @@ export default function ExercisesPage() {
       const matchesEquipment = equipmentFilter === "All" || e.equipment === equipmentFilter;
       const matchesMovement = movementTypeFilter === "All" || e.movementPattern === movementTypeFilter;
       
-      const hasValidVideo = (e as any).videoStatus === "ready" && e.videoExerciseSlug === e.slug;
-      const matchesVideo = !withVideoOnly || hasValidVideo;
+      const hasPlayableVideo = (e as any).videoStatus === "ready" && Boolean((e as any).videoUrl);
+      const matchesVideo = !withVideoOnly || hasPlayableVideo;
       
       const isNoEq = e.equipment.toLowerCase() === "bodyweight";
       const matchesNoEq = !noEquipmentOnly || isNoEq;
