@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Play, Dumbbell, Zap, CircleDot, Info, Activity, Loader2, AlertTriangle, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
-import type { ExerciseMedia } from "@/lib/exercise-provider";
+import type { ExerciseMedia, MediaStatus } from "@/lib/exercise-provider";
 
 // Local types until everything is unified
 export interface Exercise {
@@ -25,12 +25,12 @@ export interface Exercise {
   videoUrl?: string | null;
   thumbnailUrl?: string | null;
   status?: string;
-  videoStatus?: string;
+  videoStatus?: MediaStatus;
   videoExerciseSlug?: string;
   audioUrl?: string | null;
-  audioStatus?: string;
+  audioStatus?: MediaStatus;
   voiceoverUrl?: string;
-  voiceoverStatus?: string;
+  voiceoverStatus?: MediaStatus;
   transcript?: string;
   photoUrl?: string | null;
   photoAlt?: string | null;
@@ -42,7 +42,7 @@ export interface Exercise {
 
   imageUrl?: string | null;
   imageAlt?: string;
-  imageStatus?: "not_started" | "generating" | "ready" | "failed" | "unavailable";
+  imageStatus?: MediaStatus;
   imageExerciseSlug?: string;
   imageSource?: "ai_generated" | "local";
   imagePromptHash?: string;
@@ -91,9 +91,11 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
   
   const hasValidAudio = ex.audioStatus === "ready" && Boolean(ex.audioUrl) && Boolean(ex.transcript);
   const isGeneratingAudio = ex.audioStatus === "queued" || ex.audioStatus === "generating" || ex.audioStatus === "processing";
+  const isFailedAudio = ex.audioStatus === "failed";
   
   const hasValidImage = ex.imageExerciseSlug === ex.slug && ex.imageStatus === "ready" && Boolean(ex.imageUrl);
-  const isGeneratingImage = ex.imageStatus === "generating";
+  const isGeneratingImage = ex.imageStatus === "queued" || ex.imageStatus === "generating" || ex.imageStatus === "processing";
+  const isFailedImage = ex.imageStatus === "failed";
 
   return (
     <motion.div 
@@ -126,6 +128,11 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
                <span className="text-[9px] font-bold text-accent uppercase tracking-widest">Preparing exercise image...</span>
             </div>
           </>
+        ) : isFailedImage ? (
+          <div className="flex flex-col items-center gap-2 z-10 opacity-70">
+            <AlertTriangle className="text-red-400" size={24} />
+            <span className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Try again</span>
+          </div>
         ) : (
           <div className="flex flex-col items-center gap-2 z-10 opacity-30">
             <Dumbbell size={32} />
@@ -174,6 +181,11 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[shimmer_2s_infinite]" />
             <Loader2 className="animate-spin text-accent" size={14} />
             <span className="text-[11px] font-bold text-muted">Preparing trainer guidance...</span>
+          </div>
+        ) : isFailedAudio ? (
+          <div className="bg-red-500/5 border border-red-500/10 rounded-lg p-2 flex items-center gap-3">
+            <AlertTriangle className="text-red-400/50" size={14} />
+            <span className="text-[11px] font-bold text-muted">Try again</span>
           </div>
         ) : (
           <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center gap-3 opacity-50">
