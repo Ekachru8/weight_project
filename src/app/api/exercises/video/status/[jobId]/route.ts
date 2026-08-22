@@ -5,10 +5,11 @@ import { storeVideoAsset } from "@/lib/storage-provider";
 
 export async function GET(
   request: Request,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
-    const jobId = parseInt(params.jobId, 10);
+    const { jobId: jobIdStr } = await params;
+    const jobId = parseInt(jobIdStr, 10);
     
     if (isNaN(jobId)) {
       return NextResponse.json({ error: "Invalid Job ID" }, { status: 400 });
