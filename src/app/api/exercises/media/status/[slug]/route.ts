@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { EXERCISE_ASSETS } from "@/data/exercise-assets";
 import { prisma } from "@/lib/prisma";
+import type { MediaStatus } from "@/lib/exercise-provider";
 
 export async function GET(
   req: Request,
@@ -22,7 +23,7 @@ export async function GET(
       orderBy: { createdAt: 'desc' }
     });
 
-    let audioStatus: string = existingAsset?.status || "unavailable";
+    let audioStatus: MediaStatus = existingAsset?.status || "unavailable";
     let audioUrl: string | null = existingAsset?.voiceoverUrl || null;
     let transcript: string = existingAsset?.transcript || "";
 

@@ -9,6 +9,8 @@ export type ExerciseAudio = {
   transcriptHash?: string;
 };
 
+export type MediaStatus = "queued" | "generating" | "processing" | "ready" | "failed" | "unavailable";
+
 export type ExerciseMedia = {
   exerciseSlug: string;
   exerciseName: string;
@@ -20,9 +22,9 @@ export type ExerciseMedia = {
   photoAlt: string | null;
   photoSource: string | null;
   photoSourcePage: string | null;
-  status: "queued" | "generating" | "ready" | "failed" | "unavailable";
-  videoStatus: "ready" | "failed" | "unavailable";
-  audioStatus: "ready" | "failed" | "unavailable";
+  status: MediaStatus;
+  videoStatus: MediaStatus;
+  audioStatus: MediaStatus;
 };
 
 export interface ExerciseMediaProvider {
