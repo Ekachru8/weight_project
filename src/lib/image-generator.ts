@@ -1,0 +1,57 @@
+import { OpenAI } from "openai";
+import { storeImageBuffer } from "./storage-provider";
+
+export async function generateImage({
+  prompt,
+  negativePrompt,
+  slug,
+  hash
+}: {
+  prompt: string;
+  negativePrompt?: string;
+  slug: string;
+  hash: string;
+}) {
+  const apiKey = process.env.OPENAI_API_KEY || process.env.GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    console.log("No API key found for image generation. Using a mock placeholder.");
+    // 1x1 transparent WebP buffer
+    const mockBuffer = Buffer.from("UklGRhIAAABXRUJQVlA4TA4AAAAvAAAAAIiI/gcA", "base64");
+    const { permanentUrl } = await storeImageBuffer(mockBuffer, slug, hash);
+    return { imageUrl: permanentUrl };
+  }
+
+  try {
+    const openai = new OpenAI({
+      apiKey,
+      baseURL: process.env.OPENAI_API_BASE || undefined,
+    });
+
+    // We'll use DALL-E 3 if available. Negative prompt isn't supported in standard DALL-E 3 API,
+    // but we've embedded the constraints into the main prompt.
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: prompt,
+      n: 1,
+      size: "1024x1024",
+      response_format: "b64_json",
+    });
+
+    const base64Data = response?.data?.[0]?.b64_json;
+    if (!base64Data) {
+      throw new Error("No image data returned from provider");
+    }
+
+    const buffer = Buffer.from(base64Data, "base64");
+    
+    // Store image buffer permanently
+    const { permanentUrl } = await storeImageBuffer(buffer, slug, hash);
+    
+    return { imageUrl: permanentUrl };
+
+  } catch (error) {
+    console.error(`Failed to generate image for ${slug}:`, error);
+    return null;
+  }
+}

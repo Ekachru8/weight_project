@@ -7,6 +7,8 @@ import { weeklyWorkoutSchedule } from "@/lib/workout-schedule";
 import { FitnessAssistant, FitnessReadiness } from "@/components/FitnessAssistant";
 import { ExerciseCard, type Exercise } from "@/components/ExerciseCard";
 import { ExerciseModal } from "@/components/ExerciseModal";
+import { EXERCISES } from "@/data/exercises";
+import { EXERCISE_ASSETS } from "@/data/exercise-assets";
 
 
 interface WorkoutLog {
@@ -97,7 +99,7 @@ export default function ExercisesPage() {
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [equipmentFilter, setEquipmentFilter] = useState("All");
   const [movementTypeFilter, setMovementTypeFilter] = useState("All");
-  const [withVideoOnly, setWithVideoOnly] = useState(false);
+  const [audioOnly, setAudioOnly] = useState(false);
   const [noEquipmentOnly, setNoEquipmentOnly] = useState(false);
   const [sortBy, setSortBy] = useState("Recommended");
   
@@ -227,8 +229,29 @@ export default function ExercisesPage() {
         setAssistantState('ready_card');
       }
 
-      const validExercises = Array.isArray(exData) ? exData : [];
-      setExercises(validExercises);
+      // 1. PRESERVE THE COMPLETE EXERCISE CATALOG
+      const allExercises = EXERCISES;
+      const exercisesWithMedia = allExercises.map((ex) => {
+        const asset = EXERCISE_ASSETS[ex.slug];
+        return {
+          ...ex,
+          audioUrl: asset?.voiceoverUrl || null,
+          audioStatus: asset?.status || "not_started",
+          transcript: asset?.transcript || undefined,
+          imageUrl: asset?.photoUrl || null,
+          imageAlt: asset?.photoAlt || undefined,
+          imageStatus: asset?.photoUrl ? "ready" : "unavailable",
+          imageExerciseSlug: asset?.photoUrl ? ex.slug : undefined,
+          imageSource: (asset?.photoSource as any) || undefined,
+        } as Exercise;
+      });
+
+      setExercises(exercisesWithMedia);
+      
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`[Catalog Health] Loaded ${exercisesWithMedia.length} exercises from trusted catalog.`);
+      }
+
       if (Array.isArray(logsData)) setLogs(logsData);
 
       let td = null;
@@ -245,7 +268,7 @@ export default function ExercisesPage() {
           let fallbackExercises: any[] = [];
           if (!isRestDay && schedule.exercises) {
             fallbackExercises = schedule.exercises
-              .map(slug => validExercises.find(ex => ex.slug === slug))
+              .map(slug => exercisesWithMedia.find(ex => ex.slug === slug))
               .filter(Boolean);
           }
           
@@ -398,13 +421,13 @@ export default function ExercisesPage() {
       const matchesEquipment = equipmentFilter === "All" || e.equipment === equipmentFilter;
       const matchesMovement = movementTypeFilter === "All" || e.movementPattern === movementTypeFilter;
       
-      const hasPlayableVideo = (e as any).videoStatus === "ready" && Boolean((e as any).videoUrl);
-      const matchesVideo = !withVideoOnly || hasPlayableVideo;
+      const hasValidAudio = e.audioStatus === "ready" && Boolean(e.audioUrl);
+      const matchesAudio = !audioOnly || hasValidAudio;
       
       const isNoEq = e.equipment.toLowerCase() === "bodyweight";
       const matchesNoEq = !noEquipmentOnly || isNoEq;
 
-      return matchesSearch && matchesCategory && matchesDifficulty && matchesEquipment && matchesMovement && matchesVideo && matchesNoEq;
+      return matchesSearch && matchesCategory && matchesDifficulty && matchesEquipment && matchesMovement && matchesAudio && matchesNoEq;
     });
 
     if (sortBy === "Beginner friendly") {
@@ -420,7 +443,7 @@ export default function ExercisesPage() {
        result.sort((a, b) => (b.estimatedCaloriesPerMinute || 0) - (a.estimatedCaloriesPerMinute || 0));
     }
     return result;
-  }, [exercises, search, categoryFilter, difficultyFilter, equipmentFilter, movementTypeFilter, withVideoOnly, noEquipmentOnly, sortBy]);
+  }, [exercises, search, categoryFilter, difficultyFilter, equipmentFilter, movementTypeFilter, audioOnly, noEquipmentOnly, sortBy]);
 
   const [confettiParticles, setConfettiParticles] = useState<any[]>([]);
   useEffect(() => {
@@ -666,7 +689,7 @@ export default function ExercisesPage() {
               <button 
                 onClick={() => {
                   setSearch(""); setCategoryFilter("All"); setDifficultyFilter("All"); setEquipmentFilter("All");
-                  setMovementTypeFilter("All"); setWithVideoOnly(false); setNoEquipmentOnly(false); setSortBy("Recommended");
+                  setMovementTypeFilter("All"); setAudioOnly(false); setNoEquipmentOnly(false); setSortBy("Recommended");
                 }}
                 className="text-xs font-bold text-red-400 hover:text-red-300 transition-colors uppercase tracking-widest px-3 py-2"
               >
@@ -703,8 +726,8 @@ export default function ExercisesPage() {
 
             <div className="flex flex-wrap gap-4 pt-2">
                <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
-                 <input type="checkbox" checked={withVideoOnly} onChange={(e) => setWithVideoOnly(e.target.checked)} className="rounded border-white/10 text-accent focus:ring-accent/50 bg-[#1a1a1a]" />
-                 <span className="font-medium">With video</span>
+                 <input type="checkbox" checked={audioOnly} onChange={(e) => setAudioOnly(e.target.checked)} className="rounded border-white/10 text-accent focus:ring-accent/50 bg-[#1a1a1a]" />
+                 <span className="font-medium">Audio guidance available</span>
                </label>
                <label className="flex items-center gap-2 text-sm text-white cursor-pointer">
                  <input type="checkbox" checked={noEquipmentOnly} onChange={(e) => setNoEquipmentOnly(e.target.checked)} className="rounded border-white/10 text-accent focus:ring-accent/50 bg-[#1a1a1a]" />

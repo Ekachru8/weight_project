@@ -215,9 +215,9 @@ class LocalExerciseProvider implements ExerciseMediaProvider {
       return {
         exerciseSlug: slug,
         exerciseName: asset.exerciseName,
-        videoUrl: asset.videoUrl,
+        videoUrl: asset.videoUrl || null,
         videoType: asset.videoUrl ? "mp4" : null,
-        audioUrl: asset.voiceoverUrl,
+        audioUrl: asset.voiceoverUrl || null,
         transcript: asset.transcript || "",
         photoUrl: (asset as any).photoUrl || null,
         photoAlt: (asset as any).photoAlt || null,

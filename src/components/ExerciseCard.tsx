@@ -40,6 +40,13 @@ export interface Exercise {
   videoSourcePage?: string;
   pixabayAssetId?: string;
 
+  imageUrl?: string | null;
+  imageAlt?: string;
+  imageStatus?: "not_started" | "generating" | "ready" | "failed" | "unavailable";
+  imageExerciseSlug?: string;
+  imageSource?: "ai_generated" | "local";
+  imagePromptHash?: string;
+
   estimatedCaloriesPerMinute?: number;
   // Legacy for "today" workout
   dayNumber?: number;
@@ -84,8 +91,10 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
   
   const hasValidAudio = ex.audioStatus === "ready" && Boolean(ex.audioUrl) && Boolean(ex.transcript);
   const isGeneratingAudio = ex.audioStatus === "queued" || ex.audioStatus === "generating" || ex.audioStatus === "processing";
-  const isAudioFailed = ex.audioStatus === "failed";
   
+  const hasValidImage = ex.imageExerciseSlug === ex.slug && ex.imageStatus === "ready" && Boolean(ex.imageUrl);
+  const isGeneratingImage = ex.imageStatus === "generating";
+
   return (
     <motion.div 
       variants={itemVariants}
@@ -96,18 +105,27 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
     >
       {/* Exercise Photo */}
       <div className="relative w-full h-40 bg-[#0a0a0a] border-b border-white/5 overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-transform origin-bottom">
-        {ex.photoUrl ? (
-          <img 
-            src={ex.photoUrl} 
-            alt={ex.photoAlt || ex.name} 
-            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-              e.currentTarget.parentElement?.querySelector('span')?.classList.remove('hidden');
-            }}
-          />
+        {hasValidImage ? (
+          <>
+            <img 
+              src={ex.imageUrl!} 
+              alt={ex.imageAlt || ex.name} 
+              className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                e.currentTarget.parentElement?.querySelector('.fallback-text')?.classList.remove('hidden');
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+          </>
+        ) : isGeneratingImage ? (
+          <div className="flex flex-col items-center gap-2">
+             <Loader2 className="animate-spin text-accent" size={20} />
+             <span className="text-[9px] font-bold text-muted uppercase tracking-widest">Preparing exercise image...</span>
+          </div>
         ) : null}
-        <span className={`text-xs font-bold text-muted uppercase tracking-widest ${ex.photoUrl ? 'hidden' : ''}`}>Exercise image coming soon</span>
+        
+        <span className={`fallback-text text-xs font-bold text-muted uppercase tracking-widest ${hasValidImage || isGeneratingImage ? 'hidden' : ''}`}>Exercise image coming soon</span>
         
         <div className="absolute top-2 right-2 flex gap-2 z-10">
           <div className="px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-white uppercase tracking-widest backdrop-blur-md">

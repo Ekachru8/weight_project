@@ -13,7 +13,8 @@
     "test:coverage": "vitest run --coverage",
     "validate:exercise-assets": "npx tsx scripts/validate-exercise-assets.ts",
     "validate:exercise-media": "npx tsx scripts/validate-exercise-media.ts",
-    "generate:exercise-audio": "tsx scripts/generate-all-exercise-audio.ts"
+    "generate:exercise-audio": "tsx scripts/generate-all-exercise-audio.ts",
+    "generate:exercise-images": "tsx scripts/generate-all-exercise-images.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

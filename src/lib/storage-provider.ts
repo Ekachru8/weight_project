@@ -59,3 +59,32 @@ export async function storeAudioBuffer(
   
   return { permanentUrl };
 }
+
+export async function storeImageBuffer(
+  buffer: Buffer,
+  exerciseSlug: string,
+  contentHash: string
+): Promise<{ permanentUrl: string }> {
+  
+  if (!process.env.MEDIA_STORAGE_PUBLIC_BASE_URL) {
+    console.warn("[DEV] Image generation succeeded, but persistent media storage is not configured. Saving to local public folder.");
+    
+    // Save to public/exercises/images folder
+    const imageDir = path.join(process.cwd(), "public", "exercises", "images", exerciseSlug);
+    if (!fs.existsSync(imageDir)) {
+      fs.mkdirSync(imageDir, { recursive: true });
+    }
+    const filePath = path.join(imageDir, `${contentHash}.webp`);
+    fs.writeFileSync(filePath, buffer);
+
+    return { permanentUrl: `/exercises/images/${exerciseSlug}/${contentHash}.webp` };
+  }
+
+  const bucketUrl = process.env.MEDIA_STORAGE_PUBLIC_BASE_URL || "";
+  const permanentUrl = `${bucketUrl}/exercises/images/${exerciseSlug}/${contentHash}.webp`;
+
+  // In a real app we'd upload the buffer to S3 here
+  
+  return { permanentUrl };
+}
+

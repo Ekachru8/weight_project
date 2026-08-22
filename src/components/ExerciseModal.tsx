@@ -73,18 +73,26 @@ export function ExerciseModal({
             
             {/* Exercise Photo */}
             <div className="w-full h-[240px] md:h-[320px] bg-[#050505] relative border-b border-white/5 flex items-center justify-center overflow-hidden">
-              {ex.photoUrl ? (
-                <img 
-                  src={ex.photoUrl} 
-                  alt={ex.photoAlt || ex.name} 
-                  className="w-full h-full object-cover" 
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                    e.currentTarget.parentElement?.querySelector('span')?.classList.remove('hidden');
-                  }}
-                />
+              {ex.imageExerciseSlug === ex.slug && ex.imageStatus === "ready" && ex.imageUrl ? (
+                <>
+                  <img 
+                    src={ex.imageUrl} 
+                    alt={ex.imageAlt || ex.name} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      e.currentTarget.parentElement?.querySelector('.fallback-text')?.classList.remove('hidden');
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+                </>
+              ) : ex.imageStatus === "generating" ? (
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="animate-spin text-accent" size={24} />
+                  <span className="text-sm font-bold text-muted uppercase tracking-widest">Preparing exercise image...</span>
+                </div>
               ) : null}
-              <span className={`text-sm font-bold text-muted uppercase tracking-widest ${ex.photoUrl ? 'hidden' : ''}`}>Exercise image coming soon</span>
+              <span className={`fallback-text text-sm font-bold text-muted uppercase tracking-widest ${ex.imageExerciseSlug === ex.slug && ex.imageStatus === "ready" && ex.imageUrl || ex.imageStatus === "generating" ? 'hidden' : ''}`}>Exercise image coming soon</span>
             </div>
 
             <div className="p-6 md:p-8 space-y-8">
