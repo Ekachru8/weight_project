@@ -16,6 +16,10 @@ export type ExerciseMedia = {
   videoType: "mp4" | "webm" | "hls" | null;
   audioUrl: string | null;
   transcript: string;
+  photoUrl: string | null;
+  photoAlt: string | null;
+  photoSource: string | null;
+  photoSourcePage: string | null;
   status: "queued" | "generating" | "ready" | "failed" | "unavailable";
   videoStatus: "ready" | "failed" | "unavailable";
   audioStatus: "ready" | "failed" | "unavailable";
@@ -107,6 +111,10 @@ class YMoveExerciseProvider implements ExerciseMediaProvider {
       videoType: videoUrl ? "mp4" : null,
       audioUrl: null,
       transcript: "",
+      photoUrl: ymoveExercise.photoUrl || null,
+      photoAlt: ymoveExercise.photoAlt || null,
+      photoSource: ymoveExercise.photoSource || null,
+      photoSourcePage: ymoveExercise.photoSourcePage || null,
       status: videoUrl ? "ready" : "unavailable",
       videoStatus: videoUrl ? "ready" : "unavailable",
       audioStatus: "unavailable"
@@ -179,6 +187,10 @@ class MuscleWikiExerciseProvider implements ExerciseMediaProvider {
       videoType: videoUrl ? "mp4" : null,
       audioUrl: null,
       transcript: "",
+      photoUrl: mwExercise.photoUrl || null,
+      photoAlt: mwExercise.photoAlt || null,
+      photoSource: mwExercise.photoSource || null,
+      photoSourcePage: mwExercise.photoSourcePage || null,
       status: videoUrl ? "ready" : "unavailable",
       videoStatus: videoUrl ? "ready" : "unavailable",
       audioStatus: "unavailable"
@@ -207,6 +219,10 @@ class LocalExerciseProvider implements ExerciseMediaProvider {
         videoType: asset.videoUrl ? "mp4" : null,
         audioUrl: asset.voiceoverUrl,
         transcript: asset.transcript || "",
+        photoUrl: (asset as any).photoUrl || null,
+        photoAlt: (asset as any).photoAlt || null,
+        photoSource: (asset as any).photoSource || null,
+        photoSourcePage: (asset as any).photoSourcePage || null,
         status: asset.status === "ready" ? "ready" : "unavailable",
         videoStatus: vStatus,
         audioStatus: aStatus,

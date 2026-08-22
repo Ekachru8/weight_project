@@ -32,6 +32,10 @@ export interface Exercise {
   voiceoverUrl?: string;
   voiceoverStatus?: string;
   transcript?: string;
+  photoUrl?: string | null;
+  photoAlt?: string | null;
+  photoSource?: string | null;
+  photoSourcePage?: string | null;
   videoSource?: string;
   videoSourcePage?: string;
   pixabayAssetId?: string;
@@ -90,49 +94,64 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      {/* Top Audio Panel instead of large video */}
-      <div className="relative w-full bg-[#0a0a0a] border-b border-white/5 p-4 flex flex-col gap-2">
-        <div className="flex justify-between items-center mb-1">
-          <div className="flex items-center gap-2">
-            <Activity className="text-accent" size={14} />
-            <span className="text-[10px] font-bold text-accent uppercase tracking-widest">Form Guidance</span>
+      {/* Exercise Photo */}
+      <div className="relative w-full h-40 bg-[#0a0a0a] border-b border-white/5 overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-transform origin-bottom">
+        {ex.photoUrl ? (
+          <img 
+            src={ex.photoUrl} 
+            alt={ex.photoAlt || ex.name} 
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+              e.currentTarget.parentElement?.querySelector('span')?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        <span className={`text-xs font-bold text-muted uppercase tracking-widest ${ex.photoUrl ? 'hidden' : ''}`}>Exercise image coming soon</span>
+        
+        <div className="absolute top-2 right-2 flex gap-2 z-10">
+          <div className="px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-white uppercase tracking-widest backdrop-blur-md">
+            {ex.category}
           </div>
-          <div className="flex gap-2">
-            <div className="px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-white uppercase tracking-widest backdrop-blur-md">
-              {ex.category}
+          {ex.difficulty && (
+            <div className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border ${getDifficultyColor(ex.difficulty)}`}>
+              {ex.difficulty}
             </div>
-            {ex.difficulty && (
-              <div className={`px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border ${getDifficultyColor(ex.difficulty)}`}>
-                {ex.difficulty}
-              </div>
-            )}
-          </div>
+          )}
+        </div>
+      </div>
+
+      {/* Audio Panel */}
+      <div className="relative w-full bg-[#0a0a0a] border-b border-white/5 p-3 flex flex-col gap-2">
+        <div className="flex items-center gap-2 mb-1">
+          <Activity className="text-accent" size={12} />
+          <span className="text-[9px] font-bold text-accent uppercase tracking-widest">Physical Trainer Guidance</span>
         </div>
 
         {hasValidAudio ? (
-          <div className="bg-white/5 border border-white/10 rounded-lg p-3 flex items-center justify-between group-hover:bg-white/10 transition-colors">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center justify-between group-hover:bg-white/10 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent">
-                <Play size={14} fill="currentColor" className="ml-0.5" />
+              <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                <Play size={12} fill="currentColor" className="ml-0.5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-bold text-white">Listen to guidance</span>
-                <span className="text-[10px] text-muted">AI Voice Coach</span>
+                <span className="text-[11px] font-bold text-white">Listen to guidance</span>
+                <span className="text-[9px] text-muted">AI Voice Coach</span>
               </div>
             </div>
-            <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="w-12 h-1 bg-white/10 rounded-full overflow-hidden">
               <div className="w-0 h-full bg-accent rounded-full"></div>
             </div>
           </div>
         ) : isGeneratingAudio ? (
-          <div className="bg-white/5 border border-white/10 rounded-lg p-3 flex items-center gap-3">
-            <Loader2 className="animate-spin text-accent" size={16} />
-            <span className="text-xs font-bold text-muted">Preparing form guidance...</span>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center gap-3">
+            <Loader2 className="animate-spin text-accent" size={14} />
+            <span className="text-[11px] font-bold text-muted">Preparing form guidance...</span>
           </div>
         ) : (
-          <div className="bg-red-500/5 border border-red-500/10 rounded-lg p-3 flex items-center gap-3">
-            <AlertTriangle className="text-red-400/50" size={16} />
-            <span className="text-xs font-bold text-muted">Audio guidance unavailable</span>
+          <div className="bg-red-500/5 border border-red-500/10 rounded-lg p-2 flex items-center gap-3">
+            <AlertTriangle className="text-red-400/50" size={14} />
+            <span className="text-[11px] font-bold text-muted">Audio guidance unavailable</span>
           </div>
         )}
       </div>

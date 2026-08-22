@@ -69,7 +69,25 @@ export function ExerciseModal({
           </div>
 
           {/* Scrollable Body */}
-          <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+          <div className="flex-1 overflow-y-auto">
+            
+            {/* Exercise Photo */}
+            <div className="w-full h-[240px] md:h-[320px] bg-[#050505] relative border-b border-white/5 flex items-center justify-center overflow-hidden">
+              {ex.photoUrl ? (
+                <img 
+                  src={ex.photoUrl} 
+                  alt={ex.photoAlt || ex.name} 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    e.currentTarget.parentElement?.querySelector('span')?.classList.remove('hidden');
+                  }}
+                />
+              ) : null}
+              <span className={`text-sm font-bold text-muted uppercase tracking-widest ${ex.photoUrl ? 'hidden' : ''}`}>Exercise image coming soon</span>
+            </div>
+
+            <div className="p-6 md:p-8 space-y-8">
             
             {/* Audio Form-Guidance Panel */}
             {hasMatchingAudio ? (
@@ -297,7 +315,7 @@ export function ExerciseModal({
                 </AnimatePresence>
               </div>
             )}
-
+            </div>
           </div>
         </motion.div>
       </motion.div>

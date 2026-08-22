@@ -1,6 +1,10 @@
 export interface ExerciseAsset {
   exerciseSlug: string;
   exerciseName: string;
+  photoUrl: string | null;
+  photoAlt: string | null;
+  photoSource: "pixabay" | "generated" | "local" | null;
+  photoSourcePage?: string;
   videoUrl: string | null;
   videoSource: "pixabay" | "generated" | "local";
   videoSourcePage?: string;
@@ -14,6 +18,9 @@ export interface ExerciseAsset {
 export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   "push-ups": {
     exerciseSlug: "push-ups",
+    photoUrl: "/exercises/photos/push-ups.webp",
+    photoAlt: "push ups exercise",
+    photoSource: "generated",
     exerciseName: "Push-ups",
     videoUrl: "/exercises/push-ups.mp4",
     videoSource: "pixabay",
@@ -24,6 +31,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "incline-push-ups": {
     exerciseSlug: "incline-push-ups",
+    photoUrl: "/exercises/photos/incline-push-ups.webp",
+    photoAlt: "incline push ups exercise",
+    photoSource: "generated",
     exerciseName: "Incline push-ups",
     videoUrl: "/exercises/incline-push-ups.mp4",
     videoSource: "generated",
@@ -34,6 +44,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "knee-push-ups": {
     exerciseSlug: "knee-push-ups",
+    photoUrl: "/exercises/photos/knee-push-ups.webp",
+    photoAlt: "knee push ups exercise",
+    photoSource: "generated",
     exerciseName: "Knee push-ups",
     videoUrl: "/exercises/knee-push-ups.mp4",
     videoSource: "generated",
@@ -44,6 +57,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "wide-grip-push-ups": {
     exerciseSlug: "wide-grip-push-ups",
+    photoUrl: "/exercises/photos/wide-grip-push-ups.webp",
+    photoAlt: "wide grip push ups exercise",
+    photoSource: "generated",
     exerciseName: "Wide-grip push-ups",
     videoUrl: "/exercises/wide-grip-push-ups.mp4",
     videoSource: "generated",
@@ -54,6 +70,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "diamond-push-ups": {
     exerciseSlug: "diamond-push-ups",
+    photoUrl: "/exercises/photos/diamond-push-ups.webp",
+    photoAlt: "diamond push ups exercise",
+    photoSource: "generated",
     exerciseName: "Diamond push-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -64,6 +83,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "decline-push-ups": {
     exerciseSlug: "decline-push-ups",
+    photoUrl: "/exercises/photos/decline-push-ups.webp",
+    photoAlt: "decline push ups exercise",
+    photoSource: "generated",
     exerciseName: "Decline push-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -74,6 +96,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "chest-squeeze-press-with-dumbbells": {
     exerciseSlug: "chest-squeeze-press-with-dumbbells",
+    photoUrl: "/exercises/photos/chest-squeeze-press-with-dumbbells.webp",
+    photoAlt: "chest squeeze press with dumbbells exercise",
+    photoSource: "generated",
     exerciseName: "Chest squeeze press with dumbbells",
     videoUrl: null,
     videoSource: "generated",
@@ -84,6 +109,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "floor-dumbbell-press": {
     exerciseSlug: "floor-dumbbell-press",
+    photoUrl: "/exercises/photos/floor-dumbbell-press.webp",
+    photoAlt: "floor dumbbell press exercise",
+    photoSource: "generated",
     exerciseName: "Floor dumbbell press",
     videoUrl: null,
     videoSource: "generated",
@@ -94,6 +122,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "resistance-band-chest-press": {
     exerciseSlug: "resistance-band-chest-press",
+    photoUrl: "/exercises/photos/resistance-band-chest-press.webp",
+    photoAlt: "resistance band chest press exercise",
+    photoSource: "generated",
     exerciseName: "Resistance-band chest press",
     videoUrl: null,
     videoSource: "generated",
@@ -104,6 +135,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "standing-wall-push-ups": {
     exerciseSlug: "standing-wall-push-ups",
+    photoUrl: "/exercises/photos/standing-wall-push-ups.webp",
+    photoAlt: "standing wall push ups exercise",
+    photoSource: "generated",
     exerciseName: "Standing wall push-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -114,6 +148,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "pull-ups": {
     exerciseSlug: "pull-ups",
+    photoUrl: "/exercises/photos/pull-ups.webp",
+    photoAlt: "pull ups exercise",
+    photoSource: "generated",
     exerciseName: "Pull-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -124,6 +161,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "assisted-pull-ups": {
     exerciseSlug: "assisted-pull-ups",
+    photoUrl: "/exercises/photos/assisted-pull-ups.webp",
+    photoAlt: "assisted pull ups exercise",
+    photoSource: "generated",
     exerciseName: "Assisted pull-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -134,6 +174,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "resistance-band-rows": {
     exerciseSlug: "resistance-band-rows",
+    photoUrl: "/exercises/photos/resistance-band-rows.webp",
+    photoAlt: "resistance band rows exercise",
+    photoSource: "generated",
     exerciseName: "Resistance-band rows",
     videoUrl: null,
     videoSource: "generated",
@@ -144,6 +187,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "one-arm-dumbbell-rows": {
     exerciseSlug: "one-arm-dumbbell-rows",
+    photoUrl: "/exercises/photos/one-arm-dumbbell-rows.webp",
+    photoAlt: "one arm dumbbell rows exercise",
+    photoSource: "generated",
     exerciseName: "One-arm dumbbell rows",
     videoUrl: null,
     videoSource: "generated",
@@ -154,6 +200,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bent-over-dumbbell-rows": {
     exerciseSlug: "bent-over-dumbbell-rows",
+    photoUrl: "/exercises/photos/bent-over-dumbbell-rows.webp",
+    photoAlt: "bent over dumbbell rows exercise",
+    photoSource: "generated",
     exerciseName: "Bent-over dumbbell rows",
     videoUrl: null,
     videoSource: "generated",
@@ -164,6 +213,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "superman-holds": {
     exerciseSlug: "superman-holds",
+    photoUrl: "/exercises/photos/superman-holds.webp",
+    photoAlt: "superman holds exercise",
+    photoSource: "generated",
     exerciseName: "Superman holds",
     videoUrl: null,
     videoSource: "generated",
@@ -174,6 +226,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "reverse-snow-angels": {
     exerciseSlug: "reverse-snow-angels",
+    photoUrl: "/exercises/photos/reverse-snow-angels.webp",
+    photoAlt: "reverse snow angels exercise",
+    photoSource: "generated",
     exerciseName: "Reverse snow angels",
     videoUrl: null,
     videoSource: "generated",
@@ -184,6 +239,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bird-dog-rows": {
     exerciseSlug: "bird-dog-rows",
+    photoUrl: "/exercises/photos/bird-dog-rows.webp",
+    photoAlt: "bird dog rows exercise",
+    photoSource: "generated",
     exerciseName: "Bird-dog rows",
     videoUrl: null,
     videoSource: "generated",
@@ -194,6 +252,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "doorway-rows": {
     exerciseSlug: "doorway-rows",
+    photoUrl: "/exercises/photos/doorway-rows.webp",
+    photoAlt: "doorway rows exercise",
+    photoSource: "generated",
     exerciseName: "Doorway rows",
     videoUrl: null,
     videoSource: "generated",
@@ -204,6 +265,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "prone-y-t-w-raises": {
     exerciseSlug: "prone-y-t-w-raises",
+    photoUrl: "/exercises/photos/prone-y-t-w-raises.webp",
+    photoAlt: "prone y t w raises exercise",
+    photoSource: "generated",
     exerciseName: "Prone Y-T-W raises",
     videoUrl: null,
     videoSource: "generated",
@@ -214,6 +278,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bodyweight-squats": {
     exerciseSlug: "bodyweight-squats",
+    photoUrl: "/exercises/photos/bodyweight-squats.webp",
+    photoAlt: "bodyweight squats exercise",
+    photoSource: "generated",
     exerciseName: "Bodyweight squats",
     videoUrl: "/exercises/bodyweight-squats.mp4",
     videoSource: "pixabay",
@@ -224,6 +291,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "sumo-squats": {
     exerciseSlug: "sumo-squats",
+    photoUrl: "/exercises/photos/sumo-squats.webp",
+    photoAlt: "sumo squats exercise",
+    photoSource: "generated",
     exerciseName: "Sumo squats",
     videoUrl: null,
     videoSource: "generated",
@@ -234,6 +304,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "pause-squats": {
     exerciseSlug: "pause-squats",
+    photoUrl: "/exercises/photos/pause-squats.webp",
+    photoAlt: "pause squats exercise",
+    photoSource: "generated",
     exerciseName: "Pause squats",
     videoUrl: null,
     videoSource: "generated",
@@ -244,6 +317,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "split-squats": {
     exerciseSlug: "split-squats",
+    photoUrl: "/exercises/photos/split-squats.webp",
+    photoAlt: "split squats exercise",
+    photoSource: "generated",
     exerciseName: "Split squats",
     videoUrl: null,
     videoSource: "generated",
@@ -254,6 +330,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "reverse-lunges": {
     exerciseSlug: "reverse-lunges",
+    photoUrl: "/exercises/photos/reverse-lunges.webp",
+    photoAlt: "reverse lunges exercise",
+    photoSource: "generated",
     exerciseName: "Reverse Lunges",
     videoUrl: "/exercises/reverse-lunges.mp4",
     videoSource: "pixabay",
@@ -264,6 +343,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "forward-lunges": {
     exerciseSlug: "forward-lunges",
+    photoUrl: "/exercises/photos/forward-lunges.webp",
+    photoAlt: "forward lunges exercise",
+    photoSource: "generated",
     exerciseName: "Forward lunges",
     videoUrl: null,
     videoSource: "generated",
@@ -274,6 +356,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "walking-lunges": {
     exerciseSlug: "walking-lunges",
+    photoUrl: "/exercises/photos/walking-lunges.webp",
+    photoAlt: "walking lunges exercise",
+    photoSource: "generated",
     exerciseName: "Walking lunges",
     videoUrl: null,
     videoSource: "generated",
@@ -284,6 +369,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "step-ups": {
     exerciseSlug: "step-ups",
+    photoUrl: "/exercises/photos/step-ups.webp",
+    photoAlt: "step ups exercise",
+    photoSource: "generated",
     exerciseName: "Step-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -294,6 +382,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "wall-sits": {
     exerciseSlug: "wall-sits",
+    photoUrl: "/exercises/photos/wall-sits.webp",
+    photoAlt: "wall sits exercise",
+    photoSource: "generated",
     exerciseName: "Wall sits",
     videoUrl: null,
     videoSource: "generated",
@@ -304,6 +395,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bulgarian-split-squats": {
     exerciseSlug: "bulgarian-split-squats",
+    photoUrl: "/exercises/photos/bulgarian-split-squats.webp",
+    photoAlt: "bulgarian split squats exercise",
+    photoSource: "generated",
     exerciseName: "Bulgarian split squats",
     videoUrl: null,
     videoSource: "generated",
@@ -314,6 +408,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "cossack-squats": {
     exerciseSlug: "cossack-squats",
+    photoUrl: "/exercises/photos/cossack-squats.webp",
+    photoAlt: "cossack squats exercise",
+    photoSource: "generated",
     exerciseName: "Cossack squats",
     videoUrl: null,
     videoSource: "generated",
@@ -324,6 +421,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "calf-raises": {
     exerciseSlug: "calf-raises",
+    photoUrl: "/exercises/photos/calf-raises.webp",
+    photoAlt: "calf raises exercise",
+    photoSource: "generated",
     exerciseName: "Calf raises",
     videoUrl: null,
     videoSource: "generated",
@@ -334,6 +434,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "glute-bridges": {
     exerciseSlug: "glute-bridges",
+    photoUrl: "/exercises/photos/glute-bridges.webp",
+    photoAlt: "glute bridges exercise",
+    photoSource: "generated",
     exerciseName: "Glute bridges",
     videoUrl: "/exercises/glute-bridges.mp4",
     videoSource: "pixabay",
@@ -344,6 +447,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "single-leg-glute-bridges": {
     exerciseSlug: "single-leg-glute-bridges",
+    photoUrl: "/exercises/photos/single-leg-glute-bridges.webp",
+    photoAlt: "single leg glute bridges exercise",
+    photoSource: "generated",
     exerciseName: "Single-leg glute bridges",
     videoUrl: null,
     videoSource: "generated",
@@ -354,6 +460,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "hip-thrusts-on-a-sofa": {
     exerciseSlug: "hip-thrusts-on-a-sofa",
+    photoUrl: "/exercises/photos/hip-thrusts-on-a-sofa.webp",
+    photoAlt: "hip thrusts on a sofa exercise",
+    photoSource: "generated",
     exerciseName: "Hip thrusts on a sofa",
     videoUrl: null,
     videoSource: "generated",
@@ -364,6 +473,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "donkey-kicks": {
     exerciseSlug: "donkey-kicks",
+    photoUrl: "/exercises/photos/donkey-kicks.webp",
+    photoAlt: "donkey kicks exercise",
+    photoSource: "generated",
     exerciseName: "Donkey kicks",
     videoUrl: null,
     videoSource: "generated",
@@ -374,6 +486,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "fire-hydrants": {
     exerciseSlug: "fire-hydrants",
+    photoUrl: "/exercises/photos/fire-hydrants.webp",
+    photoAlt: "fire hydrants exercise",
+    photoSource: "generated",
     exerciseName: "Fire hydrants",
     videoUrl: null,
     videoSource: "generated",
@@ -384,6 +499,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "standing-kickbacks": {
     exerciseSlug: "standing-kickbacks",
+    photoUrl: "/exercises/photos/standing-kickbacks.webp",
+    photoAlt: "standing kickbacks exercise",
+    photoSource: "generated",
     exerciseName: "Standing kickbacks",
     videoUrl: null,
     videoSource: "generated",
@@ -394,6 +512,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "frog-pumps": {
     exerciseSlug: "frog-pumps",
+    photoUrl: "/exercises/photos/frog-pumps.webp",
+    photoAlt: "frog pumps exercise",
+    photoSource: "generated",
     exerciseName: "Frog pumps",
     videoUrl: null,
     videoSource: "generated",
@@ -404,6 +525,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "curtsy-lunges": {
     exerciseSlug: "curtsy-lunges",
+    photoUrl: "/exercises/photos/curtsy-lunges.webp",
+    photoAlt: "curtsy lunges exercise",
+    photoSource: "generated",
     exerciseName: "Curtsy lunges",
     videoUrl: null,
     videoSource: "generated",
@@ -414,6 +538,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "banded-lateral-walks": {
     exerciseSlug: "banded-lateral-walks",
+    photoUrl: "/exercises/photos/banded-lateral-walks.webp",
+    photoAlt: "banded lateral walks exercise",
+    photoSource: "generated",
     exerciseName: "Banded lateral walks",
     videoUrl: null,
     videoSource: "generated",
@@ -424,6 +551,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "pike-push-ups": {
     exerciseSlug: "pike-push-ups",
+    photoUrl: "/exercises/photos/pike-push-ups.webp",
+    photoAlt: "pike push ups exercise",
+    photoSource: "generated",
     exerciseName: "Pike push-ups",
     videoUrl: "/exercises/pike-push-ups.mp4",
     videoSource: "pixabay",
@@ -434,6 +564,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "dumbbell-shoulder-press": {
     exerciseSlug: "dumbbell-shoulder-press",
+    photoUrl: "/exercises/photos/dumbbell-shoulder-press.webp",
+    photoAlt: "dumbbell shoulder press exercise",
+    photoSource: "generated",
     exerciseName: "Dumbbell shoulder press",
     videoUrl: "/exercises/dumbbell-shoulder-press.mp4",
     videoSource: "pixabay",
@@ -444,6 +577,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "arnold-press": {
     exerciseSlug: "arnold-press",
+    photoUrl: "/exercises/photos/arnold-press.webp",
+    photoAlt: "arnold press exercise",
+    photoSource: "generated",
     exerciseName: "Arnold press",
     videoUrl: null,
     videoSource: "generated",
@@ -454,6 +590,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "lateral-raises": {
     exerciseSlug: "lateral-raises",
+    photoUrl: "/exercises/photos/lateral-raises.webp",
+    photoAlt: "lateral raises exercise",
+    photoSource: "generated",
     exerciseName: "Lateral raises",
     videoUrl: null,
     videoSource: "generated",
@@ -464,6 +603,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "front-raises": {
     exerciseSlug: "front-raises",
+    photoUrl: "/exercises/photos/front-raises.webp",
+    photoAlt: "front raises exercise",
+    photoSource: "generated",
     exerciseName: "Front raises",
     videoUrl: null,
     videoSource: "generated",
@@ -474,6 +616,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bent-over-reverse-flyes": {
     exerciseSlug: "bent-over-reverse-flyes",
+    photoUrl: "/exercises/photos/bent-over-reverse-flyes.webp",
+    photoAlt: "bent over reverse flyes exercise",
+    photoSource: "generated",
     exerciseName: "Bent-over reverse flyes",
     videoUrl: null,
     videoSource: "generated",
@@ -484,6 +629,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "resistance-band-shoulder-press": {
     exerciseSlug: "resistance-band-shoulder-press",
+    photoUrl: "/exercises/photos/resistance-band-shoulder-press.webp",
+    photoAlt: "resistance band shoulder press exercise",
+    photoSource: "generated",
     exerciseName: "Resistance-band shoulder press",
     videoUrl: null,
     videoSource: "generated",
@@ -494,6 +642,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "wall-handstand-hold": {
     exerciseSlug: "wall-handstand-hold",
+    photoUrl: "/exercises/photos/wall-handstand-hold.webp",
+    photoAlt: "wall handstand hold exercise",
+    photoSource: "generated",
     exerciseName: "Wall handstand hold",
     videoUrl: null,
     videoSource: "generated",
@@ -504,6 +655,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "shoulder-taps": {
     exerciseSlug: "shoulder-taps",
+    photoUrl: "/exercises/photos/shoulder-taps.webp",
+    photoAlt: "shoulder taps exercise",
+    photoSource: "generated",
     exerciseName: "Shoulder taps",
     videoUrl: null,
     videoSource: "generated",
@@ -514,6 +668,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "y-raises": {
     exerciseSlug: "y-raises",
+    photoUrl: "/exercises/photos/y-raises.webp",
+    photoAlt: "y raises exercise",
+    photoSource: "generated",
     exerciseName: "Y-raises",
     videoUrl: null,
     videoSource: "generated",
@@ -524,6 +681,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "close-grip-push-ups": {
     exerciseSlug: "close-grip-push-ups",
+    photoUrl: "/exercises/photos/close-grip-push-ups.webp",
+    photoAlt: "close grip push ups exercise",
+    photoSource: "generated",
     exerciseName: "Close-grip push-ups",
     videoUrl: null,
     videoSource: "generated",
@@ -534,6 +694,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "chair-tricep-dips": {
     exerciseSlug: "chair-tricep-dips",
+    photoUrl: "/exercises/photos/chair-tricep-dips.webp",
+    photoAlt: "chair tricep dips exercise",
+    photoSource: "generated",
     exerciseName: "Chair tricep dips",
     videoUrl: null,
     videoSource: "generated",
@@ -544,6 +707,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "overhead-tricep-extensions": {
     exerciseSlug: "overhead-tricep-extensions",
+    photoUrl: "/exercises/photos/overhead-tricep-extensions.webp",
+    photoAlt: "overhead tricep extensions exercise",
+    photoSource: "generated",
     exerciseName: "Overhead tricep extensions",
     videoUrl: null,
     videoSource: "generated",
@@ -554,6 +720,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "dumbbell-bicep-curls": {
     exerciseSlug: "dumbbell-bicep-curls",
+    photoUrl: "/exercises/photos/dumbbell-bicep-curls.webp",
+    photoAlt: "dumbbell bicep curls exercise",
+    photoSource: "generated",
     exerciseName: "Dumbbell bicep curls",
     videoUrl: null,
     videoSource: "generated",
@@ -564,6 +733,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "hammer-curls": {
     exerciseSlug: "hammer-curls",
+    photoUrl: "/exercises/photos/hammer-curls.webp",
+    photoAlt: "hammer curls exercise",
+    photoSource: "generated",
     exerciseName: "Hammer curls",
     videoUrl: null,
     videoSource: "generated",
@@ -574,6 +746,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "concentration-curls": {
     exerciseSlug: "concentration-curls",
+    photoUrl: "/exercises/photos/concentration-curls.webp",
+    photoAlt: "concentration curls exercise",
+    photoSource: "generated",
     exerciseName: "Concentration curls",
     videoUrl: null,
     videoSource: "generated",
@@ -584,6 +759,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "resistance-band-curls": {
     exerciseSlug: "resistance-band-curls",
+    photoUrl: "/exercises/photos/resistance-band-curls.webp",
+    photoAlt: "resistance band curls exercise",
+    photoSource: "generated",
     exerciseName: "Resistance-band curls",
     videoUrl: null,
     videoSource: "generated",
@@ -594,6 +772,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "tricep-kickbacks": {
     exerciseSlug: "tricep-kickbacks",
+    photoUrl: "/exercises/photos/tricep-kickbacks.webp",
+    photoAlt: "tricep kickbacks exercise",
+    photoSource: "generated",
     exerciseName: "Tricep kickbacks",
     videoUrl: null,
     videoSource: "generated",
@@ -604,6 +785,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "isometric-bicep-holds": {
     exerciseSlug: "isometric-bicep-holds",
+    photoUrl: "/exercises/photos/isometric-bicep-holds.webp",
+    photoAlt: "isometric bicep holds exercise",
+    photoSource: "generated",
     exerciseName: "Isometric bicep holds",
     videoUrl: null,
     videoSource: "generated",
@@ -614,6 +798,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "forearm-plank": {
     exerciseSlug: "forearm-plank",
+    photoUrl: "/exercises/photos/forearm-plank.webp",
+    photoAlt: "forearm plank exercise",
+    photoSource: "generated",
     exerciseName: "Forearm Plank",
     videoUrl: "/exercises/forearm-plank.mp4",
     videoSource: "pixabay",
@@ -624,6 +811,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "high-plank": {
     exerciseSlug: "high-plank",
+    photoUrl: "/exercises/photos/high-plank.webp",
+    photoAlt: "high plank exercise",
+    photoSource: "generated",
     exerciseName: "High plank",
     videoUrl: null,
     videoSource: "generated",
@@ -634,6 +824,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "side-plank": {
     exerciseSlug: "side-plank",
+    photoUrl: "/exercises/photos/side-plank.webp",
+    photoAlt: "side plank exercise",
+    photoSource: "generated",
     exerciseName: "Side plank",
     videoUrl: null,
     videoSource: "generated",
@@ -644,6 +837,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "dead-bug": {
     exerciseSlug: "dead-bug",
+    photoUrl: "/exercises/photos/dead-bug.webp",
+    photoAlt: "dead bug exercise",
+    photoSource: "generated",
     exerciseName: "Dead bug",
     videoUrl: "/exercises/dead-bug.mp4",
     videoSource: "pixabay",
@@ -654,6 +850,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bird-dog": {
     exerciseSlug: "bird-dog",
+    photoUrl: "/exercises/photos/bird-dog.webp",
+    photoAlt: "bird dog exercise",
+    photoSource: "generated",
     exerciseName: "Bird dog",
     videoUrl: null,
     videoSource: "generated",
@@ -664,6 +863,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "mountain-climbers": {
     exerciseSlug: "mountain-climbers",
+    photoUrl: "/exercises/photos/mountain-climbers.webp",
+    photoAlt: "mountain climbers exercise",
+    photoSource: "generated",
     exerciseName: "Mountain climbers",
     videoUrl: "/exercises/mountain-climbers.mp4",
     videoSource: "pixabay",
@@ -674,6 +876,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bicycle-crunches": {
     exerciseSlug: "bicycle-crunches",
+    photoUrl: "/exercises/photos/bicycle-crunches.webp",
+    photoAlt: "bicycle crunches exercise",
+    photoSource: "generated",
     exerciseName: "Bicycle crunches",
     videoUrl: null,
     videoSource: "generated",
@@ -684,6 +889,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "reverse-crunches": {
     exerciseSlug: "reverse-crunches",
+    photoUrl: "/exercises/photos/reverse-crunches.webp",
+    photoAlt: "reverse crunches exercise",
+    photoSource: "generated",
     exerciseName: "Reverse crunches",
     videoUrl: null,
     videoSource: "generated",
@@ -694,6 +902,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "leg-raises": {
     exerciseSlug: "leg-raises",
+    photoUrl: "/exercises/photos/leg-raises.webp",
+    photoAlt: "leg raises exercise",
+    photoSource: "generated",
     exerciseName: "Leg raises",
     videoUrl: null,
     videoSource: "generated",
@@ -704,6 +915,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "hollow-body-hold": {
     exerciseSlug: "hollow-body-hold",
+    photoUrl: "/exercises/photos/hollow-body-hold.webp",
+    photoAlt: "hollow body hold exercise",
+    photoSource: "generated",
     exerciseName: "Hollow-body hold",
     videoUrl: null,
     videoSource: "generated",
@@ -714,6 +928,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "russian-twists": {
     exerciseSlug: "russian-twists",
+    photoUrl: "/exercises/photos/russian-twists.webp",
+    photoAlt: "russian twists exercise",
+    photoSource: "generated",
     exerciseName: "Russian twists",
     videoUrl: null,
     videoSource: "generated",
@@ -724,6 +941,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "bear-crawl": {
     exerciseSlug: "bear-crawl",
+    photoUrl: "/exercises/photos/bear-crawl.webp",
+    photoAlt: "bear crawl exercise",
+    photoSource: "generated",
     exerciseName: "Bear crawl",
     videoUrl: null,
     videoSource: "generated",
@@ -734,6 +954,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "burpees": {
     exerciseSlug: "burpees",
+    photoUrl: "/exercises/photos/burpees.webp",
+    photoAlt: "burpees exercise",
+    photoSource: "generated",
     exerciseName: "Burpees",
     videoUrl: "/exercises/burpees.mp4",
     videoSource: "pixabay",
@@ -744,6 +967,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "squat-to-reach": {
     exerciseSlug: "squat-to-reach",
+    photoUrl: "/exercises/photos/squat-to-reach.webp",
+    photoAlt: "squat to reach exercise",
+    photoSource: "generated",
     exerciseName: "Squat to reach",
     videoUrl: null,
     videoSource: "generated",
@@ -754,6 +980,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "inchworms": {
     exerciseSlug: "inchworms",
+    photoUrl: "/exercises/photos/inchworms.webp",
+    photoAlt: "inchworms exercise",
+    photoSource: "generated",
     exerciseName: "Inchworms",
     videoUrl: null,
     videoSource: "generated",
@@ -764,6 +993,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "devil-press": {
     exerciseSlug: "devil-press",
+    photoUrl: "/exercises/photos/devil-press.webp",
+    photoAlt: "devil press exercise",
+    photoSource: "generated",
     exerciseName: "Devil press",
     videoUrl: null,
     videoSource: "generated",
@@ -774,6 +1006,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "dumbbell-thrusters": {
     exerciseSlug: "dumbbell-thrusters",
+    photoUrl: "/exercises/photos/dumbbell-thrusters.webp",
+    photoAlt: "dumbbell thrusters exercise",
+    photoSource: "generated",
     exerciseName: "Dumbbell thrusters",
     videoUrl: null,
     videoSource: "generated",
@@ -784,6 +1019,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "man-makers": {
     exerciseSlug: "man-makers",
+    photoUrl: "/exercises/photos/man-makers.webp",
+    photoAlt: "man makers exercise",
+    photoSource: "generated",
     exerciseName: "Man makers",
     videoUrl: null,
     videoSource: "generated",
@@ -794,6 +1032,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "plank-to-push-up": {
     exerciseSlug: "plank-to-push-up",
+    photoUrl: "/exercises/photos/plank-to-push-up.webp",
+    photoAlt: "plank to push up exercise",
+    photoSource: "generated",
     exerciseName: "Plank to push-up",
     videoUrl: null,
     videoSource: "generated",
@@ -804,6 +1045,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "clean-and-press": {
     exerciseSlug: "clean-and-press",
+    photoUrl: "/exercises/photos/clean-and-press.webp",
+    photoAlt: "clean and press exercise",
+    photoSource: "generated",
     exerciseName: "Clean and press",
     videoUrl: null,
     videoSource: "generated",
@@ -814,6 +1058,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "reverse-lunge-to-knee-drive": {
     exerciseSlug: "reverse-lunge-to-knee-drive",
+    photoUrl: "/exercises/photos/reverse-lunge-to-knee-drive.webp",
+    photoAlt: "reverse lunge to knee drive exercise",
+    photoSource: "generated",
     exerciseName: "Reverse lunge to knee drive",
     videoUrl: null,
     videoSource: "generated",
@@ -824,6 +1071,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "jumping-jacks": {
     exerciseSlug: "jumping-jacks",
+    photoUrl: "/exercises/photos/jumping-jacks.webp",
+    photoAlt: "jumping jacks exercise",
+    photoSource: "generated",
     exerciseName: "Jumping Jacks",
     videoUrl: "/exercises/jumping-jacks.mp4",
     videoSource: "generated",
@@ -834,6 +1084,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "high-knees": {
     exerciseSlug: "high-knees",
+    photoUrl: "/exercises/photos/high-knees.webp",
+    photoAlt: "high knees exercise",
+    photoSource: "generated",
     exerciseName: "High knees",
     videoUrl: null,
     videoSource: "generated",
@@ -844,6 +1097,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "butt-kicks": {
     exerciseSlug: "butt-kicks",
+    photoUrl: "/exercises/photos/butt-kicks.webp",
+    photoAlt: "butt kicks exercise",
+    photoSource: "generated",
     exerciseName: "Butt kicks",
     videoUrl: null,
     videoSource: "generated",
@@ -854,6 +1110,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "skater-hops": {
     exerciseSlug: "skater-hops",
+    photoUrl: "/exercises/photos/skater-hops.webp",
+    photoAlt: "skater hops exercise",
+    photoSource: "generated",
     exerciseName: "Skater hops",
     videoUrl: null,
     videoSource: "generated",
@@ -864,6 +1123,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "fast-feet": {
     exerciseSlug: "fast-feet",
+    photoUrl: "/exercises/photos/fast-feet.webp",
+    photoAlt: "fast feet exercise",
+    photoSource: "generated",
     exerciseName: "Fast feet",
     videoUrl: null,
     videoSource: "generated",
@@ -874,6 +1136,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "squat-jumps": {
     exerciseSlug: "squat-jumps",
+    photoUrl: "/exercises/photos/squat-jumps.webp",
+    photoAlt: "squat jumps exercise",
+    photoSource: "generated",
     exerciseName: "Squat jumps",
     videoUrl: null,
     videoSource: "generated",
@@ -884,6 +1149,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "tuck-jumps": {
     exerciseSlug: "tuck-jumps",
+    photoUrl: "/exercises/photos/tuck-jumps.webp",
+    photoAlt: "tuck jumps exercise",
+    photoSource: "generated",
     exerciseName: "Tuck jumps",
     videoUrl: null,
     videoSource: "generated",
@@ -894,6 +1162,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "shadow-boxing": {
     exerciseSlug: "shadow-boxing",
+    photoUrl: "/exercises/photos/shadow-boxing.webp",
+    photoAlt: "shadow boxing exercise",
+    photoSource: "generated",
     exerciseName: "Shadow boxing",
     videoUrl: null,
     videoSource: "generated",
@@ -904,6 +1175,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "stair-stepping": {
     exerciseSlug: "stair-stepping",
+    photoUrl: "/exercises/photos/stair-stepping.webp",
+    photoAlt: "stair stepping exercise",
+    photoSource: "generated",
     exerciseName: "Stair stepping",
     videoUrl: null,
     videoSource: "generated",
@@ -914,6 +1188,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "marching-in-place": {
     exerciseSlug: "marching-in-place",
+    photoUrl: "/exercises/photos/marching-in-place.webp",
+    photoAlt: "marching in place exercise",
+    photoSource: "generated",
     exerciseName: "Marching in place",
     videoUrl: null,
     videoSource: "generated",
@@ -924,6 +1201,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "cat-cow-stretch": {
     exerciseSlug: "cat-cow-stretch",
+    photoUrl: "/exercises/photos/cat-cow-stretch.webp",
+    photoAlt: "cat cow stretch exercise",
+    photoSource: "generated",
     exerciseName: "Cat-cow stretch",
     videoUrl: null,
     videoSource: "generated",
@@ -934,6 +1214,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "childs-pose": {
     exerciseSlug: "childs-pose",
+    photoUrl: "/exercises/photos/childs-pose.webp",
+    photoAlt: "childs pose exercise",
+    photoSource: "generated",
     exerciseName: "Child's pose",
     videoUrl: null,
     videoSource: "generated",
@@ -944,6 +1227,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "worlds-greatest-stretch": {
     exerciseSlug: "worlds-greatest-stretch",
+    photoUrl: "/exercises/photos/worlds-greatest-stretch.webp",
+    photoAlt: "worlds greatest stretch exercise",
+    photoSource: "generated",
     exerciseName: "World's greatest stretch",
     videoUrl: null,
     videoSource: "generated",
@@ -954,6 +1240,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "hip-flexor-stretch": {
     exerciseSlug: "hip-flexor-stretch",
+    photoUrl: "/exercises/photos/hip-flexor-stretch.webp",
+    photoAlt: "hip flexor stretch exercise",
+    photoSource: "generated",
     exerciseName: "Hip flexor stretch",
     videoUrl: null,
     videoSource: "generated",
@@ -964,6 +1253,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "hamstring-stretch": {
     exerciseSlug: "hamstring-stretch",
+    photoUrl: "/exercises/photos/hamstring-stretch.webp",
+    photoAlt: "hamstring stretch exercise",
+    photoSource: "generated",
     exerciseName: "Hamstring stretch",
     videoUrl: null,
     videoSource: "generated",
@@ -974,6 +1266,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "thoracic-rotations": {
     exerciseSlug: "thoracic-rotations",
+    photoUrl: "/exercises/photos/thoracic-rotations.webp",
+    photoAlt: "thoracic rotations exercise",
+    photoSource: "generated",
     exerciseName: "Thoracic rotations",
     videoUrl: null,
     videoSource: "generated",
@@ -984,6 +1279,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "shoulder-circles": {
     exerciseSlug: "shoulder-circles",
+    photoUrl: "/exercises/photos/shoulder-circles.webp",
+    photoAlt: "shoulder circles exercise",
+    photoSource: "generated",
     exerciseName: "Shoulder circles",
     videoUrl: null,
     videoSource: "generated",
@@ -994,6 +1292,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "ankle-mobility-rocks": {
     exerciseSlug: "ankle-mobility-rocks",
+    photoUrl: "/exercises/photos/ankle-mobility-rocks.webp",
+    photoAlt: "ankle mobility rocks exercise",
+    photoSource: "generated",
     exerciseName: "Ankle mobility rocks",
     videoUrl: null,
     videoSource: "generated",
@@ -1004,6 +1305,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "9090-hip-switches": {
     exerciseSlug: "9090-hip-switches",
+    photoUrl: "/exercises/photos/9090-hip-switches.webp",
+    photoAlt: "9090 hip switches exercise",
+    photoSource: "generated",
     exerciseName: "90/90 hip switches",
     videoUrl: null,
     videoSource: "generated",
@@ -1014,6 +1318,9 @@ export const EXERCISE_ASSETS: Record<string, ExerciseAsset> = {
   },
   "deep-squat-hold": {
     exerciseSlug: "deep-squat-hold",
+    photoUrl: "/exercises/photos/deep-squat-hold.webp",
+    photoAlt: "deep squat hold exercise",
+    photoSource: "generated",
     exerciseName: "Deep squat hold",
     videoUrl: null,
     videoSource: "generated",

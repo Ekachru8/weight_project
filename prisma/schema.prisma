@@ -116,6 +116,10 @@ model Exercise {
   audioUrl                   String?
   audioStatus                String   @default("not_started")
   transcript                 String?
+  photoUrl                   String?
+  photoAlt                   String?
+  photoSource                String?
+  photoSourcePage            String?
 
   // Legacy program fields
   dayNumber                  Int?
