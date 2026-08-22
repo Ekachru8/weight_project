@@ -116,16 +116,24 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
                 e.currentTarget.parentElement?.querySelector('.fallback-text')?.classList.remove('hidden');
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
           </>
         ) : isGeneratingImage ? (
-          <div className="flex flex-col items-center gap-2">
-             <Loader2 className="animate-spin text-accent" size={20} />
-             <span className="text-[9px] font-bold text-muted uppercase tracking-widest">Preparing exercise image...</span>
+          <>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-[#1a1a1a] animate-pulse" />
+            <div className="flex flex-col items-center gap-2 z-10">
+               <Loader2 className="animate-spin text-accent" size={20} />
+               <span className="text-[9px] font-bold text-accent uppercase tracking-widest">Preparing exercise image...</span>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-2 z-10 opacity-30">
+            <Dumbbell size={32} />
+            <span className="text-[9px] font-bold text-muted uppercase tracking-widest">{ex.category} placeholder</span>
           </div>
-        ) : null}
+        )}
         
-        <span className={`fallback-text text-xs font-bold text-muted uppercase tracking-widest ${hasValidImage || isGeneratingImage ? 'hidden' : ''}`}>Exercise image coming soon</span>
+        <span className={`fallback-text text-[9px] font-bold text-muted uppercase tracking-widest hidden z-10`}>{ex.category} placeholder</span>
         
         <div className="absolute top-2 right-2 flex gap-2 z-10">
           <div className="px-2 py-1 bg-black/60 rounded text-[9px] font-bold text-white uppercase tracking-widest backdrop-blur-md">
@@ -162,13 +170,14 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
             </div>
           </div>
         ) : isGeneratingAudio ? (
-          <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center gap-3">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center gap-3 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[shimmer_2s_infinite]" />
             <Loader2 className="animate-spin text-accent" size={14} />
-            <span className="text-[11px] font-bold text-muted">Preparing form guidance...</span>
+            <span className="text-[11px] font-bold text-muted">Preparing trainer guidance...</span>
           </div>
         ) : (
-          <div className="bg-red-500/5 border border-red-500/10 rounded-lg p-2 flex items-center gap-3">
-            <AlertTriangle className="text-red-400/50" size={14} />
+          <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center gap-3 opacity-50">
+            <VolumeX className="text-muted" size={14} />
             <span className="text-[11px] font-bold text-muted">Audio guidance unavailable</span>
           </div>
         )}

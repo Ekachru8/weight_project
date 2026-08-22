@@ -55,3 +55,28 @@ export async function generateImage({
     return null;
   }
 }
+
+export async function generateExerciseImage(exercise: any) {
+  const prompt = `Create a professional fitness instruction image showing one realistic adult athlete performing exactly ${exercise.name}.
+Exercise variation: ${exercise.name}.
+Body position: ${exercise.instructions?.[0] || 'correct starting or mid-movement position clearly'}.
+Movement pattern: ${exercise.movementPattern}.
+Equipment: ${exercise.equipment}.
+Target muscles: ${exercise.targetMuscles?.join(", ")}.
+Correct form cues: ${exercise.formCues?.join("; ")}.
+Show the full body from a clear side three-quarter angle in a clean home-workout studio. Use natural lighting, realistic anatomy, modest athletic clothing, and no text. This image is specifically for ${exercise.name}.`;
+
+  const negativePrompt = `Do not show a different exercise, a different variation, animals, fantasy characters, unrelated equipment, random objects, distorted anatomy, extra limbs, multiple athletes, logos, text overlays, or incorrect posture.`;
+
+  const crypto = require("crypto");
+  const hash = crypto.createHash("sha256").update(prompt).digest("hex").slice(0, 16);
+
+  const result = await generateImage({
+    prompt,
+    negativePrompt,
+    slug: exercise.slug,
+    hash
+  });
+
+  return { ...result, prompt, hash };
+}

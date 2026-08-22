@@ -249,6 +249,16 @@ export function ExerciseModal({
                     </ul>
                   </div>
                 )}
+                
+                {ex.modification && (
+                  <div>
+                    <h3 className="text-lg font-bold text-white mb-3">Make it easier</h3>
+                    <div className="flex items-start gap-2 text-sm text-blue-400/90 bg-blue-400/5 p-3 rounded-lg border border-blue-400/10">
+                      <Info size={16} className="shrink-0 mt-0.5 text-blue-400" />
+                      <span>{ex.modification}</span>
+                    </div>
+                  </div>
+                )}
               </div>
               
               {/* Metadata & Progress */}

@@ -1,26 +1,7 @@
 import { NextResponse } from "next/server";
 import { EXERCISES } from "@/data/exercises";
 import { EXERCISE_ASSETS } from "@/data/exercise-assets";
-import { generateImage } from "@/lib/image-generator"; // Will implement a stub or real generator
-import crypto from "crypto";
-
-function buildExerciseImagePrompt(exercise: any) {
-  return `
-Create a professional fitness instruction image showing one realistic adult athlete performing exactly ${exercise.name}.
-
-Exercise category: ${exercise.category}.
-Equipment: ${exercise.equipment}.
-Target muscles: ${exercise.targetMuscles.join(", ")}.
-Movement pattern: ${exercise.movementPattern}.
-Correct form: ${exercise.formCues.join("; ")}.
-
-Show the correct starting or mid-movement position clearly. Use a clean premium home-workout or studio background, natural lighting, realistic anatomy, modest athletic clothing, and a clear camera angle that makes the movement easy to understand.
-
-This image is specifically for ${exercise.name}. Do not show any other exercise.
-  `.trim();
-}
-
-const negativePrompt = "Do not show a different exercise, a different variation, animals, fantasy characters, unrelated equipment, random objects, food, scenery, logos, text overlays, distorted anatomy, extra limbs, duplicate people, or an incorrect body position.";
+import { generateExerciseImage } from "@/lib/image-generator";
 
 export async function POST(req: Request) {
   try {
@@ -35,8 +16,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Exercise not found in trusted catalog" }, { status: 404 });
     }
 
-    const prompt = buildExerciseImagePrompt(exercise);
-    const hash = crypto.createHash("sha256").update(prompt).digest("hex").slice(0, 16);
+    // First do a dry-run prompt generation to see if we already have it
+    // But since the new generateExerciseImage function does the hash generation,
+    // we should just call it. Wait, the old route checked EXERCISE_ASSETS first.
+    // Let's implement the prompt generation logic quickly here or just call the generator.
+    // Let's re-use the check logic by just building a temporary prompt here to check the hash.
+    const tempPrompt = `Create a professional fitness instruction image showing one realistic adult athlete performing exactly ${exercise.name}.
+Exercise variation: ${exercise.name}.
+Body position: ${exercise.instructions?.[0] || 'correct starting or mid-movement position clearly'}.
+Movement pattern: ${exercise.movementPattern}.
+Equipment: ${exercise.equipment}.
+Target muscles: ${exercise.targetMuscles?.join(", ")}.
+Correct form cues: ${exercise.formCues?.join("; ")}.
+Show the full body from a clear side three-quarter angle in a clean home-workout studio. Use natural lighting, realistic anatomy, modest athletic clothing, and no text. This image is specifically for ${exercise.name}.`;
+
+    const crypto = require("crypto");
+    const hash = crypto.createHash("sha256").update(tempPrompt).digest("hex").slice(0, 16);
     
     // Check if we already have it ready
     const existingAsset = EXERCISE_ASSETS[exerciseSlug];
@@ -49,12 +44,7 @@ export async function POST(req: Request) {
     }
 
     // Attempt to generate the image
-    const result = await generateImage({
-      prompt: prompt,
-      negativePrompt: negativePrompt,
-      slug: exerciseSlug,
-      hash: hash,
-    });
+    const result = await generateExerciseImage(exercise);
 
     if (!result || !result.imageUrl) {
       return NextResponse.json({ error: "Failed to generate image" }, { status: 500 });

@@ -21,29 +21,21 @@ function hashString(str: string) {
 export function buildExerciseTranscript(exercise: any) {
   const name = exercise.name;
   
-  // Extract fields safely
-  const startingPosition = exercise.instructions?.[0] || "getting into a comfortable starting position";
+  const startingPosition = exercise.instructions?.[0] || "Get into a comfortable starting position.";
   
-  // Try to find breathing instructions, otherwise use a fallback
-  let breathingInstruction = "naturally";
-  const instructionsStr = (exercise.instructions || []).join(" ").toLowerCase();
-  if (instructionsStr.includes("breathe in") || instructionsStr.includes("breathe out")) {
-    // If the original instructions had breathing cues, just tell them to breathe naturally here and we'll keep the instructions
-    breathingInstruction = "steadily";
-  }
+  const movementSteps = exercise.instructions?.slice(1).join(" ") || "Perform the movement smoothly and with control.";
   
-  // Clean up instructions
-  const movementInstructions = exercise.instructions?.slice(1).join(" ") || "perform the movement smoothly";
+  const breathingInstruction = "Breathe in as you lower and breathe out as you rise.";
+  
+  const formCue = exercise.formCues?.[0] || "maintain proper form";
+  
+  const commonMistake = exercise.commonMistakes?.[0] || "rushing the movement";
   
   // Clean up casing/punctuation for seamless reading
   const cleanFirstLetter = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
   const ensureDot = (str: string) => str.endsWith(".") ? str : str + ".";
-  
-  const formCue = exercise.formCues?.[0] ? cleanFirstLetter(exercise.formCues[0]) : "maintaining proper form";
-  const commonMistake = exercise.commonMistakes?.[0] ? cleanFirstLetter(exercise.commonMistakes[0]) : "rushing the movement";
-  const beginnerModification = exercise.modification ? cleanFirstLetter(exercise.modification) : "an easier variation or reducing your range of motion";
 
-  return `Let’s go through ${name}. Start by ${cleanFirstLetter(startingPosition)}. Now ${cleanFirstLetter(movementInstructions)}. Breathe ${breathingInstruction}, and focus on ${formCue}. Avoid ${commonMistake}. If this feels too difficult, try ${beginnerModification}. Stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.`;
+  return `Let's go through ${name}. ${ensureDot(startingPosition)} ${ensureDot(movementSteps)} ${breathingInstruction} Focus on ${cleanFirstLetter(formCue)}, and avoid ${cleanFirstLetter(commonMistake)}. Use a lighter weight or reduce your range of motion if needed, and stop if you feel sharp pain, dizziness, chest discomfort, or unusual shortness of breath.`;
 }
 
 export async function generateExerciseAudio(exercise: any) {

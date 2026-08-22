@@ -159,23 +159,23 @@ export default function ExercisesPage() {
         // Start polling
         const poll = setInterval(async () => {
           try {
-            const statusRes = await fetch(`/api/exercises/audio/status/${data.jobId}`);
+            const statusRes = await fetch(`/api/exercises/media/status/${ex.slug}`);
             const statusData = await statusRes.json();
             
-            if (statusData.status === 'ready' && statusData.audioUrl) {
+            if (statusData.audioStatus === 'ready' && statusData.audioUrl) {
               clearInterval(poll);
               setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioUrl: statusData.audioUrl, audioStatus: 'ready', transcript: statusData.transcript } : prev);
               setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioUrl: statusData.audioUrl, audioStatus: 'ready', transcript: statusData.transcript } : p));
               setAudioState('ready');
-            } else if (statusData.status === 'failed') {
+            } else if (statusData.audioStatus === 'failed') {
               clearInterval(poll);
               setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioStatus: 'failed' } : prev);
               setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioStatus: 'failed' } : p));
               setAudioState('error');
             } else {
               // queued, generating, processing
-              setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioStatus: statusData.status } : prev);
-              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioStatus: statusData.status } : p));
+              setSelectedExercise(prev => prev?.slug === ex.slug ? { ...prev, audioStatus: statusData.audioStatus } : prev);
+              setExercises(prev => prev.map(p => p.slug === ex.slug ? { ...p, audioStatus: statusData.audioStatus } : p));
             }
           } catch (e) {
             clearInterval(poll);

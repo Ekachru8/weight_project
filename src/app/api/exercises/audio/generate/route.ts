@@ -15,9 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate the exercise slug against the known exercise list
-    const exercise = await prisma.exercise.findUnique({
-      where: { slug: exerciseSlug },
-    });
+    const { EXERCISES } = await import("@/data/exercises");
+    const exercise = EXERCISES.find(ex => ex.slug === exerciseSlug);
 
     if (!exercise) {
       return NextResponse.json(
@@ -27,12 +26,14 @@ export async function POST(request: NextRequest) {
     }
 
     try {
+      const { EXERCISE_ASSETS } = await import("@/data/exercise-assets");
+      const existingAsset = EXERCISE_ASSETS[exerciseSlug];
       // Check if we already have it
-      if (exercise.audioUrl && exercise.audioStatus === "ready") {
+      if (existingAsset?.voiceoverUrl && existingAsset?.status === "ready") {
         return NextResponse.json({
           exerciseSlug: exercise.slug,
-          audioUrl: exercise.audioUrl,
-          transcript: exercise.transcript,
+          audioUrl: existingAsset.voiceoverUrl,
+          transcript: existingAsset.transcript,
           audioStatus: "ready"
         });
       }
