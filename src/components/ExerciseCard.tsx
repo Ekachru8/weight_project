@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play, Dumbbell, Zap, CircleDot, Info, Activity } from "lucide-react";
+import { Play, Dumbbell, Zap, CircleDot, Info, Activity, Loader2, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ExerciseMedia } from "@/lib/exercise-provider";
 
@@ -78,6 +78,8 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
   
   // Checking both new API fields and legacy fields
   const hasValidVideo = ex.videoUrl && ex.videoUrl.trim() !== "";
+  const isGenerating = ex.videoStatus === "queued" || ex.videoStatus === "generating" || ex.videoStatus === "processing";
+  const isFailed = ex.videoStatus === "failed";
   
   return (
     <motion.div 
@@ -112,6 +114,19 @@ export function ExerciseCard({ ex, onClick, itemVariants }: ExerciseCardProps) {
               </div>
             </>
           )
+        ) : isGenerating ? (
+          <div className="flex flex-col items-center justify-center w-full h-full bg-black/60 relative">
+            <div className="absolute inset-0 overflow-hidden">
+               <div className="w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]" />
+            </div>
+            <Loader2 className="animate-spin text-accent mb-2 relative z-10" size={24} />
+            <p className="text-[10px] text-accent font-bold uppercase tracking-widest mb-1 relative z-10">Preparing Video...</p>
+          </div>
+        ) : isFailed ? (
+          <div className="px-4 text-center">
+            <AlertTriangle className="mx-auto text-red-400/50 mb-2" size={32} />
+            <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-1">Demonstration Failed</p>
+          </div>
         ) : (
           <div className="px-4 text-center">
             <Activity className="mx-auto text-muted/30 mb-2" size={32} />

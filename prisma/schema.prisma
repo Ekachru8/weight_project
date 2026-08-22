@@ -136,3 +136,18 @@ model DietTarget {
   generatedAt DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
 }
+
+model VideoJob {
+  id            Int      @id @default(autoincrement())
+  exerciseSlug  String
+  status        String   // "queued" | "generating" | "processing" | "ready" | "failed"
+  provider      String
+  providerJobId String?
+  videoUrl      String?
+  thumbnailUrl  String?
+  prompt        String
+  promptVersion String
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

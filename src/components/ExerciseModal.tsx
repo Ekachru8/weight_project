@@ -71,7 +71,7 @@ export function ExerciseModal({
           <div className="flex-1 overflow-y-auto">
             
             {/* Video Area */}
-            <div className="w-full bg-black relative flex items-center justify-center overflow-hidden aspect-video max-h-[28vh] md:max-h-[34vh] border-b border-white/5">
+            <div className="w-full bg-black relative flex items-center justify-center overflow-hidden aspect-video max-h-[230px] md:max-h-[320px] border-b border-white/5">
               {videoState === 'loading' && (
                 <div className="flex flex-col items-center justify-center absolute inset-0 bg-black/80 z-10">
                   <Loader2 className="animate-spin text-accent mb-2" size={24} />
