@@ -22,9 +22,9 @@ export async function GET(
       orderBy: { createdAt: 'desc' }
     });
 
-    let audioStatus = existingAsset?.status || "unavailable";
-    let audioUrl = existingAsset?.voiceoverUrl || null;
-    let transcript = existingAsset?.transcript || "";
+    let audioStatus: string = existingAsset?.status || "unavailable";
+    let audioUrl: string | null = existingAsset?.voiceoverUrl || null;
+    let transcript: string = existingAsset?.transcript || "";
 
     if (audioJob) {
        // if job says ready, but asset says unavailable, job is more recent

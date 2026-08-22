@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play, Dumbbell, Zap, CircleDot, Info, Activity, Loader2, AlertTriangle } from "lucide-react";
+import { Play, Dumbbell, Zap, CircleDot, Info, Activity, Loader2, AlertTriangle, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ExerciseMedia } from "@/lib/exercise-provider";
 
