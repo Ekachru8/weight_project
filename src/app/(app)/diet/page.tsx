@@ -25,6 +25,7 @@ import {
   Check,
   X,
   Info,
+  Utensils,
 } from "lucide-react";
 
 interface UserData {
@@ -36,6 +37,7 @@ interface UserData {
   activityLevel: string | null;
   goal: string | null;
   dietPreference: string | null;
+  mealsPerDay?: number | null;
 }
 
 export default function DietPage() {
@@ -595,6 +597,29 @@ export default function DietPage() {
   const displayedCarbs = assistantPlan ? dynamicTotals.totalCarbs : diet.carbsG;
   const displayedFat = assistantPlan ? dynamicTotals.totalFat : diet.fatG;
 
+  const macroCalories = {
+    protein: displayedProtein * 4,
+    carbs: displayedCarbs * 4,
+    fat: displayedFat * 9,
+  };
+
+  const totalMacroCalories =
+    macroCalories.protein + macroCalories.carbs + macroCalories.fat;
+
+  const proteinPercentage = totalMacroCalories
+    ? Math.round((macroCalories.protein / totalMacroCalories) * 100)
+    : 0;
+
+  const carbsPercentage = totalMacroCalories
+    ? Math.round((macroCalories.carbs / totalMacroCalories) * 100)
+    : 0;
+
+  const fatPercentage = totalMacroCalories
+    ? Math.round((macroCalories.fat / totalMacroCalories) * 100)
+    : 0;
+
+  const displayedMeals = assistantIntake?.mealsPerDay || user?.mealsPerDay || 5;
+
   return (
     <div className="space-y-6">
       <div className="fade-in-up">
@@ -1032,56 +1057,166 @@ export default function DietPage() {
         )}
       </div>
 
-      {/* Redesigned Daily Macros Section */}
-      <div className="glass-card p-6 lg:p-8 border-white/10 fade-in-up mt-8 relative overflow-hidden">
-        <div className="absolute top-[-50px] right-[-50px] w-[250px] h-[250px] bg-accent/10 rounded-full blur-[80px] pointer-events-none" />
+      {/* Premium Redesigned Daily Macros Section */}
+      <div className="glass-card rounded-3xl bg-white/[0.025] border border-white/[0.08] shadow-2xl backdrop-blur-xl p-6 lg:p-8 fade-in-up mt-8 relative overflow-hidden">
+        {/* Subtle radial green gradient in top-right */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(192,255,0,0.09),transparent_34%)]" />
         
-        <div className="mb-8 relative z-10">
-          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Your daily nutrition targets</h2>
-          <p className="text-sm text-muted mt-1.5">Personalized to support your goal and daily routine.</p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8 items-center relative z-10">
+        {/* Header */}
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 border-b border-white/[0.08] pb-6">
           <div>
-            <div className="mb-8">
-              <p className="text-5xl font-black accent-text count-up-pop tracking-tight flex items-baseline gap-2">
-                {displayedCalories} <span className="text-xl text-foreground font-bold tracking-normal">kcal</span>
-              </p>
-              <p className="text-[11px] uppercase tracking-widest text-muted font-bold mt-2">Daily energy target</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
-                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Protein</p>
-                <p className="text-2xl font-black text-green-400">{displayedProtein} <span className="text-sm font-bold text-muted ml-0.5">g</span></p>
-              </div>
-              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
-                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Carbohydrates</p>
-                <p className="text-2xl font-black text-blue-400">{displayedCarbs} <span className="text-sm font-bold text-muted ml-0.5">g</span></p>
-              </div>
-              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
-                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Fat</p>
-                <p className="text-2xl font-black text-orange-400">{displayedFat} <span className="text-sm font-bold text-muted ml-0.5">g</span></p>
-              </div>
-              <div className="rounded-2xl bg-white/[0.035] border border-white/5 p-4 sm:p-5 hover-lift">
-                <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1.5">Meals</p>
-                <p className="text-2xl font-black text-accent">{assistantIntake.mealsPerDay || 5}</p>
-              </div>
-            </div>
+            <p className="text-[10px] uppercase tracking-widest text-muted font-bold mb-1.5">Daily Nutrition</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">Your daily nutrition targets</h2>
+            <p className="text-sm text-foreground/70 mt-1.5 max-w-lg leading-relaxed">
+              Personalized from your profile, goal, activity level, and selected meals.
+            </p>
           </div>
-
-          <div className="flex items-center justify-center pt-4 lg:pt-0">
-            <MacroRing
-              proteinG={displayedProtein}
-              carbsG={displayedCarbs}
-              fatG={displayedFat}
-              calories={displayedCalories}
-            />
+          <div className="shrink-0">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/10">
+              <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(192,255,0,0.8)]" />
+              <span className="text-xs font-semibold text-foreground/90">
+                {assistantPlan ? "Personalized plan" : "Based on your profile"}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-4 text-center relative z-10">
-          <p className="text-[11px] text-muted/60">Your targets are calculated from your current goal, body metrics, activity level, and personalized meal plan.</p>
+        {/* Compact Context Row */}
+        <div className="relative z-10 flex flex-wrap gap-2 mb-8">
+          {user?.goal && (
+            <div className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] text-xs font-medium text-muted">
+              {goalLabel(user.goal)}
+            </div>
+          )}
+          {dietType && (
+            <div className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] text-xs font-medium text-muted capitalize">
+              {dietType.replace('_', ' ')}
+            </div>
+          )}
+          {displayedMeals && (
+            <div className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] text-xs font-medium text-muted">
+              {displayedMeals} meals per day
+            </div>
+          )}
+          {user?.activityLevel && (
+            <div className="px-3 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] text-xs font-medium text-muted capitalize">
+              {user.activityLevel.replace('_', ' ')}
+            </div>
+          )}
+        </div>
+
+        {/* Premium Hero Layout */}
+        <div className="grid lg:grid-cols-2 gap-10 items-center relative z-10 mb-10">
+          {/* Left Side — Calorie Target */}
+          <div className="flex flex-col justify-center">
+            <p className="text-[11px] uppercase tracking-widest text-muted font-bold mb-3">Daily energy target</p>
+            <p className="text-6xl sm:text-7xl font-black text-foreground tracking-tight flex items-baseline gap-2 count-up-pop mb-4">
+              {displayedCalories} <span className="text-xl sm:text-2xl text-foreground/60 font-bold tracking-normal">kcal</span>
+            </p>
+            <p className="text-sm font-medium text-foreground/90 mb-1">Your estimated daily energy target</p>
+            <p className="text-[11px] sm:text-xs text-muted leading-relaxed max-w-sm">
+              This target is designed to support your current goal at a realistic, sustainable pace.
+            </p>
+          </div>
+
+          {/* Right Side — Macro Balance */}
+          <div className="flex items-center justify-center lg:justify-end">
+            <div className="w-[200px] h-[200px]">
+              <MacroRing
+                proteinG={displayedProtein}
+                carbsG={displayedCarbs}
+                fatG={displayedFat}
+                calories={displayedCalories}
+                centerText="Macro balance"
+                showBreakdown={false}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Redesigned Macro Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10 mb-8">
+          {/* Protein */}
+          <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 sm:p-5 hover:bg-white/[0.05] transition-colors group">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#a3e635] shadow-[0_0_8px_rgba(163,230,53,0.6)]" />
+                <span className="text-xs uppercase tracking-wider font-bold text-foreground">Protein</span>
+              </div>
+              <span className="text-xs font-bold text-[#a3e635]">{proteinPercentage}%</span>
+            </div>
+            <p className="text-2xl font-black text-foreground mb-3">{displayedProtein} <span className="text-xs font-semibold text-muted ml-0.5">g</span></p>
+            <div className="h-1 bg-white/[0.05] rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-[#a3e635] group-hover:opacity-80 transition-opacity" style={{ width: `${proteinPercentage}%` }} />
+            </div>
+          </div>
+          
+          {/* Carbohydrates */}
+          <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 sm:p-5 hover:bg-white/[0.05] transition-colors group">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#38bdf8] shadow-[0_0_8px_rgba(56,189,248,0.6)]" />
+                <span className="text-xs uppercase tracking-wider font-bold text-foreground">Carbohydrates</span>
+              </div>
+              <span className="text-xs font-bold text-[#38bdf8]">{carbsPercentage}%</span>
+            </div>
+            <p className="text-2xl font-black text-foreground mb-3">{displayedCarbs} <span className="text-xs font-semibold text-muted ml-0.5">g</span></p>
+            <div className="h-1 bg-white/[0.05] rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-[#38bdf8] group-hover:opacity-80 transition-opacity" style={{ width: `${carbsPercentage}%` }} />
+            </div>
+          </div>
+          
+          {/* Fat */}
+          <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 sm:p-5 hover:bg-white/[0.05] transition-colors group">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#fb923c] shadow-[0_0_8px_rgba(251,146,60,0.6)]" />
+                <span className="text-xs uppercase tracking-wider font-bold text-foreground">Fat</span>
+              </div>
+              <span className="text-xs font-bold text-[#fb923c]">{fatPercentage}%</span>
+            </div>
+            <p className="text-2xl font-black text-foreground mb-3">{displayedFat} <span className="text-xs font-semibold text-muted ml-0.5">g</span></p>
+            <div className="h-1 bg-white/[0.05] rounded-full overflow-hidden">
+              <div className="h-full rounded-full bg-[#fb923c] group-hover:opacity-80 transition-opacity" style={{ width: `${fatPercentage}%` }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Meal Structure Information */}
+        <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 sm:p-5 relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+          <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0">
+            <Utensils className="text-accent" size={20} aria-label="Meal Structure" />
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-muted font-bold mb-1">Meal structure</p>
+            <p className="text-sm font-semibold text-foreground">{displayedMeals} meals per day</p>
+            <p className="text-[11px] sm:text-xs text-muted mt-1 leading-relaxed">
+              Your plan is distributed across your preferred eating schedule.
+            </p>
+          </div>
+        </div>
+
+        {/* Premium Explanation Footer with Details Drawer */}
+        <div className="border-t border-white/[0.08] pt-5 relative z-10">
+          <div className="flex items-start gap-3 mb-3">
+            <Info className="text-muted shrink-0 mt-0.5" size={16} aria-label="Information" />
+            <p className="text-xs text-muted/80 leading-relaxed">
+              {assistantPlan 
+                ? "These targets reflect your current personalized meal plan. If you change a recipe, the daily totals update automatically."
+                : "These targets are calculated from your current goal, body metrics, activity level, and nutrition preferences."
+              }
+            </p>
+          </div>
+          
+          <details className="group [&_summary::-webkit-details-marker]:hidden">
+            <summary className="text-[11px] font-semibold text-accent/80 hover:text-accent cursor-pointer select-none transition-colors inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded px-1 -ml-1">
+              How are these targets calculated?
+              <span className="transition group-open:rotate-180">▼</span>
+            </summary>
+            <p className="mt-3 text-[11px] sm:text-xs text-muted leading-relaxed pl-1 pb-2 border-l-2 border-white/[0.05] ml-1">
+              Your calorie target is estimated from your body metrics, activity level, and goal. Protein, carbohydrates, and fat are distributed across your daily target to create a practical starting point. Your needs may vary, so adjust gradually and seek professional advice if you have medical concerns.
+            </p>
+          </details>
         </div>
       </div>
 

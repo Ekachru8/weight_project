@@ -13,6 +13,8 @@ interface MacroRingProps {
   carbsG: number;
   fatG: number;
   calories: number;
+  centerText?: string;
+  showBreakdown?: boolean;
 }
 
 export default function MacroRing({
@@ -20,6 +22,8 @@ export default function MacroRing({
   carbsG,
   fatG,
   calories,
+  centerText,
+  showBreakdown = true,
 }: MacroRingProps) {
   const data = [
     { name: "Protein", value: proteinG * 4, grams: proteinG, color: "#a3e635" },
@@ -30,9 +34,9 @@ export default function MacroRing({
   const totalCals = data.reduce((s, d) => s + d.value, 0);
 
   return (
-    <div className="macro-ring-layout w-full">
+    <div className={`macro-ring-layout w-full ${!showBreakdown ? 'flex items-center justify-center' : ''}`}>
       {/* Donut chart */}
-      <div className="relative macro-ring-chart flex-shrink-0">
+      <div className="relative macro-ring-chart flex-shrink-0" style={{ width: showBreakdown ? undefined : '180px', height: showBreakdown ? undefined : '180px' }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -72,54 +76,64 @@ export default function MacroRing({
         </ResponsiveContainer>
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-extrabold text-foreground">
-            {calories}
-          </span>
-          <span className="text-[10px] text-muted uppercase tracking-wider font-bold">kcal</span>
+          {centerText ? (
+            <span className="text-[11px] text-muted uppercase tracking-[0.15em] font-bold max-w-[60%] text-center leading-tight">
+              {centerText}
+            </span>
+          ) : (
+            <>
+              <span className="text-3xl font-extrabold text-foreground">
+                {calories}
+              </span>
+              <span className="text-[10px] text-muted uppercase tracking-wider font-bold">kcal</span>
+            </>
+          )}
         </div>
       </div>
 
       {/* Macro breakdown */}
-      <div className="flex flex-col gap-4 macro-ring-breakdown w-full justify-center">
-        {data.map((d) => {
-          const percent = totalCals > 0 ? Math.round((d.value / totalCals) * 100) : 0;
-          return (
-            <div key={d.name} className="flex items-center gap-3">
-              <div
-                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: d.color, color: d.color }}
-              />
-              <div className="flex-1">
-                <div className="flex justify-between items-baseline mb-1">
-                  <span className="text-xs uppercase tracking-wider font-bold text-foreground">
-                    {d.name}
-                  </span>
-                  <span className="text-xs font-semibold" style={{ color: d.color }}>
-                    {percent}%
-                  </span>
+      {showBreakdown && (
+        <div className="flex flex-col gap-4 macro-ring-breakdown w-full justify-center">
+          {data.map((d) => {
+            const percent = totalCals > 0 ? Math.round((d.value / totalCals) * 100) : 0;
+            return (
+              <div key={d.name} className="flex items-center gap-3">
+                <div
+                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: d.color, color: d.color }}
+                />
+                <div className="flex-1">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="text-xs uppercase tracking-wider font-bold text-foreground">
+                      {d.name}
+                    </span>
+                    <span className="text-xs font-semibold" style={{ color: d.color }}>
+                      {percent}%
+                    </span>
+                  </div>
+                  {/* Animated bar */}
+                  <div className="h-1.5 bg-white/[0.05] rounded-full overflow-hidden shadow-inner">
+                    <div
+                      className="h-full rounded-full progress-fill-animate"
+                      style={{
+                        width: `${percent}%`,
+                        backgroundColor: d.color,
+                        animationDelay: "300ms",
+                      }}
+                    />
+                  </div>
+                  <p className="text-sm font-bold mt-1.5 text-foreground/80">
+                    {d.grams}
+                    <span className="text-[10px] font-normal text-muted ml-0.5">
+                      g
+                    </span>
+                  </p>
                 </div>
-                {/* Animated bar */}
-                <div className="h-1.5 bg-white/[0.05] rounded-full overflow-hidden shadow-inner">
-                  <div
-                    className="h-full rounded-full progress-fill-animate"
-                    style={{
-                      width: `${percent}%`,
-                      backgroundColor: d.color,
-                      animationDelay: "300ms",
-                    }}
-                  />
-                </div>
-                <p className="text-sm font-bold mt-1.5 text-foreground/80">
-                  {d.grams}
-                  <span className="text-[10px] font-normal text-muted ml-0.5">
-                    g
-                  </span>
-                </p>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
