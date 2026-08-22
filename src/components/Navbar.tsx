@@ -19,7 +19,6 @@ const navItems = [
   { href: "/diet", label: "Diet", icon: Utensils },
   { href: "/progress", label: "Progress", icon: TrendingUp },
   { href: "/exercises", label: "Workouts", icon: Dumbbell },
-  { href: "/profile", label: "Profile", icon: User },
 ];
 
 export default function Navbar() {
@@ -68,13 +67,13 @@ export default function Navbar() {
             );
           })}
           {isAuthenticated ? (
-            <button
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-all duration-300 btn-press text-danger/80 hover:text-danger"
+            <Link
+              href="/profile"
+              className="flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-all duration-300 btn-press text-muted hover:text-foreground"
             >
-              <LogOut size={20} strokeWidth={1.5} />
-              <span className="text-[9px] font-medium hidden sm:block">Logout</span>
-            </button>
+              <User size={20} strokeWidth={1.5} />
+              <span className="text-[9px] font-medium hidden sm:block">Profile</span>
+            </Link>
           ) : (
             <Link
               href="/login"
@@ -130,16 +129,25 @@ export default function Navbar() {
         </div>
         
         <div className="flex flex-col items-center gap-4">
-          <div className="flex flex-col items-center gap-1">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
-              {isAuthenticated && session?.user?.image ? (
-                <img src={session.user.image} alt={displayName} className="w-full h-full object-cover" />
-              ) : (
+          {isAuthenticated ? (
+            <Link href="/profile" className="flex flex-col items-center gap-1 group/profile transition-all">
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-transparent group-hover/profile:border-accent/50 transition-colors">
+                {session?.user?.image ? (
+                  <img src={session.user.image} alt={displayName} className="w-full h-full object-cover" />
+                ) : (
+                  <User size={16} className="text-white/50 group-hover/profile:text-accent/70 transition-colors" />
+                )}
+              </div>
+              <span className="text-[8px] text-white/50 max-w-[50px] truncate text-center group-hover/profile:text-foreground transition-colors">{displayName}</span>
+            </Link>
+          ) : (
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
                 <User size={16} className="text-white/50" />
-              )}
+              </div>
+              <span className="text-[8px] text-white/50 max-w-[50px] truncate text-center">{displayName}</span>
             </div>
-            <span className="text-[8px] text-white/50 max-w-[50px] truncate text-center">{displayName}</span>
-          </div>
+          )}
         
           {isAuthenticated ? (
             <button
@@ -154,11 +162,11 @@ export default function Navbar() {
             </button>
           ) : (
             <Link
-              href="/login"
+              href="/signup"
               className="group relative flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 w-14 text-accent/70 hover:text-accent hover:bg-accent/10"
             >
               <User size={20} strokeWidth={1.5} className="group-hover:scale-105 transition-transform" />
-              <span className="text-[9px] font-medium text-center leading-tight">Sign In</span>
+              <span className="text-[9px] font-medium text-center leading-tight">Create<br/>Account</span>
             </Link>
           )}
         </div>

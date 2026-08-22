@@ -61,7 +61,7 @@ export default function Dashboard() {
   const { user, diet } = data || {};
 
   const displayName = isAuthenticated
-    ? session?.user?.name?.trim() || session?.user?.email?.split("@")[0] || "there"
+    ? user?.name?.trim() || session?.user?.name?.trim() || session?.user?.email?.split("@")[0] || "User"
     : null;
 
   // Calculate goal progress percentage safely

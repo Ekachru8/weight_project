@@ -66,6 +66,25 @@ model User {
   equipment       String       @default("Dumbbells, Resistance Band, Yoga Mat")
   onboardingDone  Boolean      @default(false)
   fitnessReadiness Json?
+  
+  // Nutrition Preferences
+  foodsTheyEat       String?
+  comfortableFoods   String?
+  foodsToAvoid       String?
+  allergies          String?
+  budget             String?
+  openToNewFoods     Boolean?
+  mealsPerDay        Int?
+  cookingConstraints String?
+
+  // Fitness Readiness
+  fitnessLevel        String?
+  mobilityLevel       String?
+  difficultMovements  String?
+  intensityPreference String?
+  healthNotes         String?
+  workoutFocus        String?
+
   createdAt       DateTime     @default(now())
   accounts        Account[]
   sessions        Session[]

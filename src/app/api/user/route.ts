@@ -35,6 +35,44 @@ export async function GET() {
   }
 }
 
+// Validation helper
+function validateFields(fields: any) {
+  if (fields.name !== undefined && typeof fields.name === 'string' && fields.name.trim() === '') {
+    return { error: "Display name cannot be empty" };
+  }
+  if (fields.age !== undefined && (isNaN(fields.age) || fields.age <= 0 || fields.age > 120)) {
+    return { error: "Age must be a realistic positive number" };
+  }
+  if (fields.heightCm !== undefined && (isNaN(fields.heightCm) || fields.heightCm <= 0)) {
+    return { error: "Height must be positive" };
+  }
+  if (fields.weightKg !== undefined && (isNaN(fields.weightKg) || fields.weightKg <= 0)) {
+    return { error: "Current weight must be positive" };
+  }
+  if (fields.targetWeightKg !== undefined && fields.targetWeightKg !== "" && fields.targetWeightKg !== null) {
+    if (isNaN(fields.targetWeightKg) || fields.targetWeightKg <= 0) {
+      return { error: "Target weight must be positive" };
+    }
+  }
+  if (fields.mealsPerDay !== undefined && fields.mealsPerDay !== "" && fields.mealsPerDay !== null) {
+    const meals = Number(fields.mealsPerDay);
+    if (isNaN(meals) || meals < 3 || meals > 6) {
+      return { error: "Meals per day must be between 3 and 6" };
+    }
+  }
+  if (fields.goal && fields.targetWeightKg && fields.weightKg) {
+    const target = Number(fields.targetWeightKg);
+    const weight = Number(fields.weightKg);
+    if (fields.goal === "lose" && target >= weight) {
+      return { error: "Goal is lose weight, but target weight is not lower than current weight" };
+    }
+    if (fields.goal === "gain" && target <= weight) {
+      return { error: "Goal is gain weight, but target weight is not higher than current weight" };
+    }
+  }
+  return null;
+}
+
 // PUT /api/user — Update user profile and recalculate diet
 export async function PUT(request: Request) {
   try {
@@ -49,7 +87,16 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    const { name, age, gender, heightCm, weightKg, targetWeightKg, activityLevel, goal, equipment } = body;
+    const validationError = validateFields(body);
+    if (validationError) {
+      return NextResponse.json(validationError, { status: 400 });
+    }
+
+    const { 
+      name, age, gender, heightCm, weightKg, targetWeightKg, activityLevel, goal, equipment, dietPreference,
+      foodsTheyEat, comfortableFoods, foodsToAvoid, allergies, budget, openToNewFoods, mealsPerDay,
+      cookingConstraints, fitnessLevel, mobilityLevel, difficultMovements, intensityPreference, healthNotes, workoutFocus
+    } = body;
 
     const user = await prisma.user.update({
       where: { id: userId },
@@ -59,10 +106,25 @@ export async function PUT(request: Request) {
         ...(gender !== undefined && { gender }),
         ...(heightCm !== undefined && { heightCm: Number(heightCm) }),
         ...(weightKg !== undefined && { weightKg: Number(weightKg) }),
-        ...(targetWeightKg !== undefined && { targetWeightKg: Number(targetWeightKg) }),
+        ...(targetWeightKg !== undefined && { targetWeightKg: targetWeightKg ? Number(targetWeightKg) : null }),
         ...(activityLevel !== undefined && { activityLevel }),
         ...(goal !== undefined && { goal }),
         ...(equipment !== undefined && { equipment }),
+        ...(dietPreference !== undefined && { dietPreference }),
+        ...(foodsTheyEat !== undefined && { foodsTheyEat }),
+        ...(comfortableFoods !== undefined && { comfortableFoods }),
+        ...(foodsToAvoid !== undefined && { foodsToAvoid }),
+        ...(allergies !== undefined && { allergies }),
+        ...(budget !== undefined && { budget }),
+        ...(openToNewFoods !== undefined && { openToNewFoods: Boolean(openToNewFoods) }),
+        ...(mealsPerDay !== undefined && { mealsPerDay: mealsPerDay ? Number(mealsPerDay) : null }),
+        ...(cookingConstraints !== undefined && { cookingConstraints }),
+        ...(fitnessLevel !== undefined && { fitnessLevel }),
+        ...(mobilityLevel !== undefined && { mobilityLevel }),
+        ...(difficultMovements !== undefined && { difficultMovements }),
+        ...(intensityPreference !== undefined && { intensityPreference }),
+        ...(healthNotes !== undefined && { healthNotes }),
+        ...(workoutFocus !== undefined && { workoutFocus }),
       },
     });
 
@@ -120,10 +182,15 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
+    const validationError = validateFields(body);
+    if (validationError) {
+      return NextResponse.json(validationError, { status: 400 });
+    }
+
     const {
-      name, age, gender, heightCm, weightKg,
-      targetWeightKg, activityLevel, goal,
-      equipment, onboardingDone,
+      name, age, gender, heightCm, weightKg, targetWeightKg, activityLevel, goal, equipment, onboardingDone, dietPreference,
+      foodsTheyEat, comfortableFoods, foodsToAvoid, allergies, budget, openToNewFoods, mealsPerDay,
+      cookingConstraints, fitnessLevel, mobilityLevel, difficultMovements, intensityPreference, healthNotes, workoutFocus
     } = body;
 
     const user = await prisma.user.update({
@@ -134,11 +201,26 @@ export async function PATCH(request: Request) {
         ...(gender !== undefined && { gender }),
         ...(heightCm !== undefined && { heightCm: Number(heightCm) }),
         ...(weightKg !== undefined && { weightKg: Number(weightKg) }),
-        ...(targetWeightKg !== undefined && { targetWeightKg: Number(targetWeightKg) }),
+        ...(targetWeightKg !== undefined && { targetWeightKg: targetWeightKg ? Number(targetWeightKg) : null }),
         ...(activityLevel !== undefined && { activityLevel }),
         ...(goal !== undefined && { goal }),
         ...(equipment !== undefined && { equipment }),
         ...(onboardingDone !== undefined && { onboardingDone: Boolean(onboardingDone) }),
+        ...(dietPreference !== undefined && { dietPreference }),
+        ...(foodsTheyEat !== undefined && { foodsTheyEat }),
+        ...(comfortableFoods !== undefined && { comfortableFoods }),
+        ...(foodsToAvoid !== undefined && { foodsToAvoid }),
+        ...(allergies !== undefined && { allergies }),
+        ...(budget !== undefined && { budget }),
+        ...(openToNewFoods !== undefined && { openToNewFoods: Boolean(openToNewFoods) }),
+        ...(mealsPerDay !== undefined && { mealsPerDay: mealsPerDay ? Number(mealsPerDay) : null }),
+        ...(cookingConstraints !== undefined && { cookingConstraints }),
+        ...(fitnessLevel !== undefined && { fitnessLevel }),
+        ...(mobilityLevel !== undefined && { mobilityLevel }),
+        ...(difficultMovements !== undefined && { difficultMovements }),
+        ...(intensityPreference !== undefined && { intensityPreference }),
+        ...(healthNotes !== undefined && { healthNotes }),
+        ...(workoutFocus !== undefined && { workoutFocus }),
       },
     });
 
